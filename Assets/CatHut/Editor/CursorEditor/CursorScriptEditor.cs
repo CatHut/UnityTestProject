@@ -19,7 +19,7 @@ namespace CursorEditor
         IDiscovery m_Discoverability;
         IGenerator m_ProjectGeneration;
 
-        static readonly string[] k_SupportedFileNames = { "code.exe", "visualstudiocode.app", "visualstudiocode-insiders.app", "vscode.app", "code.app", "code.cmd", "code-insiders.cmd", "code", "com.visualstudio.code" };
+        static readonly string[] k_SupportedFileNames = { "cursor.exe", "cursor.app", "cursor.cmd", "cursor"};
 
         static bool IsOSX => Application.platform == RuntimePlatform.OSXEditor;
 
