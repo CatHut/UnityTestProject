@@ -8,11 +8,11 @@ using System.IO;
 
 namespace CatHut
 {
-    public class MasterData
+    public class MasterDataCsvImporter
     {
-        private Dictionary<string, DataGroup> _DataGroupDic;
+        private SerializableDictionary<string, DataGroup> _DataGroupDic;
 
-        public Dictionary<string, DataGroup> DataGroupDic
+        public SerializableDictionary<string, DataGroup> DataGroupDic
         {
             get
             {
@@ -20,12 +20,12 @@ namespace CatHut
             }
         }
 
-        public MasterData()
+        public MasterDataCsvImporter()
         {
 
         }
 
-        public MasterData(string folderPath)
+        public MasterDataCsvImporter(string folderPath)
         {
             if(!Directory.Exists(folderPath)) { return; }
 
@@ -37,7 +37,7 @@ namespace CatHut
 
             var folder = folderPath;
 
-            this._DataGroupDic = new Dictionary<string, DataGroup>();
+            this._DataGroupDic = new SerializableDictionary<string, DataGroup>();
 
             string[] subFolders = Directory.GetDirectories(folder);
             foreach (string subFolder in subFolders)

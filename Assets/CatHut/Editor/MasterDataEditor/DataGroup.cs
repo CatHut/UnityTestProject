@@ -9,11 +9,11 @@ namespace CatHut
 {
     public class DataGroup
     {
-        private Dictionary<string, FormatedCsvData> _FormatedCsvDic;
+        private SerializableDictionary<string, FormatedCsvData> _FormatedCsvDic;
         private TableData _TableData;
         bool _Enable = false;
 
-        public Dictionary<string, FormatedCsvData> FormatedCsvDic
+        public SerializableDictionary<string, FormatedCsvData> FormatedCsvDic
         {
             get { return _FormatedCsvDic; }
         }
@@ -33,7 +33,7 @@ namespace CatHut
             _TableData = new TableData(folder);
 
 
-            _FormatedCsvDic = new Dictionary<string, FormatedCsvData>();
+            _FormatedCsvDic = new SerializableDictionary<string, FormatedCsvData>();
 
             string[] subSubFolders = Directory.GetDirectories(folder);
 
@@ -52,8 +52,6 @@ namespace CatHut
                     this._Enable = true;
                 }
             }
-
-
 
         }
 
