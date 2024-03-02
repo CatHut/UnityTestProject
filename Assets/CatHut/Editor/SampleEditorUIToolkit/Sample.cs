@@ -15,11 +15,11 @@ public class MyEditorWindow : EditorWindow
     public void CreateGUI()
     {
         // UXMLテンプレートのロード
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Asset/UI Toolkit/Sample.uxml");
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI Toolkit/Sample.uxml");
         visualTree.CloneTree(rootVisualElement);
 
         // USSスタイルの適用
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Asset/UI Toolkit/Sample.uss");
+        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/UI Toolkit/Sample.uss");
         rootVisualElement.styleSheets.Add(styleSheet);
 
         // UI操作の例（ボタンの追加など）
