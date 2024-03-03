@@ -6,8 +6,6 @@ using System.IO;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using ClosedXML;
-using ClosedXML.Excel;
 using System;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -43,8 +41,8 @@ namespace CatHut
             //ここでScriptableobjectを作成
             foreach (var path in CreateScriptableObjectList)
             {
-                var dic = AnalysisExcelFile(path.Value);
-                ExcelDataDic.Add(path.Value, dic);
+                //var dic = AnalysisExcelFile(path.Value);
+                //ExcelDataDic.Add(path.Value, dic);
             }
 
             //ScriptableObject出力
@@ -751,54 +749,54 @@ namespace CatHut
         }
 
 
-        private static ExcelDataDictionary AnalysisExcelFile(string path)
-        {
-            //処理するワークシートのフォーマット情報を生成
-            var ExcelDataFromatDic = new ExcelDataDictionary();
+        //private static ExcelDataDictionary AnalysisExcelFile(string path)
+        //{
+        //    //処理するワークシートのフォーマット情報を生成
+        //    var ExcelDataFromatDic = new ExcelDataDictionary();
 
-            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                using (var xwb = new XLWorkbook(fs, XLEventTracking.Disabled))
-                {
+        //    using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        //    {
+        //        using (var xwb = new XLWorkbook(fs, XLEventTracking.Disabled))
+        //        {
 
-                    var wsNameList = new List<string>();
+        //            var wsNameList = new List<string>();
 
-                    //処理するワークシート名を取得
-                    foreach (var ws in xwb.Worksheets)
-                    {
-                        if (ws.Name.Contains(UsingExcelCommon.TargetWorkSheetMark))
-                        {
-                            wsNameList.Add(ws.Name);
-                        }
-
-
-                        if (ws.Name == UsingExcelCommon.TableDeclareWorkSheetName)
-                        {
-                            UsingExcelCommon.GetEnumDeclare(ws, ref ExcelDataFromatDic.EnumDic);
-                        }
-
-                    }
-
-                    foreach (var name in wsNameList)
-                    {
-                        var edf = new ExcelSheetFormat();
-
-                        UsingExcelCommon.GetExcelDataFormat(xwb, name, ref edf);
-
-                        if (!ExcelDataFromatDic.ExcelSheetDic.ContainsKey(edf.ClassName))
-                        {
-                            ExcelDataFromatDic.ExcelSheetDic.Add(edf.ClassName, edf);
-                        }
-
-                    }
+        //            //処理するワークシート名を取得
+        //            foreach (var ws in xwb.Worksheets)
+        //            {
+        //                if (ws.Name.Contains(UsingExcelCommon.TargetWorkSheetMark))
+        //                {
+        //                    wsNameList.Add(ws.Name);
+        //                }
 
 
-                }
-            }
+        //                if (ws.Name == UsingExcelCommon.TableDeclareWorkSheetName)
+        //                {
+        //                    UsingExcelCommon.GetEnumDeclare(ws, ref ExcelDataFromatDic.EnumDic);
+        //                }
 
-            return ExcelDataFromatDic;
+        //            }
 
-        }
+        //            foreach (var name in wsNameList)
+        //            {
+        //                var edf = new ExcelSheetFormat();
+
+        //                UsingExcelCommon.GetExcelDataFormat(xwb, name, ref edf);
+
+        //                if (!ExcelDataFromatDic.ExcelSheetDic.ContainsKey(edf.ClassName))
+        //                {
+        //                    ExcelDataFromatDic.ExcelSheetDic.Add(edf.ClassName, edf);
+        //                }
+
+        //            }
+
+
+        //        }
+        //    }
+
+        //    return ExcelDataFromatDic;
+
+        //}
 
 
         private static void DeleteExcelImporter()

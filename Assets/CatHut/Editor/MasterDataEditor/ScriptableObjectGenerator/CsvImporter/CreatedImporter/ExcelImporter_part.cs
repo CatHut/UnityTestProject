@@ -6,7 +6,6 @@ using System.IO;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using ClosedXML;
 using CatHut;
 
 namespace CatHut
@@ -23,16 +22,16 @@ namespace CatHut
 				switch (file)
 				{
                         case "Enemy":
-                            Import_Enemy(path);
+                            //Import_Enemy(path);
                             break;
                         case "Skill":
-                            Import_Skill(path);
+                            //Import_Skill(path);
                             break;
                         case "Player":
-                            Import_Player(path);
+                            //Import_Player(path);
                             break;
                         case "Item":
-                            Import_Item(path);
+                            //Import_Item(path);
                             break;
 
 

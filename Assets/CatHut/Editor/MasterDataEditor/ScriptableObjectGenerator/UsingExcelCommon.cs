@@ -3,7 +3,6 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
-using ClosedXML.Excel;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -152,243 +151,243 @@ namespace CatHut
 
         }
 
-        /// <summary>
-        /// エクセルの内容からデータのフォーマット情報を取得する
-        /// </summary>
-        /// <param name="wb">ワークブック</param>
-        /// <param name="SheetName">シート名</param>
-        /// <param name="edf">フォーマット格納データ</param>
-        public static void GetExcelDataFormat(XLWorkbook wb, string SheetName, ref ExcelSheetFormat edf)
-        {
-            //シート名取得
-            edf.SheetName = SheetName;
+        ///// <summary>
+        ///// エクセルの内容からデータのフォーマット情報を取得する
+        ///// </summary>
+        ///// <param name="wb">ワークブック</param>
+        ///// <param name="SheetName">シート名</param>
+        ///// <param name="edf">フォーマット格納データ</param>
+        //public static void GetExcelDataFormat(XLWorkbook wb, string SheetName, ref ExcelSheetFormat edf)
+        //{
+        //    //シート名取得
+        //    edf.SheetName = SheetName;
 
-            //クラス名取得
-            edf.ClassName = GetExcelValueByHeading(wb, SheetName, ClassNameHeading);
-            edf.ClassName += "Class";
+        //    //クラス名取得
+        //    edf.ClassName = GetExcelValueByHeading(wb, SheetName, ClassNameHeading);
+        //    edf.ClassName += "Class";
 
-            //コレクションタイプ取得
-            edf.CollectionType = GetExcelValueByHeading(wb, SheetName, CollectionTypeHeading);
+        //    //コレクションタイプ取得
+        //    edf.CollectionType = GetExcelValueByHeading(wb, SheetName, CollectionTypeHeading);
 
-            //ID重複可否取得
+        //    //ID重複可否取得
 
-            var temp = GetExcelValueByHeading(wb, SheetName, IdDuplicatableHeading);
+        //    var temp = GetExcelValueByHeading(wb, SheetName, IdDuplicatableHeading);
 
-            edf.IdDuplicatable = false;
-            if("True" == temp
-            || "true" == temp
-            || "TRUE" == temp
-                )
-            {
-                edf.IdDuplicatable = true;
-            }
+        //    edf.IdDuplicatable = false;
+        //    if("True" == temp
+        //    || "true" == temp
+        //    || "TRUE" == temp
+        //        )
+        //    {
+        //        edf.IdDuplicatable = true;
+        //    }
 
-            //変数リスト取得
-            edf.ValuableDefine = GetExcelValuableDefine(wb, SheetName);
+        //    //変数リスト取得
+        //    edf.ValuableDefine = GetExcelValuableDefine(wb, SheetName);
 
-        }
+        //}
 
-        /// <summary>
-        /// エクセルの内容からEnum変換するテーブル情報を取得
-        /// </summary>
-        /// <param name="ws">ワークシート</param>
-        /// <param name="enumDic">Enum変換するテーブルデータ</param>
-        public static void GetEnumDeclare(IXLWorksheet ws, ref Dictionary<string, Dictionary<string, string>> enumDic)
-        {
-            //変数名はテーブルから取得する
-            var tables = ws.Tables;
+        ///// <summary>
+        ///// エクセルの内容からEnum変換するテーブル情報を取得
+        ///// </summary>
+        ///// <param name="ws">ワークシート</param>
+        ///// <param name="enumDic">Enum変換するテーブルデータ</param>
+        //public static void GetEnumDeclare(IXLWorksheet ws, ref Dictionary<string, Dictionary<string, string>> enumDic)
+        //{
+        //    //変数名はテーブルから取得する
+        //    var tables = ws.Tables;
 
-            //シートにあるテーブルを処理
-            foreach (var temp in tables)
-            {
+        //    //シートにあるテーブルを処理
+        //    foreach (var temp in tables)
+        //    {
 
-                if (ExclusionTableName.Contains(temp.Name))
-                {
-                    continue;
-                }
+        //        if (ExclusionTableName.Contains(temp.Name))
+        //        {
+        //            continue;
+        //        }
 
-                if (enumDic == null)
-                {
-                    enumDic = new Dictionary<string, Dictionary<string, string>>();
-                }
+        //        if (enumDic == null)
+        //        {
+        //            enumDic = new Dictionary<string, Dictionary<string, string>>();
+        //        }
 
-                enumDic.Add(temp.Name, new Dictionary<string, string>());
-
-
-                var dic = enumDic[temp.Name];
-
-                foreach (var row in temp.DataRange.Rows())
-                {
-                    var key = row.Cell(1).GetString();
-                    var val = row.Cell(2).GetString();
-
-                    string duplicateKey = null;
-
-                    foreach(var kvp in dic)
-                    {
-                        if(kvp.Value == val)
-                        {
-                            duplicateKey = kvp.Key;
-                        }
-                    }
-
-                    if (duplicateKey == null)
-                    {
-                        dic.Add(key, val);
-                    }
-                    else
-                    {
-                        dic.Add(key, duplicateKey);
-                    }
-
-                }
-
-            }
-
-        }
-
-        /// <summary>
-        /// 規定されたヘッダからデータを取得する
-        /// </summary>
-        /// <param name="wb">ワークブック</param>
-        /// <param name="SheetName">シート名</param>
-        /// <param name="Heading">ヘッダパラメータ名</param>
-        /// <returns>ヘッダ部に設定された値</returns>
-        public static string GetExcelValueByHeading(XLWorkbook wb, string SheetName, string Heading)
-        {
-            var cells = wb.Worksheet(SheetName).Search(Heading);
-            IXLCell cell = null;
-
-            foreach (var temp in cells)
-            {
-                cell = temp;
-                break;
-            }
-
-            IXLCell retCell = null;
-            if (cell != null)
-            {
-                retCell = cell.CellRight();
-            }
-
-            if (retCell != null)
-            {
-                Debug.Log(Heading + ": " + retCell.Value.ToString());
-                return retCell.Value.ToString();
-            }
-
-            return null;
-        }
+        //        enumDic.Add(temp.Name, new Dictionary<string, string>());
 
 
-        /// <summary>
-        /// 列名と型のディクショナリを取得する
-        /// </summary>
-        /// <param name="wb">ワークブック</param>
-        /// <param name="SheetName">シート名</param>
-        /// <returns>列名と型のディクショナリ</returns>
-        public static Dictionary<string, string> GetExcelValuableDefine(XLWorkbook wb, string SheetName)
-        {
+        //        var dic = enumDic[temp.Name];
 
-            //変数名はテーブルから取得する
-            //シートにテーブルは１つしかない
-            var table = wb.Worksheet(SheetName).Tables.FirstOrDefault(); ;
+        //        foreach (var row in temp.DataRange.Rows())
+        //        {
+        //            var key = row.Cell(1).GetString();
+        //            var val = row.Cell(2).GetString();
 
-            Dictionary<string, string> retDic = new Dictionary<string, string>();
+        //            string duplicateKey = null;
 
-            if (table != null)
-            {
-                foreach (var cell in table.HeadersRow().Cells())
-                {
-                    var ValuableName = cell.Value.ToString();
+        //            foreach(var kvp in dic)
+        //            {
+        //                if(kvp.Value == val)
+        //                {
+        //                    duplicateKey = kvp.Key;
+        //                }
+        //            }
 
-                    var Type = wb.Worksheet(SheetName).Cell(cell.Address.RowNumber - 1, cell.Address.ColumnNumber).Value.ToString();
+        //            if (duplicateKey == null)
+        //            {
+        //                dic.Add(key, val);
+        //            }
+        //            else
+        //            {
+        //                dic.Add(key, duplicateKey);
+        //            }
 
-                    retDic.Add(ValuableName, Type);
-                }
-            }
+        //        }
 
-            if (retDic.Count > 0)
-            {
-                Debug.Log("Created ValuableDic:" + retDic.Count.ToString() + " Values");
-                return retDic;
-            }
-            return null;
-        }
+        //    }
 
-        /// <summary>
-        /// 列名と列番号のディクショナリを取得する
-        /// </summary>
-        /// <param name="wb">ワークブック</param>
-        /// <param name="SheetName">シート名</param>
-        /// <returns>列名と列番号のディクショナリ</returns>
-        public static Dictionary<string, int> GetExcelValuableColumn(XLWorkbook wb, string SheetName)
-        {
+        //}
 
-            //変数名はテーブルから取得する
-            //シートにテーブルは１つしかない
-            var table = wb.Worksheet(SheetName).Tables.FirstOrDefault(); ;
+        ///// <summary>
+        ///// 規定されたヘッダからデータを取得する
+        ///// </summary>
+        ///// <param name="wb">ワークブック</param>
+        ///// <param name="SheetName">シート名</param>
+        ///// <param name="Heading">ヘッダパラメータ名</param>
+        ///// <returns>ヘッダ部に設定された値</returns>
+        //public static string GetExcelValueByHeading(XLWorkbook wb, string SheetName, string Heading)
+        //{
+        //    var cells = wb.Worksheet(SheetName).Search(Heading);
+        //    IXLCell cell = null;
 
-            Dictionary<string, int> retDic = new Dictionary<string, int>();
+        //    foreach (var temp in cells)
+        //    {
+        //        cell = temp;
+        //        break;
+        //    }
 
-            if (table != null)
-            {
-                var tableLeft = table.RangeAddress.FirstAddress.ColumnNumber;
+        //    IXLCell retCell = null;
+        //    if (cell != null)
+        //    {
+        //        retCell = cell.CellRight();
+        //    }
 
-                foreach (var cell in table.HeadersRow().Cells())
-                {
-                    var ValuableName = cell.Value.ToString();
+        //    if (retCell != null)
+        //    {
+        //        Debug.Log(Heading + ": " + retCell.Value.ToString());
+        //        return retCell.Value.ToString();
+        //    }
 
-                    var Column = cell.Address.ColumnNumber - tableLeft + 1;
-
-                    retDic.Add(ValuableName, Column);
-                }
-            }
-
-            if (retDic.Count > 0)
-            {
-                Debug.Log("Created ValuableColumnDic:" + retDic.Count.ToString() + " Values");
-                return retDic;
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// 指定された値が格納されているテーブル内の行番号を取得
-        /// </summary>
-        /// <param name="table">テーブル</param>
-        /// <param name="columnNumber">列番号</param>
-        /// <param name="cellValue">探索する値</param>
-        /// <returns></returns>
-        public static int GetTableRowNumber(IXLTable table, int columnNumber, string cellValue)
-        {
-            var tableTop = table.RangeAddress.FirstAddress.RowNumber;
-
-            foreach (var row in table.Rows())
-            {
-                if (row.Cell(columnNumber).Value.ToString() == cellValue)
-                {
-                    return row.RowNumber() - tableTop + 1;
-                }
-            }
-
-            return -1; // 見つからなかった場合
-        }
+        //    return null;
+        //}
 
 
-        /// <summary>
-        /// 指定されたテーブルを取得
-        /// </summary>
-        /// <param name="wb">ワークブック</param>
-        /// <param name="SheetName">シート名</param>
-        /// <returns></returns>
-        public static IXLTable GetExcelSheetTable(XLWorkbook wb, string SheetName)
-        {
-            //シートにテーブルは１つしかない前提
-            var table = wb.Worksheet(SheetName).Tables.FirstOrDefault(); ;
+        ///// <summary>
+        ///// 列名と型のディクショナリを取得する
+        ///// </summary>
+        ///// <param name="wb">ワークブック</param>
+        ///// <param name="SheetName">シート名</param>
+        ///// <returns>列名と型のディクショナリ</returns>
+        //public static Dictionary<string, string> GetExcelValuableDefine(XLWorkbook wb, string SheetName)
+        //{
 
-            return table;
-        }
+        //    //変数名はテーブルから取得する
+        //    //シートにテーブルは１つしかない
+        //    var table = wb.Worksheet(SheetName).Tables.FirstOrDefault(); ;
+
+        //    Dictionary<string, string> retDic = new Dictionary<string, string>();
+
+        //    if (table != null)
+        //    {
+        //        foreach (var cell in table.HeadersRow().Cells())
+        //        {
+        //            var ValuableName = cell.Value.ToString();
+
+        //            var Type = wb.Worksheet(SheetName).Cell(cell.Address.RowNumber - 1, cell.Address.ColumnNumber).Value.ToString();
+
+        //            retDic.Add(ValuableName, Type);
+        //        }
+        //    }
+
+        //    if (retDic.Count > 0)
+        //    {
+        //        Debug.Log("Created ValuableDic:" + retDic.Count.ToString() + " Values");
+        //        return retDic;
+        //    }
+        //    return null;
+        //}
+
+        ///// <summary>
+        ///// 列名と列番号のディクショナリを取得する
+        ///// </summary>
+        ///// <param name="wb">ワークブック</param>
+        ///// <param name="SheetName">シート名</param>
+        ///// <returns>列名と列番号のディクショナリ</returns>
+        //public static Dictionary<string, int> GetExcelValuableColumn(XLWorkbook wb, string SheetName)
+        //{
+
+        //    //変数名はテーブルから取得する
+        //    //シートにテーブルは１つしかない
+        //    var table = wb.Worksheet(SheetName).Tables.FirstOrDefault(); ;
+
+        //    Dictionary<string, int> retDic = new Dictionary<string, int>();
+
+        //    if (table != null)
+        //    {
+        //        var tableLeft = table.RangeAddress.FirstAddress.ColumnNumber;
+
+        //        foreach (var cell in table.HeadersRow().Cells())
+        //        {
+        //            var ValuableName = cell.Value.ToString();
+
+        //            var Column = cell.Address.ColumnNumber - tableLeft + 1;
+
+        //            retDic.Add(ValuableName, Column);
+        //        }
+        //    }
+
+        //    if (retDic.Count > 0)
+        //    {
+        //        Debug.Log("Created ValuableColumnDic:" + retDic.Count.ToString() + " Values");
+        //        return retDic;
+        //    }
+        //    return null;
+        //}
+
+        ///// <summary>
+        ///// 指定された値が格納されているテーブル内の行番号を取得
+        ///// </summary>
+        ///// <param name="table">テーブル</param>
+        ///// <param name="columnNumber">列番号</param>
+        ///// <param name="cellValue">探索する値</param>
+        ///// <returns></returns>
+        //public static int GetTableRowNumber(IXLTable table, int columnNumber, string cellValue)
+        //{
+        //    var tableTop = table.RangeAddress.FirstAddress.RowNumber;
+
+        //    foreach (var row in table.Rows())
+        //    {
+        //        if (row.Cell(columnNumber).Value.ToString() == cellValue)
+        //        {
+        //            return row.RowNumber() - tableTop + 1;
+        //        }
+        //    }
+
+        //    return -1; // 見つからなかった場合
+        //}
+
+
+        ///// <summary>
+        ///// 指定されたテーブルを取得
+        ///// </summary>
+        ///// <param name="wb">ワークブック</param>
+        ///// <param name="SheetName">シート名</param>
+        ///// <returns></returns>
+        //public static IXLTable GetExcelSheetTable(XLWorkbook wb, string SheetName)
+        //{
+        //    //シートにテーブルは１つしかない前提
+        //    var table = wb.Worksheet(SheetName).Tables.FirstOrDefault(); ;
+
+        //    return table;
+        //}
 
 
         /// <summary>
