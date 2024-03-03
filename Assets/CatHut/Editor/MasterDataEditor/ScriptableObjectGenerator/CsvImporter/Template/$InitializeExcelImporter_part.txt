@@ -1,0 +1,33 @@
+﻿#if UNITY_EDITOR
+
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
+using ClosedXML;
+
+namespace CatHut
+{
+	public partial class ExcellImporter
+	{
+
+		private static void ImportExcelData(List<string> list) 
+		{
+			foreach(var path in list)
+			{
+				var file = Path.GetFileNameWithoutExtension(path);
+
+				switch (file)
+				{
+
+
+					default:
+						break;
+				}
+			}
+		}
+	}
+}
+#endif

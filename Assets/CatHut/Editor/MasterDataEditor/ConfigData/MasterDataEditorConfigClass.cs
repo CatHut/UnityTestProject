@@ -59,6 +59,8 @@ public static class MasterDataEditorConfig
     public class MasterDataEditorConfigData
     {
         public string CsvMasterDataPath = "";
+        public string CreatedScriptableObjectClassPath = "";
+        public string ScriptableObjectInstancePath = "";
     }    
 }
 

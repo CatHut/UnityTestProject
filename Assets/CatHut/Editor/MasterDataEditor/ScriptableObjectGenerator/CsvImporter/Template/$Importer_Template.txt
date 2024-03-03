@@ -1,0 +1,74 @@
+﻿#if UNITY_EDITOR
+
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
+using ClosedXML;
+using ClosedXML.Excel;
+using System;
+using CatHut;
+
+
+namespace CatHut
+{
+	public static partial class ExcellImporter
+	{
+		static void Import_#FileName#(string path)
+		{
+
+			//処理するワークシートのフォーマット情報を生成
+			var ExcelDataFromatDic = new Dictionary<string, ExcelSheetFormat>();
+
+			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			{
+				using (var xwb = new XLWorkbook(fs, XLEventTracking.Disabled))
+				{
+
+					var wsNameList = new List<string>();
+
+
+					//処理するワークシート名を取得
+					foreach (var ws in xwb.Worksheets)
+					{
+						if (ws.Name.Contains(UsingExcelCommon.TargetWorkSheetMark))
+						{
+							wsNameList.Add(ws.Name);
+						}
+					}
+
+					//エクセルファイル中のクラス定義分追加
+#ClassDataDefine#
+
+					foreach (var name in wsNameList)
+					{
+						var table = UsingExcelCommon.GetExcelSheetTable(xwb, name);
+						ExcelSheetFormat edf = new ExcelSheetFormat();
+						UsingExcelCommon.GetExcelDataFormat(xwb, name, ref edf);
+
+						switch (edf.ClassName)
+						{
+
+							//エクセルファイル中のクラス定義分追加
+#ExcelDataRead#
+						}
+					}
+
+                    var data = ScriptableObject.CreateInstance<#FileName#>();
+
+#ClassDataSet#
+
+#ClassDataSave#
+
+				}
+			}
+		}
+
+	}
+
+}
+
+
+#endif
