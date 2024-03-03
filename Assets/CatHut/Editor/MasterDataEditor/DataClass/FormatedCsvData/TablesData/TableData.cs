@@ -62,6 +62,17 @@ namespace CatHut
 
         }
 
+        public void AddTableData(string folder)
+        {
+            Path = folder + "\\" + TABLE_FOLDER_NAME + "\\" + TABLE_FILE_NAME;
+
+            if (File.Exists(Path))
+            {
+                CsvData = new CsvData(Path);
+                SetTableData();
+            }
+        }
+
         public void SetTableData()
         {
             Table currentTable = null;

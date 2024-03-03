@@ -13,7 +13,7 @@ namespace CatHut
 	public static partial class ExcellImporter
 	{
 
-		public static void ImportExcelData(List<string> list) 
+		public static void ImportCsvData(List<string> list) 
 		{
 			foreach(var path in list)
 			{

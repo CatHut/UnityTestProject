@@ -11,8 +11,6 @@ namespace CatHut
 {
     public class UsingExcelCommon
     {
-        readonly public static string ImportFolderListFile = "$ImportFolderList";
-        readonly public static string MasterDataExcelListFile = "$MasterDataExcelList";
         readonly public static string TargetWorkSheetMark = "$";
         readonly public static string TableDeclareWorkSheetName = "Tables";
 
@@ -66,14 +64,15 @@ namespace CatHut
         static public List<string> GetExcelFolderList()
         {
             //FolderSettingsファイルをすべて探す
-            var FolderSettingFile = GetFileList(ImportFolderListFile);
+            //var FolderSettingFile = GetFileList(ImportFolderListFile);
+            List<string> FolderSettingFile = new List<string>();
 
             List<string> ExcelFolderList = new List<string>();
-            foreach (string files in FolderSettingFile)
-            {
-                var temp = File.ReadAllLines(files);
-                ExcelFolderList.AddRange(temp);
-            }
+            //foreach (string files in FolderSettingFile)
+            //{
+            //    var temp = File.ReadAllLines(files);
+            //    ExcelFolderList.AddRange(temp);
+            //}
 
             //必要あればここで整形する
 
@@ -88,7 +87,8 @@ namespace CatHut
         static public List<string> GetMasterDataExcelList()
         {
             //FolderSettingsファイルをすべて探す
-            var MasterDataExcelList = GetFileList(MasterDataExcelListFile);
+            //var MasterDataExcelList = GetFileList(MasterDataExcelListFile);
+            List<string> MasterDataExcelList = new List<string>();
 
             List<string> ExcelFileList = new List<string>();
             foreach (string files in MasterDataExcelList)
@@ -396,27 +396,26 @@ namespace CatHut
         /// <param name="assetsList"></param>
         /// <param name="folderList"></param>
         /// <returns></returns>
-        public static List<string> GetImportExcelList(List<string> assetsList, List<string> folderList)
+        public static List<string> GetImportCsvList(List<string> assetsList, List<string> folderList)
         {
-            var ImportExcelList = new List<string>();
+            var ImportCsvList = new List<string>();
 
-            //変更のあったフォルダが含まれているパスのみを取得してインポートするエクセルを抽出
+            //変更のあったフォルダが含まれているパスのみを取得してインポートするCSVを抽出
             foreach (var asset in assetsList)
             {
                 foreach (var folder in folderList)
                 {
-
                     if (asset.Contains(folder))
                     {
                         var file = Path.GetFileName(asset);
-                        if ((file.Contains("xlsx") || file.Contains("xlsm")) && !file.Contains("~$"))
+                        if ((file.Contains("Data_") && file.Contains(".csv")) && !file.Contains("~$"))
                         {
-                            ImportExcelList.Add(asset);
+                            ImportCsvList.Add(asset);
                         }
                     }
                 }
             }
-            return ImportExcelList;
+            return ImportCsvList;
         }
 
 

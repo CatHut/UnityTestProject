@@ -19,7 +19,7 @@ namespace CatHut
         {
             var ImportExcelList = UsingExcelCommon.GetAllExcelList();
 
-            ImportExcelData(ImportExcelList);
+            ImportCsvData(ImportExcelList);
         }
 
     }

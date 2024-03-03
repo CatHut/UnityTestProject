@@ -88,10 +88,11 @@ namespace CatHut
         }
 
 
-        [MenuItem("Tools/CatHut/MasterDataEditor/Settings/Open ImportFolderList", false, 4)]
+        [MenuItem("Tools/CatHut/MasterDataEditor/Settings2/Open ImportFolderList", false, 4)]
         private static void OpenImportFolderList()
         {
-            var temp = UsingExcelCommon.GetFileList(UsingExcelCommon.ImportFolderListFile);
+//            var temp = UsingExcelCommon.GetFileList(UsingExcelCommon.ImportFolderListFile);
+            List<string> temp = null;
 
             if (temp.Count <= 0)
             {
@@ -111,10 +112,11 @@ namespace CatHut
 
         }
 
-        [MenuItem("Tools/CatHut/MasterDataEditor/Settings/Open MasterDataExcelList", false, 5)]
+        [MenuItem("Tools/CatHut/MasterDataEditor/Settings2/Open MasterDataExcelList", false, 5)]
         private static void OpenMasterDataExcelList()
         {
-            var temp = UsingExcelCommon.GetFileList(UsingExcelCommon.MasterDataExcelListFile);
+//            var temp = UsingExcelCommon.GetFileList(UsingExcelCommon.MasterDataExcelListFile);
+            List<string> temp = null;
 
             if (temp.Count <= 0)
             {

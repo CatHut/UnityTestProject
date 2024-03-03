@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class MasterDataEditorSettingsWindow : EditorWindow
 {
-    private string csvMasterDataFolder = string.Empty;
+    private List<string> csvMasterDataFolderList = new List<string>();
     private string scriptableObjectInstanceFolder = string.Empty;
     private string createdScriptableObjectClassFolder = string.Empty;
 
@@ -18,7 +20,7 @@ public class MasterDataEditorSettingsWindow : EditorWindow
         // 初期化コード
         //設定ファイルをロード
         MasterDataEditorConfig.LoadSettings();
-        csvMasterDataFolder = MasterDataEditorConfig.settings.CsvMasterDataPath;
+        csvMasterDataFolderList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
         scriptableObjectInstanceFolder = MasterDataEditorConfig.settings.ScriptableObjectInstancePath;
         createdScriptableObjectClassFolder = MasterDataEditorConfig.settings.CreatedScriptableObjectClassPath;
     }    
@@ -31,15 +33,29 @@ public class MasterDataEditorSettingsWindow : EditorWindow
 
         //指定されたフォルダがない場合に警告を表示
         GUILayout.Space(5);
-        if (!AssetDatabase.IsValidFolder(csvMasterDataFolder))
+        for (int i = 0; i < csvMasterDataFolderList.Count; i++)
         {
-            GUIStyle errorStyle = new GUIStyle();
-            errorStyle.normal.textColor = Color.red;
-            GUILayout.Label("指定されたフォルダが存在しません。", errorStyle);
+            if (!AssetDatabase.IsValidFolder(csvMasterDataFolderList[i]))
+            {
+                GUIStyle errorStyle = new GUIStyle();
+                errorStyle.normal.textColor = Color.red;
+                GUILayout.Label("指定されたフォルダが存在しません。", errorStyle);
+            }
+
+            GUILayout.BeginHorizontal();
+            //設定項目
+            csvMasterDataFolderList[i] = EditorGUILayout.TextField("CsvMasterDataPath" + "[" + i.ToString() + "]", csvMasterDataFolderList[i]);
+            if (GUILayout.Button("削除", GUILayout.Width(200)))
+            {
+                csvMasterDataFolderList.RemoveAt(i);
+            }
+            GUILayout.EndHorizontal();
+        }
+        if (GUILayout.Button("追加", GUILayout.Width(200)))
+        {
+            csvMasterDataFolderList.Add("");
         }
 
-        //設定項目
-        csvMasterDataFolder = EditorGUILayout.TextField("CsvMasterDataPath", csvMasterDataFolder);
 
         GUILayout.Space(10);
         if (!AssetDatabase.IsValidFolder(createdScriptableObjectClassFolder))
@@ -64,7 +80,7 @@ public class MasterDataEditorSettingsWindow : EditorWindow
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Save Settings", GUILayout.Width(200)))
         {
-            MasterDataEditorConfig.settings.CsvMasterDataPath = csvMasterDataFolder;
+            MasterDataEditorConfig.settings.CsvMasterDataPathList = csvMasterDataFolderList;
             MasterDataEditorConfig.settings.ScriptableObjectInstancePath = scriptableObjectInstanceFolder;
             MasterDataEditorConfig.settings.CreatedScriptableObjectClassPath = createdScriptableObjectClassFolder;
 

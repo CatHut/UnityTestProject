@@ -1,4 +1,5 @@
-﻿#if false
+﻿//#if UNITY_EDITOR
+#if false
 
 using System.Collections;
 using System.Collections.Generic;
@@ -6,8 +7,6 @@ using System.IO;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using ClosedXML;
-using ClosedXML.Excel;
 using System;
 using CatHut;
 

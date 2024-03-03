@@ -20,12 +20,12 @@ namespace CatHut
             assetsList.AddRange(importedAssets);
             assetsList.AddRange(deletedAssets);
 
-            //エクセルをインポートするフォルダリスト生成
-            var ExcelFolderList = UsingExcelCommon.GetExcelFolderList();
+            //マスターデータCsvをインポートするフォルダリスト生成
+            var ExcelFolderList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
 
-            var ImportExcelList = UsingExcelCommon.GetImportExcelList(assetsList, ExcelFolderList);
+            var ImportExcelList = UsingExcelCommon.GetImportCsvList(assetsList, ExcelFolderList);
 
-            ExcellImporter.ImportExcelData(ImportExcelList);
+            ExcellImporter.ImportCsvData(ImportExcelList);
 
         }
 

@@ -27,6 +27,11 @@ namespace CatHut
         
         }
 
+        public FormatedCsvData(DataGroup dg)
+        {
+            Parent = dg;
+        }
+
         public FormatedCsvData(DataGroup dg, string folder)
         {
             Parent = dg;
@@ -66,6 +71,21 @@ namespace CatHut
             //this.Save();
 
         }
+
+        public void SetHeaderInfo(string file)
+        {
+            HeaderPart = new HeaderInfo(Parent);
+            HeaderPart.CsvData = new CsvData(file);
+            HeaderPart.FilePath = file;
+            HeaderPart.SetHeaderInfo();
+        }
+
+        public void SetData(string file)
+        {
+            DataPart = new CsvData(file);
+            SetVariableColumnIndex();
+        }
+
 
         private void SetVariableColumnIndex()
         {

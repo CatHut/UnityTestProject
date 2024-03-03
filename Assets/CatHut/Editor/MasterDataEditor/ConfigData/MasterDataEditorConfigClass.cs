@@ -58,7 +58,7 @@ public static class MasterDataEditorConfig
     [System.Serializable]
     public class MasterDataEditorConfigData
     {
-        public string CsvMasterDataPath = "";
+        public List<string> CsvMasterDataPathList = new List<string>();
         public string CreatedScriptableObjectClassPath = "";
         public string ScriptableObjectInstancePath = "";
     }    

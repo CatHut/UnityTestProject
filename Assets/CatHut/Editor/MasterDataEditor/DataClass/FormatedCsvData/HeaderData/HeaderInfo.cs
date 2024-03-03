@@ -66,12 +66,15 @@ namespace CatHut
 
         /// <summary>
         /// IDなどインデックスとして使用する変数リスト
-        /// これをベースにUnity上でDictionaryを作成します。
-        /// key:Name
-        /// value:IsDuplicate(重複の有無)
-        /// IsDuplicateがtrueの場合DictionaryのValueにはListが格納される
+        /// これをキーにUnity上でDictionaryを作成します。
         /// </summary>
-        public Dictionary<string, bool> IndexVariableDic;
+        public string IndexVariable;
+
+        /// <summary>
+        /// キーの重複を許容するか。（同じキーに複数のデータを保持するか）
+        /// IndexDuplicatableがtrueの場合DictionaryのValueにはListが格納される
+        /// </summary>
+        public bool IndexDuplicatable;
 
         public DataGroup Parent { get; set; }
 
@@ -89,7 +92,9 @@ namespace CatHut
 
             CustomValue = new Dictionary<string, List<string>>();
             VariableDic = new Dictionary<string, VariableInfo>();
-            IndexVariableDic = new Dictionary<string, bool>();
+
+            IndexVariable = "";
+            IndexDuplicatable = false;
         }
 
         /// <summary>
@@ -111,17 +116,7 @@ namespace CatHut
                 }
                 else if (CsvData.Data[i][0] == IDENTIFIER_INDEXVARIABLE)
                 {
-                    for (int j = 1; j < CsvData.Data[i].Count; j++)
-                    {
-                        //キー重複チェックして格納
-                        if (CsvData.Data[i][j] != "")
-                        {
-                            if (!IndexVariableDic.ContainsKey(CsvData.Data[i][j]))
-                            {
-                                IndexVariableDic.Add(CsvData.Data[i][j], false);
-                            }
-                        }
-                    }
+                    IndexVariable = CsvData.Data[i][1];
                 }
                 else if (CsvData.Data[i][0] == IDENTIFIER_CUSTOM)
                 {
@@ -231,11 +226,7 @@ namespace CatHut
             //IndexVariable
             rowData = new List<string>();
             rowData.Add(IDENTIFIER_INDEXVARIABLE);
-
-            foreach (var indexVariable in IndexVariableDic)
-            {
-                rowData.Add(indexVariable.Key);
-            }
+            rowData.Add(IndexVariable);
             csvData.AddRow(rowData);
 
             //Custom
