@@ -56,62 +56,62 @@ namespace CatHut
 
         }
 
-        public DataGroup(List<string> folders)
+        public void SetHeaderInfo(string folder)
         {
-
             //TableData格納
-            _TableData = new TableData();
+            _TableData = new TableData(folder);
 
             _FormatedCsvDic = new SerializableDictionary<string, FormatedCsvData>();
 
-            foreach (var folder in folders)
+            string[] subSubFolders = Directory.GetDirectories(folder);
+
+            //FormatedCsvData格納
+            foreach (string subSubFolder in subSubFolders)
             {
-                //全体共通テーブル取得
-                _TableData.AddTableData(folder);
+                string subSubFolderName = new DirectoryInfo(subSubFolder).Name;
 
-                var searchPattern = "Header_*.csv";
-                string[] HeaderFiles = Directory.GetFiles(folder, searchPattern);
 
-                //ヘッダ情報格納
-                foreach (string headerFile in HeaderFiles)
-                {
-                    // DirectoryInfoを使ってディレクトリ情報を取得
-                    DirectoryInfo directoryInfo = new DirectoryInfo(headerFile);
-
-                    // ディレクトリの親を取得し、その名前を取得
-                    string parentDirectoryName = directoryInfo.Parent.Name;
-
-                    //この段階ではヘッダ情報のみ設定
-                    var fcd = new FormatedCsvData(this);
-                    fcd.SetHeaderInfo(headerFile);
-                    fcd.Enable = false;
-
-                    _FormatedCsvDic.Add(parentDirectoryName, fcd);
-                }
-
+                //この段階ではヘッダ情報のみ設定
+                var fcd = new FormatedCsvData();
+                fcd.SetHeaderInfo(this, subSubFolder);
+                fcd.Enable = false;
+                this._FormatedCsvDic.Add(subSubFolderName, fcd);
             }
 
-            //データ部分取得
-            foreach (var folder in folders)
+        }
+
+        public void SetData(string folder)
+        {
+            string[] subSubFolders = Directory.GetDirectories(folder);
+
+            //FormatedCsvData格納
+            foreach (string subSubFolder in subSubFolders)
             {
-                var searchPattern = "Data_*.csv";
-                string[] DataFiles = Directory.GetFiles(folder, searchPattern);
+                string subSubFolderName = new DirectoryInfo(subSubFolder).Name;
 
-                //ヘッダ情報格納
-                foreach (string dataFile in DataFiles)
+                //データを追加
+                this._FormatedCsvDic[subSubFolderName].AddData(subSubFolder);
+            }
+        }
+
+        public void AdjustDicitonary()
+        {
+            //要素のないキーは削除する
+            foreach (var key in this._FormatedCsvDic.Keys.ToList())
+            {
+                if (this._FormatedCsvDic[key].DataPart == null || this._FormatedCsvDic[key].HeaderPart == null)
                 {
-                    // DirectoryInfoを使ってディレクトリ情報を取得
-                    DirectoryInfo directoryInfo = new DirectoryInfo(dataFile);
-
-                    // ディレクトリの親を取得し、その名前を取得
-                    string parentDirectoryName = directoryInfo.Parent.Name;
-
-                    if (_FormatedCsvDic.ContainsKey(parentDirectoryName))
-                    {
-                        _FormatedCsvDic[parentDirectoryName].SetData(dataFile);
-                        _FormatedCsvDic[parentDirectoryName].Enable = true;
-                    }
+                    this._FormatedCsvDic.Remove(key);
                 }
+                else
+                {
+                    _FormatedCsvDic[key].Enable = true;
+                }
+            }
+
+            if(_FormatedCsvDic.Count > 0)
+            {
+                _Enable = true;
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -425,6 +426,11 @@ namespace CatHut
             int columnIndex = this.ColumnDic[columnName];
 
             return GetColumnDataValues(columnIndex, out columnData);
+        }
+
+        public List<List<string>> GetRows(int startIndex)
+        {
+            return data.Skip(startIndex).ToList();
         }
 
 

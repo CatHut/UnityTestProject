@@ -27,10 +27,6 @@ namespace CatHut
         
         }
 
-        public FormatedCsvData(DataGroup dg)
-        {
-            Parent = dg;
-        }
 
         public FormatedCsvData(DataGroup dg, string folder)
         {
@@ -72,13 +68,60 @@ namespace CatHut
 
         }
 
-        public void SetHeaderInfo(string file)
+        public void SetHeaderInfo(DataGroup dg, string folder)
         {
+            Parent = dg;
+            Enable = true;
+
             HeaderPart = new HeaderInfo(Parent);
-            HeaderPart.CsvData = new CsvData(file);
-            HeaderPart.FilePath = file;
+
+            string searchPattern = "Header_*.csv";
+            string[] csvFiles = Directory.GetFiles(folder, searchPattern);
+
+            if (csvFiles.Length == 0)
+            {
+                HeaderPart = null;
+                Enable = false;
+                return;
+            }
+
+            HeaderPart.CsvData = new CsvData(csvFiles[0]);
+            HeaderPart.FilePath = csvFiles[0];
             HeaderPart.SetHeaderInfo();
+
         }
+
+        public void AddData(string folder)
+        {
+            var searchPattern = "Data_*.csv";
+            string[] csvFiles = Directory.GetFiles(folder, searchPattern);
+
+            //データが無ければデータを作成、あれば追加。
+            if (csvFiles.Length != 0)
+            {
+                if (DataPart == null)
+                {
+                    DataPart = new CsvData(csvFiles[0]);
+                }
+                else
+                {
+                    var data = new CsvData(csvFiles[0]);
+                    DataPart.Data.AddRange(data.GetRows(1));
+                }
+            }
+
+            if (DataPart != null)
+            {
+                if (DataPart.Data.Count == 0)
+                {
+                    DataPart = null;
+                    Enable = false;
+                    return;
+                }
+            }
+        }
+
+
 
         public void SetData(string file)
         {

@@ -1,0 +1,8 @@
+﻿#Table,GlobalTableSample1
+NONE,0
+FIRE,1
+WIND,2
+WATER,3
+#Table,GlobalTableSample2
+LOOP,0
+RANDOM,1
