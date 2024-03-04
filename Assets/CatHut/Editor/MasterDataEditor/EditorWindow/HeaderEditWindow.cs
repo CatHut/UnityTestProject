@@ -26,29 +26,14 @@ public class HeaderEditWindow : EditorWindow
 
     private void Reset()
     {
-        
-    }
-
-
-    public void CreateGUI()
-    {
-        // ルート
-        var root = rootVisualElement;
-        _rootItems.Clear();
-
-        // 水平分割
-        var splitView = new TwoPaneSplitView(0, 200, TwoPaneSplitViewOrientation.Horizontal);
-        root.Add(splitView);
-
-
         //ツリービューを構成
         var id = 0;
         EditorSharedData.UpdateData();
         var dgd = EditorSharedData.RawMasterData.DataGroupDic;
-        foreach ( var dg in dgd)
+        foreach (var dg in dgd)
         {
             var items = new List<TreeViewItemData<Item>>();
-            foreach(var innerItem in dg.Value.FormatedCsvDic)
+            foreach (var innerItem in dg.Value.FormatedCsvDic)
             {
                 var item = new TreeViewItemData<Item>(id++, new Item { name = innerItem.Key });
                 items.Add(item);
@@ -60,19 +45,33 @@ public class HeaderEditWindow : EditorWindow
             // ルートアイテムのみをデータソースに追加
             _rootItems.Add(rootItem);
         }
+    }
 
+
+    public void CreateGUI()
+    {
+        // ルート
+        var root = rootVisualElement;
+
+        // 水平分割
+        var splitView = new TwoPaneSplitView(0, 200, TwoPaneSplitViewOrientation.Horizontal);
+        root.Add(splitView);
+
+        var leftPane = new VisualElement();
+        splitView.Add(leftPane);
 
         var treeView = new TreeView();
         treeView.SetRootItems(_rootItems);
         treeView.selectionType = SelectionType.Single;
-        treeView.selectionChanged += OnListViewSelectionChange;
         treeView.style.flexGrow = 1;
-        splitView.Add(treeView);
+        treeView.selectionChanged += OnListViewSelectionChange;
+        treeView.Rebuild();
+        leftPane.Add(treeView);
 
         // 編集領域（初期は空）
-        var editArea = new VisualElement();
-        editArea.name = "editArea";
-        splitView.Add(editArea);
+        var rightPane = new VisualElement();
+        rightPane.name = "editArea";
+        splitView.Add(rightPane);
     }
 
     private void OnListViewSelectionChange(IEnumerable<object> selectedItems)
