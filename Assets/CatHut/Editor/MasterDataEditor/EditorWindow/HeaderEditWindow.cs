@@ -65,7 +65,19 @@ public class HeaderEditWindow : EditorWindow
         treeView.selectionType = SelectionType.Single;
         treeView.style.flexGrow = 1;
         treeView.selectionChanged += OnListViewSelectionChange;
+
+        treeView.makeItem = () => {
+            var label = new Label();
+            label.style.flexGrow = 1;
+            label.style.unityTextAlign = TextAnchor.MiddleLeft;
+            return label;
+        };
+
+        // アイテムの内容を設定する処理
+        treeView.bindItem = (e, i) => e.Q<Label>().text = treeView.GetItemDataForIndex<Item>(i).name;
+
         treeView.Rebuild();
+
         leftPane.Add(treeView);
 
         // 編集領域（初期は空）
