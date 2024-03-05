@@ -32,6 +32,7 @@ namespace CatHut
         public string IDENTIFIER_CLASSNAME = "ClassName";
         public string IDENTIFIER_PARENTNAME = "ParentName";
         public string IDENTIFIER_INDEXVARIABLE = "IndexVariable";
+        public string IDENTIFIER_INDEXDUPLICATABLE = "IndexDuplicatable";
         public string IDENTIFIER_VARIABLE = "#Valuable";
         public string IDENTIFIER_CUSTOM = "#Custom";
 
@@ -117,6 +118,18 @@ namespace CatHut
                 else if (CsvData.Data[i][0] == IDENTIFIER_INDEXVARIABLE)
                 {
                     IndexVariable = CsvData.Data[i][1];
+                }
+                else if (CsvData.Data[i][0] == IDENTIFIER_INDEXDUPLICATABLE)
+                {
+                    string value = CsvData.Data[i][1].Trim().ToLower();
+                    if (value == "true")
+                    {
+                        IndexDuplicatable = true;
+                    }
+                    else if (value == "false")
+                    {
+                        IndexDuplicatable = false;
+                    }
                 }
                 else if (CsvData.Data[i][0] == IDENTIFIER_CUSTOM)
                 {

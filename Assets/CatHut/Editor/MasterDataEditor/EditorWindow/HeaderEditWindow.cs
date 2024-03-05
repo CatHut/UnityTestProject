@@ -1,4 +1,4 @@
-using CatHut;
+ï»¿using CatHut;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ public class HeaderEditWindow : EditorWindow
 
     private void Reset()
     {
-        //ƒcƒŠ[ƒrƒ…[‚ğ\¬
+        //ãƒ„ãƒªãƒ¼ãƒ“ãƒ¥ãƒ¼ã‚’æ§‹æˆ
         var id = 0;
         EditorSharedData.UpdateData();
         var dgd = EditorSharedData.RawMasterData.DataGroupDic;
@@ -39,10 +39,10 @@ public class HeaderEditWindow : EditorWindow
                 items.Add(item);
             }
 
-            // ƒ‹[ƒgƒAƒCƒeƒ€‚ğì¬‚µAqƒAƒCƒeƒ€‚ğ’Ç‰Á
+            // ãƒ«ãƒ¼ãƒˆã‚¢ã‚¤ãƒ†ãƒ ã‚’ä½œæˆã—ã€å­ã‚¢ã‚¤ãƒ†ãƒ ã‚’è¿½åŠ 
             var rootItem = new TreeViewItemData<Item>(id++, new Item { name = dg.Key }, items);
 
-            // ƒ‹[ƒgƒAƒCƒeƒ€‚Ì‚İ‚ğƒf[ƒ^ƒ\[ƒX‚É’Ç‰Á
+            // ãƒ«ãƒ¼ãƒˆã‚¢ã‚¤ãƒ†ãƒ ã®ã¿ã‚’ãƒ‡ãƒ¼ã‚¿ã‚½ãƒ¼ã‚¹ã«è¿½åŠ 
             _rootItems.Add(rootItem);
         }
     }
@@ -50,10 +50,10 @@ public class HeaderEditWindow : EditorWindow
 
     public void CreateGUI()
     {
-        // ƒ‹[ƒg
+        // ãƒ«ãƒ¼ãƒˆ
         var root = rootVisualElement;
 
-        // …•½•ªŠ„
+        // æ°´å¹³åˆ†å‰²
         var splitView = new TwoPaneSplitView(0, 200, TwoPaneSplitViewOrientation.Horizontal);
         root.Add(splitView);
 
@@ -73,14 +73,14 @@ public class HeaderEditWindow : EditorWindow
             return label;
         };
 
-        // ƒAƒCƒeƒ€‚Ì“à—e‚ğİ’è‚·‚éˆ—
+        // ã‚¢ã‚¤ãƒ†ãƒ ã®å†…å®¹ã‚’è¨­å®šã™ã‚‹å‡¦ç†
         treeView.bindItem = (e, i) => e.Q<Label>().text = treeView.GetItemDataForIndex<Item>(i).name;
 
         treeView.Rebuild();
 
         leftPane.Add(treeView);
 
-        // •ÒW—Ìˆæi‰Šú‚Í‹ój
+        // ç·¨é›†é ˜åŸŸï¼ˆåˆæœŸã¯ç©ºï¼‰
         var rightPane = new VisualElement();
         rightPane.name = "editArea";
         splitView.Add(rightPane);
@@ -94,14 +94,14 @@ public class HeaderEditWindow : EditorWindow
 
         if (selectedItem == "Item1")
         {
-            // Item1‘I‘ğ‚Ìƒ{ƒ^ƒ“
+            // Item1é¸æŠæ™‚ã®ãƒœã‚¿ãƒ³
             editArea.Add(new Button(() => Debug.Log("Button 1")) { text = "Button 1" });
             editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Button 2" });
             editArea.Add(new Button(() => Debug.Log("Button 3")) { text = "Button 3" });
         }
         else if (selectedItem == "Item2")
         {
-            // Item2‘I‘ğ‚Ìƒ{ƒ^ƒ“
+            // Item2é¸æŠæ™‚ã®ãƒœã‚¿ãƒ³
             editArea.Add(new Button(() => Debug.Log("Button 4")) { text = "Button 4" });
             editArea.Add(new Button(() => Debug.Log("Button 5")) { text = "Button 5" });
             editArea.Add(new Button(() => Debug.Log("Button 6")) { text = "Button 6" });
