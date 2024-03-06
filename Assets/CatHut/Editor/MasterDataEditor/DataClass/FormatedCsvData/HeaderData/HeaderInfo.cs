@@ -40,7 +40,9 @@ namespace CatHut
         public string IDENTIFIER_VARUALBETYPE = "Type";
         public string IDENTIFIER_VARUALBEDESCRIPTION = "Description";
 
-
+        /// <summary>
+        /// Header情報を保存しているCSVのパス
+        /// </summary>
         public string FilePath { get; set; }
         
         /// <summary>
@@ -77,6 +79,9 @@ namespace CatHut
         /// </summary>
         public bool IndexDuplicatable;
 
+        /// <summary>
+        /// 親データグループ
+        /// </summary>
         public DataGroup Parent { get; set; }
 
         /// <summary>
