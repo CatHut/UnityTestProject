@@ -101,22 +101,30 @@ public class HeaderEditWindow : EditorWindow
         var editArea = rootVisualElement.Q<VisualElement>("editArea");
         editArea.Clear();
 
-//        EditorSharedData.RawMasterData.DataGroupDic
+        var name = GetSelectedAndParentItemNames(treeView);
+
+        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
         // ClassNameの入力フィールド
         var classNameField = new TextField("ClassName");
+        classNameField.value = header.ClassName;
+        classNameField.isReadOnly = true;
         editArea.Add(classNameField);
 
         // ParentNameの入力フィールド
         var parentNameField = new TextField("ParentName");
+        parentNameField.value = header.ParentName;
+        parentNameField.isReadOnly = true;
         editArea.Add(parentNameField);
 
         // IndexVariableの入力フィールド
-        var indexVariableField = new TextField("IndexVariable");
-        editArea.Add(indexVariableField);
+        var options = header.VariableDic.Keys.ToList();
+        var indexVariableDropdown = new PopupField<string>("IndexVariable", options, 0);
+        editArea.Add(indexVariableDropdown);
 
         // IndexDuplicatableのチェックボックス
-        var indexDuplicatableToggle = new Toggle("IndexDuplicatable");
-        editArea.Add(indexDuplicatableToggle);
+        var boolValue = new List<string>(){ "True", "False"};
+        var indexDuplicatableDropdown = new PopupField<string>("indexDuplicatable", boolValue, 0);
+        editArea.Add(indexDuplicatableDropdown);
 
         // VariableDicのListView
         var variableType = VariableType.UnsignedInt;
@@ -138,7 +146,7 @@ public class HeaderEditWindow : EditorWindow
 
 
         editArea.Add(new Button(() => {
-            var name = GetSelectedAndParentItemNames(treeView);
+
         
         }) { text = "Save" });
 

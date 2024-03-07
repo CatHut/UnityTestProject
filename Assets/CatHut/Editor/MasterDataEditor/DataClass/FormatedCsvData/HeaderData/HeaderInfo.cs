@@ -24,6 +24,7 @@ namespace CatHut
         /// データ列（DataのCsvにおける列）
         /// </summary>
         public int ColumnIndex { get; set; }
+
     }
 
     public class HeaderInfo
