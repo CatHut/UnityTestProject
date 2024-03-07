@@ -119,28 +119,32 @@ public class HeaderEditWindow : EditorWindow
         // IndexVariableの入力フィールド
         var options = header.VariableDic.Keys.ToList();
         var indexVariableDropdown = new PopupField<string>("IndexVariable", options, 0);
+        indexVariableDropdown.value = header.IndexVariable;
         editArea.Add(indexVariableDropdown);
 
         // IndexDuplicatableのチェックボックス
         var boolValue = new List<string>(){ "True", "False"};
         var indexDuplicatableDropdown = new PopupField<string>("indexDuplicatable", boolValue, 0);
+        indexDuplicatableDropdown.value = header.IndexDuplicatableString;
         editArea.Add(indexDuplicatableDropdown);
 
         // VariableDicのListView
-        var variableType = VariableType.UnsignedInt;
+        var typeList = TypeNames.ValueTypes.ToList();
         var variableListView = new ListView();
+        variableListView.itemsSource = header.VariableDic.Values.ToList();
         variableListView.makeItem = () => new VisualElement();
         variableListView.bindItem = (element, i) =>
         {
             var variableInfo = (VariableInfo)variableListView.itemsSource[i];
             var nameField = new TextField("Name") { value = variableInfo.Name };
-            var typeDropdown = new EnumField("Type", variableType);
+            var typeDropdown = new PopupField<string>("Type", typeList, 0) { value = variableInfo.Type};
             var descriptionField = new TextField("Description") { value = variableInfo.Description };
 
             element.Add(nameField);
             element.Add(typeDropdown);
             element.Add(descriptionField);
         };
+        variableListView.Rebuild();
         editArea.Add(variableListView);
 
 

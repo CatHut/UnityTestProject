@@ -72,13 +72,20 @@ namespace CatHut
         /// IDなどインデックスとして使用する変数リスト
         /// これをキーにUnity上でDictionaryを作成します。
         /// </summary>
-        public string IndexVariable;
+        public string IndexVariable { get; set; }
 
         /// <summary>
         /// キーの重複を許容するか。（同じキーに複数のデータを保持するか）
         /// IndexDuplicatableがtrueの場合DictionaryのValueにはListが格納される
         /// </summary>
         public bool IndexDuplicatable;
+        /// <summary>
+        /// キーの重複を許容するか。（同じキーに複数のデータを保持するか）
+        /// IndexDuplicatableがtrueの場合DictionaryのValueにはListが格納される
+        /// </summary>
+        public string IndexDuplicatableString {
+            get { return IndexDuplicatable ? "True" : "False"; }
+        }
 
         /// <summary>
         /// 親データグループ
