@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -104,6 +105,7 @@ public class HeaderEditWindow : EditorWindow
         var name = GetSelectedAndParentItemNames(treeView);
 
         var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
+
         // ClassNameの入力フィールド
         var classNameField = new TextField("ClassName");
         classNameField.value = header.ClassName;
@@ -129,21 +131,76 @@ public class HeaderEditWindow : EditorWindow
         editArea.Add(indexDuplicatableDropdown);
 
         // VariableDicのListView
-        var typeList = TypeNames.ValueTypes.ToList();
-        var variableListView = new ListView();
-        variableListView.itemsSource = header.VariableDic.Values.ToList();
-        variableListView.makeItem = () => new VisualElement();
-        variableListView.bindItem = (element, i) =>
-        {
-            var variableInfo = (VariableInfo)variableListView.itemsSource[i];
-            var nameField = new TextField("Name") { value = variableInfo.Name };
-            var typeDropdown = new PopupField<string>("Type", typeList, 0) { value = variableInfo.Type};
-            var descriptionField = new TextField("Description") { value = variableInfo.Description };
+        var variableListView = new MultiColumnListView();
 
-            element.Add(nameField);
-            element.Add(typeDropdown);
-            element.Add(descriptionField);
+        var headerItem = header.VariableDic.Values.ToList();
+        variableListView.itemsSource = headerItem;
+
+        //TODO テーブルリスト取得準備中
+        // DataGroupからの取得でいいのでは・・・？考え中・・・
+        var typeList = TypeNames.ValueTypes.ToList();
+
+
+        // Create a new column
+        var nameColumn = new Column()
+        {
+            title = "Name",
+            name = "Name", // The title of your column
+            width = 100,
+            makeCell = () => new TextField(), // TextFieldを作成
+            bindCell = (e, i) =>
+            {
+                var variableInfo = (VariableInfo)variableListView.itemsSource[i];
+                var textField = e as TextField;
+                textField.value = variableInfo.Name; // 仮のデータバインディング
+            }
         };
+
+        var typeColumn = new Column()
+        {
+            title="Type",
+            name = "Type", // The title of your column
+            width = 100,
+            makeCell = () => new PopupField<string>(typeList, 0), // PopupFieldを作成
+            bindCell = (e, i) =>
+            {
+                var variableInfo = (VariableInfo)variableListView.itemsSource[i];
+                var popupField = e as PopupField<string>;
+                popupField.value = variableInfo.Type; // 仮のデータバインディング
+            }
+        };
+        var descriptionColumn = new Column()
+        {
+            title = "Description",
+            name = "Description", // The title of your column
+            width = 200,
+            makeCell = () => new TextField(), // TextFieldを作成
+            bindCell = (e, i) =>
+            {
+                var variableInfo = (VariableInfo)variableListView.itemsSource[i];
+                var textField = e as TextField;
+                textField.value = variableInfo.Description; // 仮のデータバインディング
+            }
+        };
+
+        variableListView.columns.Add(nameColumn);
+        variableListView.columns.Add(typeColumn);
+        variableListView.columns.Add(descriptionColumn);
+
+
+        //variableListView.makeItem = () => new VisualElement();
+        //variableListView.bindItem = (element, i) =>
+        //{
+        //    var variableInfo = (VariableInfo)variableListView.itemsSource[i];
+        //    var nameField = new TextField("Name") { value = variableInfo.Name };
+        //    var typeDropdown = new PopupField<string>("Type", typeList, 0) { value = variableInfo.Type};
+        //    var descriptionField = new TextField("Description") { value = variableInfo.Description };
+
+        //    element.Add(nameField);
+        //    element.Add(typeDropdown);
+        //    element.Add(descriptionField);
+        //};
+
         variableListView.Rebuild();
         editArea.Add(variableListView);
 
@@ -156,7 +213,7 @@ public class HeaderEditWindow : EditorWindow
 
 
         editArea.Add(new Button(() => Debug.Log("Button 1")) { text = "Reload" });
-        editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Create" });
+        editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Create DataGroup" });
 
 
         if (selectedItem == "Item1")
@@ -169,7 +226,6 @@ public class HeaderEditWindow : EditorWindow
             // Item2選択時のボタン
             editArea.Add(new Button(() => Debug.Log("Button 4")) { text = "Button 4" });
         }
-       
 
     }
 

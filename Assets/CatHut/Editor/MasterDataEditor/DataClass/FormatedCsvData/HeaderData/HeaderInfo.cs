@@ -34,6 +34,7 @@ namespace CatHut
         public string IDENTIFIER_PARENTNAME = "ParentName";
         public string IDENTIFIER_INDEXVARIABLE = "IndexVariable";
         public string IDENTIFIER_INDEXDUPLICATABLE = "IndexDuplicatable";
+        public string IDENTIFIER_REFERENCETABLES = "ReferenceTables";
         public string IDENTIFIER_VARIABLE = "#Valuable";
         public string IDENTIFIER_CUSTOM = "#Custom";
 
@@ -86,6 +87,10 @@ namespace CatHut
         public string IndexDuplicatableString {
             get { return IndexDuplicatable ? "True" : "False"; }
         }
+        /// <summary>
+        /// 型として使用予定のTable名
+        /// </summary>
+        public List<string> ReferenceTable { get; set; }
 
         /// <summary>
         /// 親データグループ
@@ -106,6 +111,7 @@ namespace CatHut
 
             CustomValue = new Dictionary<string, List<string>>();
             VariableDic = new Dictionary<string, VariableInfo>();
+            ReferenceTable = new List<string>();
 
             IndexVariable = "";
             IndexDuplicatable = false;
@@ -142,6 +148,13 @@ namespace CatHut
                     else if (value == "false")
                     {
                         IndexDuplicatable = false;
+                    }
+                }
+                else if (CsvData.Data[i][0] == IDENTIFIER_REFERENCETABLES)
+                {
+                    for(int j = 1; j < CsvData.Data[i].Count; j++)
+                    {
+                        ReferenceTable.Add(CsvData.Data[i][j]);
                     }
                 }
                 else if (CsvData.Data[i][0] == IDENTIFIER_CUSTOM)
@@ -270,6 +283,15 @@ namespace CatHut
                 }
                 csvData.AddRow(rowData);
             }
+
+            //ReferenceTable
+            rowData = new List<string>();
+            rowData.Add(IDENTIFIER_REFERENCETABLES);
+            foreach (var table in ReferenceTable)
+            {
+                rowData.Add(table);
+            }
+            csvData.AddRow(rowData);
 
             //Variable
             rowData = new List<string>();
