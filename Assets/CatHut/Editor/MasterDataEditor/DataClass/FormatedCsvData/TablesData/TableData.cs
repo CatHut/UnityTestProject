@@ -66,6 +66,11 @@ namespace CatHut
         {
             Path = folder + "\\" + TABLE_FOLDER_NAME + "\\" + TABLE_FILE_NAME;
 
+            if(TableDic == null)
+            {
+                TableDic = new Dictionary<string, Table>();
+            }
+
             if (File.Exists(Path))
             {
                 CsvData = new CsvData(Path);

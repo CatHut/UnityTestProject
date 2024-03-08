@@ -54,13 +54,14 @@ public class HeaderEditWindow : EditorWindow
             var items = new List<TreeViewItemData<Item>>();
             foreach (var innerItem in dg.Value.FormatedCsvDic)
             {
-                var item = new TreeViewItemData<Item>(id++, new Item { name = innerItem.Key });
+                var item = new TreeViewItemData<Item>(id, new Item { Name = innerItem.Key, HierarchyLevel = 1, Id = id }) ;
+                id++;
                 items.Add(item);
             }
 
             // ルートアイテムを作成し、子アイテムを追加
-            var rootItem = new TreeViewItemData<Item>(id++, new Item { name = dg.Key }, items);
-
+            var rootItem = new TreeViewItemData<Item>(id, new Item { Name = dg.Key, HierarchyLevel = 0, Id = id }, items);
+            id++;
             // ルートアイテムのみをデータソースに追加
             _rootItems.Add(rootItem);
         }
@@ -79,7 +80,7 @@ public class HeaderEditWindow : EditorWindow
         };
 
         // アイテムの内容を設定する処理
-        treeView.bindItem = (e, i) => e.Q<Label>().text = treeView.GetItemDataForIndex<Item>(i).name;
+        treeView.bindItem = (e, i) => e.Q<Label>().text = treeView.GetItemDataForIndex<Item>(i).Name;
 
         treeView.Rebuild();
 
@@ -98,36 +99,79 @@ public class HeaderEditWindow : EditorWindow
 
     private void OnListViewSelectionChange(IEnumerable<object> selectedItems)
     {
-        var selectedItem = selectedItems.First().ToString();
+        var tvi = (Item)selectedItems.First();
+
         var editArea = rootVisualElement.Q<VisualElement>("editArea");
         editArea.Clear();
 
+
+        switch(tvi.HierarchyLevel)
+        {
+            case 0:
+                //DataGroup選択時
+                //テーブル編集、FormatedCsvData追加ボタンとか表示
+                CreateDataGroupEditArea(editArea);
+                break;
+            case 1:
+                //FormatedCsvData選択時
+                CreateHeaderEditArea(editArea);
+                break;
+        }
+
+    }
+
+
+    private void CreateHeaderEditArea(VisualElement editArea)
+    {
         var name = GetSelectedAndParentItemNames(treeView);
 
-        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
+        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart; //ヘッダ情報
+        var gTable = EditorSharedData.RawMasterData.GrobalTableData;    //グローバルテーブル
+        var dg = EditorSharedData.RawMasterData.DataGroupDic[name.parentName];  //データグループ
 
         // ClassNameの入力フィールド
         var classNameField = new TextField("ClassName");
         classNameField.value = header.ClassName;
         classNameField.isReadOnly = true;
+        classNameField.focusable = false;
         editArea.Add(classNameField);
 
         // ParentNameの入力フィールド
         var parentNameField = new TextField("ParentName");
         parentNameField.value = header.ParentName;
         parentNameField.isReadOnly = true;
+        parentNameField.focusable = false;
         editArea.Add(parentNameField);
 
         // IndexVariableの入力フィールド
         var options = header.VariableDic.Keys.ToList();
         var indexVariableDropdown = new PopupField<string>("IndexVariable", options, 0);
         indexVariableDropdown.value = header.IndexVariable;
+
+        // 値が変更されたときの処理を登録
+        indexVariableDropdown.RegisterValueChangedCallback(evt =>
+        {
+            // ここで変更された値を処理
+            // 例: ヘッダのIndexVariableプロパティを更新
+            header.IndexVariable = evt.newValue;
+        });
+
         editArea.Add(indexVariableDropdown);
 
         // IndexDuplicatableのチェックボックス
-        var boolValue = new List<string>(){ "True", "False"};
+        var boolValue = new List<string>() { "True", "False" };
         var indexDuplicatableDropdown = new PopupField<string>("indexDuplicatable", boolValue, 0);
         indexDuplicatableDropdown.value = header.IndexDuplicatableString;
+
+        // 値が変更されたときの処理を登録
+        indexDuplicatableDropdown.RegisterValueChangedCallback(evt =>
+        {
+            // ここで変更された値を処理
+            // 例: ヘッダのIndexVariableプロパティを更新
+            header.IndexDuplicatableString = evt.newValue;
+        });
+
+
         editArea.Add(indexDuplicatableDropdown);
 
         // VariableDicのListView
@@ -136,9 +180,12 @@ public class HeaderEditWindow : EditorWindow
         var headerItem = header.VariableDic.Values.ToList();
         variableListView.itemsSource = headerItem;
 
-        //TODO テーブルリスト取得準備中
-        // DataGroupからの取得でいいのでは・・・？考え中・・・
+        //テーブルリスト取得
         var typeList = TypeNames.ValueTypes.ToList();
+
+        //Tables[name]という形式でTable型を追加
+        typeList.AddRange(gTable.TableDic.Keys.ToList().Select(item => $"Tables[{item}]").ToList());
+        typeList.AddRange(dg.TableData.TableDic.Keys.ToList().Select(item => $"Tables[{item}]").ToList());
 
 
         // Create a new column
@@ -152,13 +199,20 @@ public class HeaderEditWindow : EditorWindow
             {
                 var variableInfo = (VariableInfo)variableListView.itemsSource[i];
                 var textField = e as TextField;
-                textField.value = variableInfo.Name; // 仮のデータバインディング
+                textField.value = variableInfo.Name;
+
+                // 値が変更されたときの処理を登録
+                textField.RegisterValueChangedCallback(evt =>
+                {
+                    // 編集された新しい値をデータソースに反映
+                    variableInfo.Name = evt.newValue;
+                });
             }
         };
 
         var typeColumn = new Column()
         {
-            title="Type",
+            title = "Type",
             name = "Type", // The title of your column
             width = 100,
             makeCell = () => new PopupField<string>(typeList, 0), // PopupFieldを作成
@@ -166,7 +220,14 @@ public class HeaderEditWindow : EditorWindow
             {
                 var variableInfo = (VariableInfo)variableListView.itemsSource[i];
                 var popupField = e as PopupField<string>;
-                popupField.value = variableInfo.Type; // 仮のデータバインディング
+                popupField.value = variableInfo.Type;
+
+                // 値が変更されたときの処理を登録
+                popupField.RegisterValueChangedCallback(evt =>
+                {
+                    // 編集された新しい値をデータソースに反映
+                    variableInfo.Type = evt.newValue;
+                });
             }
         };
         var descriptionColumn = new Column()
@@ -179,7 +240,14 @@ public class HeaderEditWindow : EditorWindow
             {
                 var variableInfo = (VariableInfo)variableListView.itemsSource[i];
                 var textField = e as TextField;
-                textField.value = variableInfo.Description; // 仮のデータバインディング
+                textField.value = variableInfo.Description;
+
+                // 値が変更されたときの処理を登録
+                textField.RegisterValueChangedCallback(evt =>
+                {
+                    // 編集された新しい値をデータソースに反映
+                    variableInfo.Description = evt.newValue;
+                });
             }
         };
 
@@ -187,47 +255,59 @@ public class HeaderEditWindow : EditorWindow
         variableListView.columns.Add(typeColumn);
         variableListView.columns.Add(descriptionColumn);
 
-
-        //variableListView.makeItem = () => new VisualElement();
-        //variableListView.bindItem = (element, i) =>
-        //{
-        //    var variableInfo = (VariableInfo)variableListView.itemsSource[i];
-        //    var nameField = new TextField("Name") { value = variableInfo.Name };
-        //    var typeDropdown = new PopupField<string>("Type", typeList, 0) { value = variableInfo.Type};
-        //    var descriptionField = new TextField("Description") { value = variableInfo.Description };
-
-        //    element.Add(nameField);
-        //    element.Add(typeDropdown);
-        //    element.Add(descriptionField);
-        //};
-
         variableListView.Rebuild();
         editArea.Add(variableListView);
 
 
-
         editArea.Add(new Button(() => {
 
-        
-        }) { text = "Save" });
+            var updateDic = new Dictionary<string, VariableInfo>();
+
+            //更新後のVariableInfoを取得
+            foreach (var item in variableListView.itemsSource)
+            {
+                var vi = (VariableInfo)item;
+                updateDic[vi.Name] = vi;
+            }
+
+            header.VariableDic = updateDic;
+
+            header.Save();
+
+            var selectedItem = (Item)(treeView.selectedItem);
+            treeView.SetSelectionById(selectedItem.Id);
+        })
+        { text = "Save" });
 
 
         editArea.Add(new Button(() => Debug.Log("Button 1")) { text = "Reload" });
         editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Create DataGroup" });
-
-
-        if (selectedItem == "Item1")
-        {
-            // Item1選択時のボタン
-            editArea.Add(new Button(() => Debug.Log("Button 3")) { text = "Button 3" });
-        }
-        else if (selectedItem == "Item2")
-        {
-            // Item2選択時のボタン
-            editArea.Add(new Button(() => Debug.Log("Button 4")) { text = "Button 4" });
-        }
-
     }
+
+    private void CreateDataGroupEditArea(VisualElement editArea)
+    {
+        editArea.Add(new Button(() => {
+            //ボタン押したときの処理書く
+        })
+        { text = "Add Table" });
+
+        editArea.Add(new Button(() => {
+            //ボタン押したときの処理書く
+        })
+        { text = "Delete Table" });
+
+        editArea.Add(new Button(() => {
+            //ボタン押したときの処理書く
+        })
+        { text = "Add Header" });
+
+        editArea.Add(new Button(() => {
+            //ボタン押したときの処理書く
+        })
+        { text = "Delete Header" });
+    }
+
+
 
 
     // TreeViewから選択されたアイテムとその親アイテムの名前を取得する関数
@@ -236,7 +316,7 @@ public class HeaderEditWindow : EditorWindow
         var selected = (Item)treeView.selectedItem;
         var parentId = treeView.GetParentIdForIndex(treeView.selectedIndex);
         var parent = treeView.GetItemDataForId<Item>(parentId);
-        return (parent.name, selected.name);
+        return (parent.Name, selected.Name);
 
 
     }
@@ -246,7 +326,9 @@ public class HeaderEditWindow : EditorWindow
     [Serializable]
     public struct Item
     {
-        public string name;
+        public string Name;
+        public int HierarchyLevel;
+        public int Id;
     }
 
     

@@ -5,12 +5,14 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.WSA;
 
 namespace CatHut
 {
     public class RawMasterData
     {
         private SerializableDictionary<string, DataGroup> _DataGroupDic;
+        private TableData _GrobalTableData;
 
         public SerializableDictionary<string, DataGroup> DataGroupDic
         {
@@ -18,6 +20,11 @@ namespace CatHut
             {
                 return _DataGroupDic;
             }
+        }
+
+        public TableData GrobalTableData
+        {
+            get { return _GrobalTableData; }
         }
 
         public RawMasterData()
@@ -34,10 +41,13 @@ namespace CatHut
 
         public RawMasterData(List<string> folderPathList)
         {
+            _GrobalTableData = new TableData();
+
             foreach (var folderPath in folderPathList)
             {
                 if (!Directory.Exists(folderPath)) { continue; }
 
+                _GrobalTableData.AddTableData(folderPath);
                 ImportMasterDataMultiply(folderPath);
             }
         }
