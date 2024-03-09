@@ -87,6 +87,9 @@ namespace CatHut
 
             string[] subFolders = Directory.GetDirectories(folder);
 
+
+
+
             //一旦ヘッダ情報を生成(重複時は上書きされる)
             foreach (string subFolder in subFolders)
             {

@@ -14,6 +14,8 @@ namespace CatHut
         private TableData _TableData;
         bool _Enable = false;
 
+        public string Name { get; set; }
+
         public SerializableDictionary<string, FormatedCsvData> FormatedCsvDic
         {
             get { return _FormatedCsvDic; }
@@ -29,6 +31,9 @@ namespace CatHut
         public DataGroup() { }
 
         public DataGroup(string folder) {
+            
+            //Name設定
+            Name = new DirectoryInfo(folder).Name;
 
             //TableData格納
             _TableData = new TableData(folder);
@@ -58,6 +63,9 @@ namespace CatHut
 
         public void SetHeaderInfo(string folder)
         {
+            //Name設定
+            Name = new DirectoryInfo(folder).Name;
+
             //TableData格納
             _TableData = new TableData(folder);
 

@@ -7,11 +7,6 @@ using CatHut;
 public class Enemy : ScriptableObject
 {
 
-    public enum PATTERN{
-        RANDOM = 0,
-        LOOP = 1
-    }
-
     public enum ATTR{
         NONE = 0,
         FIRE = 1,
@@ -19,23 +14,28 @@ public class Enemy : ScriptableObject
         WATER = 3
     }
 
+    public enum PATTERN{
+        LOOP = 0,
+        RANDOM = 1
+    }
+
 
 
     //Each Sheets ClassDaclare
     [SerializeField]
-    private EnemyParameterClassDictionary _EnemyParameterClassData;
-    public EnemyParameterClassDictionary EnemyParameterClassData
+    private EnemyParameterDictionary _EnemyParameterData;
+    public EnemyParameterDictionary EnemyParameterData
     {
-        get { return _EnemyParameterClassData; }
-        set { _EnemyParameterClassData = value; } 
+        get { return _EnemyParameterData; }
+        set { _EnemyParameterData = value; } 
     }
 
     [SerializeField]
-    private SkillPatternClassDictionary _SkillPatternClassData;
-    public SkillPatternClassDictionary SkillPatternClassData
+    private SkillPatternDictionary _SkillPatternData;
+    public SkillPatternDictionary SkillPatternData
     {
-        get { return _SkillPatternClassData; }
-        set { _SkillPatternClassData = value; } 
+        get { return _SkillPatternData; }
+        set { _SkillPatternData = value; } 
     }
 
     public object this[string propertyName]
@@ -77,14 +77,14 @@ public class Enemy : ScriptableObject
 }
 
 [System.Serializable]
-public class EnemyParameterClassDictionary : SerializableDictionary<string, EnemyParameterClass> { }
+public class EnemyParameterDictionary : SerializableDictionary<string, EnemyParameter> { }
 [System.Serializable]
-public class SkillPatternClassDictionary : SerializableDictionary<string, SkillPatternClass> { }
+public class SkillPatternDictionary : SerializableDictionary<string, SkillPattern> { }
 
 
 
 [System.Serializable]
-public class EnemyParameterClass : IMasterData
+public class EnemyParameter : IMasterData
 {
     [SerializeField]
     private string _id = "";
@@ -226,12 +226,12 @@ public class EnemyParameterClass : IMasterData
     {
        get
        {
-            return typeof(EnemyParameterClass).GetProperty(propertyName).GetValue(this);
+            return typeof(EnemyParameter).GetProperty(propertyName).GetValue(this);
         }
 
        set
         {
-            typeof(EnemyParameterClass).GetProperty(propertyName).SetValue(this, value);
+            typeof(EnemyParameter).GetProperty(propertyName).SetValue(this, value);
         }
     }
 
@@ -258,7 +258,7 @@ public class EnemyParameterClass : IMasterData
 }
 
 [System.Serializable]
-public class SkillPatternClass : IMasterData
+public class SkillPattern : IMasterData
 {
     [SerializeField]
     private string _id = "";
@@ -360,12 +360,12 @@ public class SkillPatternClass : IMasterData
     {
        get
        {
-            return typeof(SkillPatternClass).GetProperty(propertyName).GetValue(this);
+            return typeof(SkillPattern).GetProperty(propertyName).GetValue(this);
         }
 
        set
         {
-            typeof(SkillPatternClass).GetProperty(propertyName).SetValue(this, value);
+            typeof(SkillPattern).GetProperty(propertyName).SetValue(this, value);
         }
     }
 

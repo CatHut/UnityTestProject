@@ -18,7 +18,8 @@ namespace CatHut
             "string",  // String
             "bool",    // Boolean
             "byte",    // Byte
-            "sbyte"    // SByte
+            "sbyte",   // SByte
+            "Comment"  // ƒRƒƒ“ƒg—p
         }.AsReadOnly();
     }
 }

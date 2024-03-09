@@ -1,7 +1,9 @@
 ﻿using CatHut;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -297,7 +299,11 @@ public class HeaderEditWindow : EditorWindow
 
 
 
-        editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Create ScriptableObject And Inporter" });
+        editArea.Add(new Button(() => {
+            var dg = EditorSharedData.RawMasterData.DataGroupDic[name.parentName];  //データグループ
+            ScriptableObjectGenerator.CreateScriptableObject(dg);
+
+        }) { text = "Create ScriptableObject And Inporter" });
 
 
         //これはTreeViewに実装
@@ -386,10 +392,7 @@ public class HeaderEditWindow : EditorWindow
     }
 
 
-    public void CreateScriptableObject(DataGroup dg)
-    {
 
-    }
 
     
 
