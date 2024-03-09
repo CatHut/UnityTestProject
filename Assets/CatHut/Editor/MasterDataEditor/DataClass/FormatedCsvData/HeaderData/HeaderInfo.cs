@@ -266,6 +266,12 @@ namespace CatHut
             rowData.Add(IndexVariable);
             csvData.AddRow(rowData);
 
+            //IndexVariable
+            rowData = new List<string>();
+            rowData.Add(IDENTIFIER_INDEXDUPLICATABLE);
+            rowData.Add(IndexDuplicatableString);
+            csvData.AddRow(rowData);
+
             //Custom
             rowData = new List<string>();
             rowData.Add(IDENTIFIER_CUSTOM);

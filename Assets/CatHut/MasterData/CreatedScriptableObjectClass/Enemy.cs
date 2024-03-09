@@ -77,10 +77,15 @@ public class Enemy : ScriptableObject
 }
 
 [System.Serializable]
-public class EnemyParameterDictionary : SerializableDictionary<string, EnemyParameter> { }
+public class EnemyParameterDictionary : SerializableDictionary<string, EnemyParameterListClass> { }
 [System.Serializable]
 public class SkillPatternDictionary : SerializableDictionary<string, SkillPattern> { }
 
+[System.Serializable]
+public class EnemyParameterListClass
+{
+    public List<EnemyParameter> EnemyParameterList;
+}
 
 
 [System.Serializable]

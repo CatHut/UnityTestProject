@@ -46,7 +46,10 @@ namespace CatHut
                 Directory.CreateDirectory(CreatedScriptableObjectFolder);
             }
 
-            File.WriteAllText(Path.Combine(CreatedScriptableObjectFolder, FileName + ".cs"), FileStr, Encoding.UTF8);
+            var fullpath = Path.Combine(CreatedScriptableObjectFolder, FileName + ".cs");
+            File.WriteAllText(fullpath, FileStr, Encoding.UTF8);
+
+            AssetDatabase.ImportAsset(fullpath);
 
         }
 
@@ -127,7 +130,7 @@ namespace CatHut
                 else
                 {
                     str += "[System.Serializable]" + Environment.NewLine
-                         + "public class " + classinfo.Key + "Dictionary : SerializableDictionary<" + classinfo.Value.HeaderPart.VariableDic[classinfo.Value.HeaderPart.IndexVariable].Type + ", " + classinfo.Key + "List" + "> { }" + Environment.NewLine;
+                         + "public class " + classinfo.Key + "Dictionary : SerializableDictionary<" + classinfo.Value.HeaderPart.VariableDic[classinfo.Value.HeaderPart.IndexVariable].Type + ", " + classinfo.Key + "ListClass" + "> { }" + Environment.NewLine;
                 }
             }
 
@@ -142,7 +145,7 @@ namespace CatHut
                 else
                 {
                     str += "[System.Serializable]" + Environment.NewLine;
-                    str += "public class " + classinfo.Key + "List" + Environment.NewLine;
+                    str += "public class " + classinfo.Key + "ListClass" + Environment.NewLine;
                     str += "{" + Environment.NewLine;
                     str += "    public List<" + classinfo.Key + "> " + classinfo.Key + "List;" + Environment.NewLine;
                     str += "}" + Environment.NewLine;
