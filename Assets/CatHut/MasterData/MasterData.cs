@@ -19,11 +19,13 @@ public class MasterData : SingletonMonoBehaviour<MasterData>
     }
 
 
+
     private new void Awake()
     {
         base.Awake();
 
         EnemyData = Addressables.LoadAssetAsync<Enemy>("Enemy").WaitForCompletion();
+
 
     }
 

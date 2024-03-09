@@ -34,7 +34,11 @@ public static class MasterDataEditorConfig
             System.IO.Directory.CreateDirectory(ConfigDataFolder);
         }
         string json = JsonUtility.ToJson(settings);
-        System.IO.File.WriteAllText(System.IO.Path.Combine(ConfigDataFolder, ConfigDataFile), json);
+
+        var path = System.IO.Path.Combine(ConfigDataFolder, ConfigDataFile);
+        System.IO.File.WriteAllText(path, json);
+
+        AssetDatabase.ImportAsset(path);
     }
 
     /// <summary>
@@ -61,6 +65,7 @@ public static class MasterDataEditorConfig
         public List<string> CsvMasterDataPathList = new List<string>();
         public string CreatedScriptableObjectClassPath = "";
         public string ScriptableObjectInstancePath = "";
+        public string CreatedMasterDataClassPath = "";
     }    
 }
 

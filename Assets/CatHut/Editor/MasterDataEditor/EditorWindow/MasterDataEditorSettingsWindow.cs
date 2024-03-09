@@ -6,8 +6,19 @@ using UnityEngine.Rendering;
 public class MasterDataEditorSettingsWindow : EditorWindow
 {
     private List<string> csvMasterDataFolderList = new List<string>();
+
+    /// <summary>
+    /// 管理しているScriptableObjectのインスタンスを格納するフォルダ
+    /// </summary>
     private string scriptableObjectInstanceFolder = string.Empty;
+    /// <summary>
+    /// Header情報から生成する、ScriptableObjectクラス(.cs)を格納するフォルダ
+    /// </summary>
     private string createdScriptableObjectClassFolder = string.Empty;
+    /// <summary>
+    /// Header情報から生成する、MasterDataクラス(.cs)を格納するフォルダ（任意）
+    /// </summary>
+    private string createdMasterDataClassFolder = string.Empty;
 
     [MenuItem("Tools/CatHut/MasterDataEditor/Settings")]
     public static void ShowWindow()
@@ -23,7 +34,8 @@ public class MasterDataEditorSettingsWindow : EditorWindow
         csvMasterDataFolderList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
         scriptableObjectInstanceFolder = MasterDataEditorConfig.settings.ScriptableObjectInstancePath;
         createdScriptableObjectClassFolder = MasterDataEditorConfig.settings.CreatedScriptableObjectClassPath;
-    }    
+        createdMasterDataClassFolder = MasterDataEditorConfig.settings.CreatedMasterDataClassPath;
+    }
 
     private void OnGUI()
     {
@@ -67,6 +79,15 @@ public class MasterDataEditorSettingsWindow : EditorWindow
         createdScriptableObjectClassFolder = EditorGUILayout.TextField("CreatedScriptableObjectClassPath", createdScriptableObjectClassFolder);
 
         GUILayout.Space(10);
+        if (!AssetDatabase.IsValidFolder(createdMasterDataClassFolder))
+        {
+            GUIStyle errorStyle = new GUIStyle();
+            errorStyle.normal.textColor = Color.red;
+            GUILayout.Label("指定されたフォルダが存在しません。", errorStyle);
+        }
+        createdMasterDataClassFolder = EditorGUILayout.TextField("CreatedMasterDataClassPath", createdMasterDataClassFolder);
+
+        GUILayout.Space(10);
         if (!AssetDatabase.IsValidFolder(scriptableObjectInstanceFolder))
         {
             GUIStyle errorStyle = new GUIStyle();
@@ -74,6 +95,9 @@ public class MasterDataEditorSettingsWindow : EditorWindow
             GUILayout.Label("指定されたフォルダが存在しません。", errorStyle);
         }
         scriptableObjectInstanceFolder = EditorGUILayout.TextField("ScriptableObjectInstancePath", scriptableObjectInstanceFolder);
+
+
+
 
         // 保存ボタン
         GUILayout.Space(10);
@@ -83,6 +107,7 @@ public class MasterDataEditorSettingsWindow : EditorWindow
             MasterDataEditorConfig.settings.CsvMasterDataPathList = csvMasterDataFolderList;
             MasterDataEditorConfig.settings.ScriptableObjectInstancePath = scriptableObjectInstanceFolder;
             MasterDataEditorConfig.settings.CreatedScriptableObjectClassPath = createdScriptableObjectClassFolder;
+            MasterDataEditorConfig.settings.CreatedMasterDataClassPath = createdMasterDataClassFolder;
 
             MasterDataEditorConfig.SaveSettings();
         }
