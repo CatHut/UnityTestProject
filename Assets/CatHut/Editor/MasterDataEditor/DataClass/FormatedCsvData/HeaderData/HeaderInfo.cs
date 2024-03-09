@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditor;
 
 namespace CatHut
 {
@@ -310,6 +311,7 @@ namespace CatHut
 
             csvData.FilePath = FilePath;
             csvData.Save();
+            AssetDatabase.ImportAsset(csvData.FilePath);
         }
 
         public void Update()
