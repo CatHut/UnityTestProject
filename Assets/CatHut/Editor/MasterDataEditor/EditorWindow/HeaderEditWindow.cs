@@ -114,7 +114,7 @@ public class HeaderEditWindow : EditorWindow
                 break;
             case 1:
                 //FormatedCsvData選択時
-                CreateHeaderEditArea(editArea);
+                InitializeHeaderEditUi(editArea);
                 break;
         }
 
@@ -131,6 +131,7 @@ public class HeaderEditWindow : EditorWindow
 
         // ClassNameの入力フィールド
         var classNameField = new TextField("ClassName");
+        classNameField.name = "ClassName";
         classNameField.value = header.ClassName;
         classNameField.isReadOnly = true;
         classNameField.focusable = false;
@@ -138,6 +139,7 @@ public class HeaderEditWindow : EditorWindow
 
         // ParentNameの入力フィールド
         var parentNameField = new TextField("ParentName");
+        parentNameField.name = "ParentName";
         parentNameField.value = header.ParentName;
         parentNameField.isReadOnly = true;
         parentNameField.focusable = false;
@@ -146,6 +148,7 @@ public class HeaderEditWindow : EditorWindow
         // IndexVariableの入力フィールド
         var options = header.VariableDic.Keys.ToList();
         var indexVariableDropdown = new PopupField<string>("IndexVariable", options, 0);
+        indexVariableDropdown.name = "IndexVariable";
         indexVariableDropdown.value = header.IndexVariable;
 
         // 値が変更されたときの処理を登録
@@ -161,6 +164,7 @@ public class HeaderEditWindow : EditorWindow
         // IndexDuplicatableのチェックボックス
         var boolValue = new List<string>() { "True", "False" };
         var indexDuplicatableDropdown = new PopupField<string>("indexDuplicatable", boolValue, 0);
+        indexDuplicatableDropdown.name = "indexDuplicatable";
         indexDuplicatableDropdown.value = header.IndexDuplicatableString;
 
         // 値が変更されたときの処理を登録
@@ -176,6 +180,7 @@ public class HeaderEditWindow : EditorWindow
 
         // VariableDicのListView
         var variableListView = new MultiColumnListView();
+        variableListView.name = "VariableListView";
 
         var headerItem = header.VariableDic.Values.ToList();
         variableListView.itemsSource = headerItem;
@@ -273,16 +278,65 @@ public class HeaderEditWindow : EditorWindow
             header.VariableDic = updateDic;
 
             header.Save();
+            UpdateHeaderEditUi(editArea);
 
-            var selectedItem = (Item)(treeView.selectedItem);
-            treeView.SetSelectionById(selectedItem.Id);
+
         })
         { text = "Save" });
 
 
-        editArea.Add(new Button(() => Debug.Log("Button 1")) { text = "Reload" });
+        editArea.Add(new Button(() => {
+
+            EditorSharedData.UpdateData();
+            var selectedItem = (Item)(treeView.selectedItem);
+
+            UpdateHeaderEditUi(editArea);
+
+        })
+        { text = "Header Csv Reload" });
+
+
+
+        editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Create ScriptableObject And Inporter" });
+
+
+        //これはTreeViewに実装
         editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Create DataGroup" });
     }
+
+    private void InitializeHeaderEditUi(VisualElement editArea)
+    {
+        CreateHeaderEditArea(editArea);
+    }
+
+    private void UpdateHeaderEditUi(VisualElement editArea)
+    {
+        var name = GetSelectedAndParentItemNames(treeView);
+
+        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart; //ヘッダ情報
+        var gTable = EditorSharedData.RawMasterData.GrobalTableData;    //グローバルテーブル
+        var dg = EditorSharedData.RawMasterData.DataGroupDic[name.parentName];  //データグループ
+
+
+        var classNameField = editArea.Q<TextField>("ClassName");
+        classNameField.value = header.ClassName;
+
+        var parentNameField = editArea.Q<TextField>("ParentName");
+        parentNameField.value = header.ParentName;
+
+        var indexVariableDropdown = editArea.Q<PopupField<string>>("IndexVariable");
+        indexVariableDropdown.value = header.IndexVariable;
+
+        var indexDuplicatableDropdown = editArea.Q<PopupField<string>>("indexDuplicatable");
+        indexDuplicatableDropdown.value = header.IndexDuplicatableString;
+
+        var variableListView = editArea.Q<MultiColumnListView>("VariableListView");
+        var headerItem = header.VariableDic.Values.ToList();
+        variableListView.itemsSource = headerItem;
+        variableListView.Rebuild();
+
+    }
+
 
     private void CreateDataGroupEditArea(VisualElement editArea)
     {
@@ -329,6 +383,12 @@ public class HeaderEditWindow : EditorWindow
         public string Name;
         public int HierarchyLevel;
         public int Id;
+    }
+
+
+    public void CreateScriptableObject(DataGroup dg)
+    {
+
     }
 
     
