@@ -1,0 +1,40 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using CatHut;
+
+//ScriptableObjectClass Named from FileName
+public class #FileName# : ScriptableObject
+{
+
+#EnumDeclare#
+
+    //Each Sheets ClassDaclare
+#ClsssDeclare#
+
+
+    public List<string> PropertyNames
+    {
+        get
+        {
+            var ret = new List<string>();
+            var properties = this.GetType().GetProperties()
+                .Where(p => p.PropertyType != typeof(System.Object) && p.Name != "PropertyNames" && p.DeclaringType == this.GetType())
+                .ToArray();
+            // インデクサによるItemプロパティ(System.Ojbect)を除外
+            // 基底クラスのプロパティを除外
+
+            foreach (var property in properties)
+            {
+                ret.Add(property.Name);
+            }
+
+            return ret;
+        }
+    }
+
+}
+
+#ClsssProtoTypeDeclare#
+
+#ClassDefinitions#
