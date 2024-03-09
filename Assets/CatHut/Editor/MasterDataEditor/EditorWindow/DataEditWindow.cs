@@ -333,7 +333,7 @@ public class DataEditWindow : EditorWindow
                                 var intField = e as UnsignedIntegerField;
                                 if (uint.TryParse(data[i][col], out uint uintResult))
                                 {
-                                    intField.value = uintResult;
+                                    intField.SetValueWithoutNotify(uintResult);
                                 }
                                 else
                                 {
@@ -349,7 +349,7 @@ public class DataEditWindow : EditorWindow
                                 var ulongField = e as UnsignedLongField;
                                 if (ulong.TryParse(data[i][col], out ulong ulongResult))
                                 {
-                                    ulongField.value = ulongResult;
+                                    ulongField.SetValueWithoutNotify(ulongResult);
                                 }
                                 else
                                 {
@@ -367,7 +367,7 @@ public class DataEditWindow : EditorWindow
                                 var intField = e as IntegerField;
                                 if (int.TryParse(data[i][col], out int intResult))
                                 {
-                                    intField.value = intResult;
+                                    intField.SetValueWithoutNotify(intResult);
                                 }
                                 else
                                 {
@@ -383,7 +383,7 @@ public class DataEditWindow : EditorWindow
                                 var longField = e as LongField;
                                 if (long.TryParse(data[i][col], out long longResult))
                                 {
-                                    longField.value = longResult;
+                                    longField.SetValueWithoutNotify(longResult);
                                 }
                                 else
                                 {
@@ -397,7 +397,7 @@ public class DataEditWindow : EditorWindow
                                 var doubleField = e as DoubleField;
                                 if (double.TryParse(data[i][col], out double doubleResult))
                                 {
-                                    doubleField.value = doubleResult;
+                                    doubleField.SetValueWithoutNotify(doubleResult);
                                 }
                                 else
                                 {
@@ -411,7 +411,7 @@ public class DataEditWindow : EditorWindow
                                 var floatField = e as FloatField;
                                 if (float.TryParse(data[i][col], out float floatResult))
                                 {
-                                    floatField.value = floatResult;
+                                    floatField.SetValueWithoutNotify(floatResult);
                                 }
                                 else
                                 {
@@ -425,7 +425,7 @@ public class DataEditWindow : EditorWindow
                                 var boolValue = new List<string>() { "true", "false" };
                                 var popup = e as PopupField<string>;
                                 popup.choices = boolValue;
-                                popup.value = ConvertBoolean.ToBoolString(data[i][col]);
+                                popup.SetValueWithoutNotify(ConvertBoolean.ToBoolString(data[i][col]));
                                 popup.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
                             }
                             break;
@@ -434,7 +434,7 @@ public class DataEditWindow : EditorWindow
                         default:
                             {
                                 var textField = e as TextField;
-                                textField.value = data[i][col];
+                                textField.SetValueWithoutNotify(data[i][col]);
                                 textField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue; });
                             }
                             break;
