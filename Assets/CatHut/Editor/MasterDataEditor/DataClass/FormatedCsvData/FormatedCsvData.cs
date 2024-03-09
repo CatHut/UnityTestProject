@@ -119,6 +119,8 @@ namespace CatHut
                     return;
                 }
             }
+
+            SetVariableColumnIndex();
         }
 
 
@@ -132,6 +134,8 @@ namespace CatHut
 
         private void SetVariableColumnIndex()
         {
+            if(DataPart == null) { return; }
+
             var titleRow = DataPart.Data[0];
 
             foreach (var title in titleRow)

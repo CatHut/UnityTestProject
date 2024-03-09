@@ -143,7 +143,7 @@ public class DataEditWindow : EditorWindow
 
         editArea.Add(new Button(() => {
 
-
+            variableListView.Rebuild();
         })
         { text = "Save" });
 
@@ -154,8 +154,14 @@ public class DataEditWindow : EditorWindow
             UpdateHeaderEditUi(editArea);
 
         })
-        { text = "Reflect Value" });
+        { text = "Csv Reload" });
 
+        editArea.Add(new Button(() => {
+
+            variableListView.RefreshItems();
+
+        })
+        { text = "TestRefresh" });
 
 
         //これはTreeViewに実装
@@ -173,7 +179,7 @@ public class DataEditWindow : EditorWindow
         var variableListView = editArea.Q<MultiColumnListView>("DataListView");
 
         //データ取得
-        var data = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.Data;
+        var data = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
 
         //ソース設定
         variableListView.itemsSource = data;
@@ -239,11 +245,9 @@ public class DataEditWindow : EditorWindow
         //ヘッダ情報
         var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart; 
 
-        //データ
-        var data = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.Data;
 
         //ソース設定
-        variableListView.itemsSource = data;
+        variableListView.itemsSource = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle; ;
 
 
         // 列の定義を動的に行う
@@ -297,7 +301,7 @@ public class DataEditWindow : EditorWindow
 
                         case "bool":
                             {
-                                var boolValue = new List<string>() { "True", "False" };
+                                var boolValue = new List<string>() { "true", "false" };
                                 return new PopupField<string>(boolValue, 0);
                             }
 
@@ -314,8 +318,11 @@ public class DataEditWindow : EditorWindow
                 {
                     var col = header.VariableDic[colName].ColumnIndex;
                     var type = header.VariableDic[colName].Type;
-                    var variableInfo = data[i][col];
-                    var container = e as IMGUIContainer;
+                    
+                    //データ
+                    var data = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
+                    
+                    Debug.Log("i:" + i.ToString());
 
                     switch (type)
                     {
@@ -323,51 +330,102 @@ public class DataEditWindow : EditorWindow
                         case "ushort":
                         case "uint":
                             {
-                                var intField = new UnsignedIntegerField() { value = uint.Parse(data[i][col]) };
-                                intField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
+                                var intField = e as UnsignedIntegerField;
+                                if (uint.TryParse(data[i][col], out uint uintResult))
+                                {
+                                    intField.value = uintResult;
+                                }
+                                else
+                                {
+                                    Debug.Log($"Parse failed for uint value: {data[i][col]} at row: {i}, col: {colName}");
+                                }
+                                intField.RegisterValueChangedCallback(evt => { 
+                                    data[i][col] = evt.newValue.ToString();
+                                });
                             }
                             break;
                         case "ulong":
                             {
-                                var ulongField = new UnsignedLongField() { value = ulong.Parse(data[i][col]) };
-                                ulongField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
+                                var ulongField = e as UnsignedLongField;
+                                if (ulong.TryParse(data[i][col], out ulong ulongResult))
+                                {
+                                    ulongField.value = ulongResult;
+                                }
+                                else
+                                {
+                                    Debug.Log($"Parse failed for uint value: {data[i][col]} at row: {i}, col: {colName}");
+                                }
+                                ulongField.RegisterValueChangedCallback(evt => { 
+                                    data[i][col] = evt.newValue.ToString();
+                                });
                             }
                             break;
-
                         case "sbyte":
                         case "short":
                         case "int":
                             {
-                                var intField = new IntegerField() { value = int.Parse(data[i][col]) };
-                                intField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
+                                var intField = e as IntegerField;
+                                if (int.TryParse(data[i][col], out int intResult))
+                                {
+                                    intField.value = intResult;
+                                }
+                                else
+                                {
+                                    Debug.Log($"Parse failed for uint value: {data[i][col]} at row: {i}, col: {colName}");
+                                }
+                                intField.RegisterValueChangedCallback(evt => {
+                                    data[i][col] = evt.newValue.ToString();
+                                });
                             }
                             break;
-
-
                         case "long":
                             {
-                                var longField = new LongField() { value = long.Parse(data[i][col]) };
+                                var longField = e as LongField;
+                                if (long.TryParse(data[i][col], out long longResult))
+                                {
+                                    longField.value = longResult;
+                                }
+                                else
+                                {
+                                    Debug.Log($"Parse failed for uint value: {data[i][col]} at row: {i}, col: {colName}");
+                                }
                                 longField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
                             }
                             break;
-
                         case "double":
                             {
-                                var doubleField = new DoubleField() { value = double.Parse(data[i][col]) };
+                                var doubleField = e as DoubleField;
+                                if (double.TryParse(data[i][col], out double doubleResult))
+                                {
+                                    doubleField.value = doubleResult;
+                                }
+                                else
+                                {
+                                    Debug.Log($"Parse failed for uint value: {data[i][col]} at row: {i}, col: {colName}");
+                                }
                                 doubleField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
                             }
                             break;
                         case "float":
                             {
-                                var floatField = new FloatField() { value = float.Parse(data[i][col]) };
+                                var floatField = e as FloatField;
+                                if (float.TryParse(data[i][col], out float floatResult))
+                                {
+                                    floatField.value = floatResult;
+                                }
+                                else
+                                {
+                                    Debug.Log($"Parse failed for uint value: {data[i][col]} at row: {i}, col: {colName}");
+                                }
                                 floatField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
                             }
                             break;
-
                         case "bool":
                             {
-                                var boolValue = new List<string>() { "True", "False" };
-                                var popup = new PopupField<string>(boolValue, 0);
+                                var boolValue = new List<string>() { "true", "false" };
+                                var popup = e as PopupField<string>;
+                                popup.choices = boolValue;
+                                popup.value = ConvertBoolean.ToBoolString(data[i][col]);
                                 popup.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
                             }
                             break;
@@ -375,7 +433,8 @@ public class DataEditWindow : EditorWindow
                         case "string":
                         default:
                             {
-                                var textField = new TextField() { value = data[i][col] };
+                                var textField = e as TextField;
+                                textField.value = data[i][col];
                                 textField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue; });
                             }
                             break;

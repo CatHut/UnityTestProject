@@ -85,9 +85,9 @@ namespace CatHut
         /// IndexDuplicatableがtrueの場合DictionaryのValueにはListが格納される
         /// </summary>
         public string IndexDuplicatableString {
-            get { return IndexDuplicatable ? "True" : "False"; }
+            get { return IndexDuplicatable ? "true" : "false"; }
             set { 
-                if(value == "True" )
+                if(value == "true" )
                 { 
                     IndexDuplicatable = true;
                 }

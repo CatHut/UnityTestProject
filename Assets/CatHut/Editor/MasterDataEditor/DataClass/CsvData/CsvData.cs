@@ -65,6 +65,12 @@ namespace CatHut
             get { return this.data; }
         }
 
+        public List<List<string>> DataWithoutColumnTitle
+        {
+            get { return this.data.Skip(ColumnTitleRow + 1).ToList(); }
+        }
+
+
         public string FilePath
         {
             set { filePath = value; }

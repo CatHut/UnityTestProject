@@ -164,7 +164,7 @@ public class HeaderEditWindow : EditorWindow
         editArea.Add(indexVariableDropdown);
 
         // IndexDuplicatableのチェックボックス
-        var boolValue = new List<string>() { "True", "False" };
+        var boolValue = new List<string>() { "true", "false" };
         var indexDuplicatableDropdown = new PopupField<string>("indexDuplicatable", boolValue, 0);
         indexDuplicatableDropdown.name = "indexDuplicatable";
         indexDuplicatableDropdown.value = header.IndexDuplicatableString;
