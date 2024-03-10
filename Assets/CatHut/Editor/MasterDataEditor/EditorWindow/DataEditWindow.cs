@@ -240,25 +240,11 @@ public class DataEditWindow : EditorWindow
 
     private void CreateDataGroupEditArea(VisualElement editArea)
     {
-        editArea.Add(new Button(() => {
-            //ボタン押したときの処理書く
-        })
-        { text = "Add Table" });
+        editArea.Clear();
+        // 編集対象のフォルダ選択ドロップダウン
+        var message = new Label("Select Child Element");
 
-        editArea.Add(new Button(() => {
-            //ボタン押したときの処理書く
-        })
-        { text = "Delete Table" });
-
-        editArea.Add(new Button(() => {
-            //ボタン押したときの処理書く
-        })
-        { text = "Add Header" });
-
-        editArea.Add(new Button(() => {
-            //ボタン押したときの処理書く
-        })
-        { text = "Delete Header" });
+        editArea.Add(message);
     }
 
 
@@ -371,11 +357,8 @@ public class DataEditWindow : EditorWindow
                     var type = header.VariableDic[colName].Type;
                     var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
 
-
                     //データ
                     var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
-                    
-                    Debug.Log("i:" + i.ToString());
 
                     switch (type)
                     {
