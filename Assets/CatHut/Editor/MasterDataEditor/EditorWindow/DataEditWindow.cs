@@ -1,4 +1,5 @@
 ﻿using CatHut;
+using DG.Tweening.Plugins.Core.PathCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -88,8 +89,10 @@ public class DataEditWindow : EditorWindow
     private void ConfigureTreeView(VisualElement container)
     {
         var id = 0;
+        var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
         EditorSharedData.UpdateData();
-        var dgd = EditorSharedData.RawMasterData.DataGroupDic;
+        var dgd = EditorSharedData.RawMasterData.EachPathDataGroupDic[path];
+
         _rootItems = new List<TreeViewItemData<Item>>();
         foreach (var dg in dgd)
         {
@@ -162,9 +165,11 @@ public class DataEditWindow : EditorWindow
     {
         var name = GetSelectedAndParentItemNames(TreeView);
 
-        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart; //ヘッダ情報
+        var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
+
+        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
         var gTable = EditorSharedData.RawMasterData.GrobalTableData;    //グローバルテーブル
-        var dg = EditorSharedData.RawMasterData.DataGroupDic[name.parentName];  //データグループ
+        var dg = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName];  //データグループ
 
 
         // VariableDicのListView
@@ -178,7 +183,7 @@ public class DataEditWindow : EditorWindow
 
         editArea.Add(new Button(() => {
 
-            EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.Save();
+            EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.Save();
 
         })
         { text = "Save" });
@@ -211,11 +216,12 @@ public class DataEditWindow : EditorWindow
 
     private void UpdateHeaderEditUi(VisualElement editArea)
     {
+        var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
         var name = GetSelectedAndParentItemNames(TreeView);
         var variableListView = editArea.Q<MultiColumnListView>("DataListView");
 
         //データ取得
-        var data = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
+        var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
 
         //ソース設定
         variableListView.itemsSource = data;
@@ -279,11 +285,12 @@ public class DataEditWindow : EditorWindow
         var name = GetSelectedAndParentItemNames(TreeView);
 
         //ヘッダ情報
-        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart; 
+        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
 
+        var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
 
         //ソース設定 TODO
-        //variableListView.itemsSource = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle; ;
+        variableListView.itemsSource = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle; ;
 
 
         // 列の定義を動的に行う
@@ -354,9 +361,11 @@ public class DataEditWindow : EditorWindow
                 {
                     var col = header.VariableDic[colName].ColumnIndex;
                     var type = header.VariableDic[colName].Type;
-                    
+                    var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
+
+
                     //データ
-                    var data = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
+                    var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
                     
                     Debug.Log("i:" + i.ToString());
 

@@ -20,6 +20,14 @@ namespace CatHut
                 return _DataGroupDic;
             }
         }
+        public SerializableDictionary<string, SerializableDictionary<string, DataGroup>> EachPathDataGroupDic
+        {
+            get
+            {
+                return _EachPathDataGroupDic;
+            }
+        }
+
 
         public TableData GrobalTableData
         {

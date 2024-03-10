@@ -90,6 +90,7 @@ namespace CatHut
             HeaderPart.FilePath = csvFiles[0];
             HeaderPart.SetHeaderInfo();
 
+            SetVariableColumnIndex(folder);
         }
 
         public void AddData(string folder)
@@ -132,6 +133,35 @@ namespace CatHut
             SetVariableColumnIndex();
         }
 
+        //インデックス取得するがここでのデータは一旦破棄する。
+        private void SetVariableColumnIndex(string folder)
+        {
+            var searchPattern = "Data_*.csv";
+            string[] csvFiles = Directory.GetFiles(folder, searchPattern);
+
+            if (csvFiles.Length == 0)
+            {
+                DataPart = null;
+                Enable = false;
+                return;
+            }
+
+            DataPart = new CsvData(csvFiles[0]);
+
+            if (DataPart == null) { return; }
+
+            var titleRow = DataPart.Data[0];
+
+            foreach (var title in titleRow)
+            {
+                if (HeaderPart.VariableDic.ContainsKey(title))
+                {
+                    HeaderPart.VariableDic[title].ColumnIndex = titleRow.IndexOf(title);
+                }
+            }
+
+            DataPart = null;
+        }
 
         private void SetVariableColumnIndex()
         {
