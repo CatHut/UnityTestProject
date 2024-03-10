@@ -18,6 +18,8 @@ public class DataEditWindow : EditorWindow
     private List<TreeViewItemData<Item>> _rootItems;
     private TreeView TreeView;
 
+    private readonly string UI_ITEM_MASTER_DATA_PATH = "MasterDataPath";
+
 
     [MenuItem("Tools/CatHut/MasterDataEditor/Data Edit")]
     public static void ShowWindow()
@@ -52,8 +54,8 @@ public class DataEditWindow : EditorWindow
 
         // 編集対象のフォルダ選択ドロップダウン
         var folderList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
-        var masterDataPathDropdown = new PopupField<string>("MasterDataPath", folderList, 0);
-        masterDataPathDropdown.name = "MasterDataPath";
+        var masterDataPathDropdown = new PopupField<string>(UI_ITEM_MASTER_DATA_PATH, folderList, 0);
+        masterDataPathDropdown.name = UI_ITEM_MASTER_DATA_PATH;
         masterDataPathDropdown.value = MasterDataEditorConfig.settings.SelectedMasterDataPath;
 
         // 値が変更されたときの処理を登録
@@ -89,7 +91,7 @@ public class DataEditWindow : EditorWindow
     private void ConfigureTreeView(VisualElement container)
     {
         var id = 0;
-        var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
+        var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
         EditorSharedData.UpdateData();
         var dgd = EditorSharedData.RawMasterData.EachPathDataGroupDic[path];
 
@@ -165,7 +167,7 @@ public class DataEditWindow : EditorWindow
     {
         var name = GetSelectedAndParentItemNames(TreeView);
 
-        var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
+        var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
 
         var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
         var gTable = EditorSharedData.RawMasterData.GrobalTableData;    //グローバルテーブル
@@ -184,6 +186,9 @@ public class DataEditWindow : EditorWindow
         editArea.Add(new Button(() => {
 
             EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.Save();
+            var file = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.FilePath;
+
+            AssetDatabase.ImportAsset(file);
 
         })
         { text = "Save" });
@@ -192,7 +197,7 @@ public class DataEditWindow : EditorWindow
         editArea.Add(new Button(() => {
 
 
-            UpdateHeaderEditUi(editArea);
+            UpdateDataEditUi(editArea);
 
         })
         { text = "Csv Reload" });
@@ -214,11 +219,14 @@ public class DataEditWindow : EditorWindow
         CreateDataEditArea(editArea);
     }
 
-    private void UpdateHeaderEditUi(VisualElement editArea)
+    private void UpdateDataEditUi(VisualElement editArea)
     {
-        var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
+        var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
         var name = GetSelectedAndParentItemNames(TreeView);
         var variableListView = editArea.Q<MultiColumnListView>("DataListView");
+
+        //データリロード
+        EditorSharedData.RawMasterData.DataReload(path);
 
         //データ取得
         var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
@@ -287,7 +295,7 @@ public class DataEditWindow : EditorWindow
         //ヘッダ情報
         var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
 
-        var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
+        var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
 
         //ソース設定 TODO
         variableListView.itemsSource = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle; ;
@@ -361,7 +369,7 @@ public class DataEditWindow : EditorWindow
                 {
                     var col = header.VariableDic[colName].ColumnIndex;
                     var type = header.VariableDic[colName].Type;
-                    var path = rootVisualElement.Q<PopupField<string>>("MasterDataPath").value;
+                    var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
 
 
                     //データ

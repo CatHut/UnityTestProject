@@ -72,6 +72,11 @@ namespace CatHut
 
         }
 
+        public void DataReload(string folderPath)
+        {
+            ImportDataMultiply(folderPath, _EachPathDataGroupDic[folderPath]);
+        }
+
         public void ImportMasterData(string folderPath)
         {
 
@@ -150,7 +155,7 @@ namespace CatHut
             string[] subFolders = Directory.GetDirectories(folder);
 
 
-            //ヘッダ情報がない場合にここで補正
+            //データ読み込み
             foreach (string subFolder in subFolders)
             {
                 string subFolderName = new DirectoryInfo(subFolder).Name;
