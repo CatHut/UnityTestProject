@@ -4,30 +4,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEditor;
+using UnityEngine;
 
 namespace CatHut
 {
+    [Serializable]
     public class VariableInfo
     {
         /// <summary>
         /// 変数名
         /// </summary>
-        public string Name { get; set; }
+        [SerializeField]
+        public string Name;
         /// <summary>
         /// 型名
         /// </summary>
-        public string Type { get; set; }
-        /// <summary>
+        [SerializeField]
+        public string Type;
         /// 変数の説明
         /// </summary>
-        public string Description { get; set; }
+        [SerializeField]
+        public string Description;
         /// <summary>
         /// データ列（DataのCsvにおける列）
         /// </summary>
-        public int ColumnIndex { get; set; }
+        [SerializeField]
+        public int ColumnIndex;
 
     }
 
+    [Serializable]
     public class HeaderInfo
     {
         //CSV Header識別子
@@ -45,40 +51,47 @@ namespace CatHut
         /// <summary>
         /// Header情報を保存しているCSVのパス
         /// </summary>
-        public string FilePath { get; set; }
-        
+        [SerializeField]
+        public string FilePath;
+
         /// <summary>
         /// このデータクラスのクラス名
         /// </summary>
-        public string ClassName { get; set; }
+        [SerializeField]
+        public string ClassName;
 
         /// <summary>
         /// このデータクラスの親クラス名
         /// </summary>
-        public string ParentName { get; set; }
+        [SerializeField]
+        public string ParentName;
 
         /// <summary>
         /// このクラスが管理する変数リスト
         /// key:Name
         /// value:VariableInfo
         /// </summary>
-        public Dictionary<string, VariableInfo> VariableDic { get; set; }
+        [SerializeField]
+        public SerializableDictionary<string, VariableInfo> VariableDic;
 
         /// <summary>
         /// ユーザが任意に指定できるカスタム値
         /// </summary>
-        public Dictionary<string, List<string>> CustomValue { get; set; }
+        [SerializeField]
+        public SerializableDictionary<string, List<string>> CustomValue;
 
         /// <summary>
         /// IDなどインデックスとして使用する変数リスト
         /// これをキーにUnity上でDictionaryを作成します。
         /// </summary>
-        public string IndexVariable { get; set; }
+        [SerializeField]
+        public string IndexVariable;
 
         /// <summary>
         /// キーの重複を許容するか。（同じキーに複数のデータを保持するか）
         /// IndexDuplicatableがtrueの場合DictionaryのValueにはListが格納される
         /// </summary>
+        [SerializeField]
         public bool IndexDuplicatable;
         /// <summary>
         /// キーの重複を許容するか。（同じキーに複数のデータを保持するか）
@@ -98,26 +111,21 @@ namespace CatHut
             }
         }
 
-
-        /// <summary>
-        /// 親データグループ
-        /// </summary>
-        public DataGroup Parent { get; set; }
-
         /// <summary>
         /// インポートしたCSVのRawデータ
         /// </summary>
-        public CsvData CsvData { get; set; }
+        [SerializeField]
+        public CsvData CsvData;
 
-        public HeaderInfo(DataGroup dg)
+
+        public HeaderInfo()
         {
-            Parent = dg;
 
             ClassName = "";
             ParentName = "";
 
-            CustomValue = new Dictionary<string, List<string>>();
-            VariableDic = new Dictionary<string, VariableInfo>();
+            CustomValue = new SerializableDictionary<string, List<string>>();
+            VariableDic = new SerializableDictionary<string, VariableInfo>();
 
             IndexVariable = "";
             IndexDuplicatable = false;
@@ -173,13 +181,13 @@ namespace CatHut
         /// <param name="i">#Variableが見つかった行番号</param>
         private void SetVariableInfo(int VariableRow)
         {
-            var VariableInfoColumn = new Dictionary<string, int>();
+            var VariableInfoColumn = new SerializableDictionary<string, int>();
 
             var columnNameRow = VariableRow + 1;
 
             for (int i = 0; i < CsvData.Data[columnNameRow].Count; i++)
             {
-                VariableInfoColumn.Add(CsvData.Data[columnNameRow][i], i);
+                VariableInfoColumn[CsvData.Data[columnNameRow][i]]= i;
             }
 
             for (int i = VariableRow + 2; i < CsvData.Data.Count; i++)
@@ -195,14 +203,7 @@ namespace CatHut
                     variableInfo.Description = CsvData.Data[i][VariableInfoColumn[IDENTIFIER_VARUALBEDESCRIPTION]];
 
                     //未登録の場合は追加、登録済みは上書き
-                    if (!VariableDic.ContainsKey(variableInfo.Name))
-                    {
-                        VariableDic.Add(variableInfo.Name, variableInfo);
-                    }
-                    else
-                    {
-                        VariableDic[variableInfo.Name] = variableInfo;
-                    }
+                    VariableDic[variableInfo.Name] = variableInfo;
                 }
             }
         }
@@ -229,16 +230,7 @@ namespace CatHut
                     }
 
                     //未登録の場合は追加、登録済みは上書き
-                    if (!CustomValue.ContainsKey(CsvData.Data[i][0]))
-                    {
-                        CustomValue.Add(CsvData.Data[i][0], customValue);
-                    }
-                    else
-                    {
-                        CustomValue[CsvData.Data[i][0]] = customValue;
-                    }
-
-
+                    CustomValue[CsvData.Data[i][0]] = customValue;
                 }
             }
         }

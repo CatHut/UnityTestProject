@@ -268,7 +268,7 @@ public class HeaderEditWindow : EditorWindow
 
         editArea.Add(new Button(() => {
 
-            var updateDic = new Dictionary<string, VariableInfo>();
+            var updateDic = new SerializableDictionary<string, VariableInfo>();
 
             //更新後のVariableInfoを取得
             foreach (var item in variableListView.itemsSource)

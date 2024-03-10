@@ -5,15 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using DG.Tweening.Plugins.Core.PathCore;
+using UnityEngine;
 
 namespace CatHut
 {
+    [Serializable]
     public class DataGroup
     {
-        private SerializableDictionary<string, FormatedCsvData> _FormatedCsvDic;
-        private TableData _TableData;
-        bool _Enable = false;
+        [SerializeField]
+        public SerializableDictionary<string, FormatedCsvData> _FormatedCsvDic;
+        [SerializeField]
+        public TableData _TableData;
+        [SerializeField]
+        public bool _Enable = false;
 
+        [SerializeField]
         public string Name { get; set; }
 
         public SerializableDictionary<string, FormatedCsvData> FormatedCsvDic
@@ -48,7 +54,7 @@ namespace CatHut
             {
                 string subSubFolderName = new DirectoryInfo(subSubFolder).Name;
 
-                this._FormatedCsvDic.Add(subSubFolderName, new FormatedCsvData(this, subSubFolder));
+                this._FormatedCsvDic[subSubFolderName]= new FormatedCsvData(subSubFolder);
             }
 
             foreach (var kvp in _FormatedCsvDic)
@@ -81,9 +87,9 @@ namespace CatHut
 
                 //この段階ではヘッダ情報のみ設定
                 var fcd = new FormatedCsvData();
-                fcd.SetHeaderInfo(this, subSubFolder);
+                fcd.SetHeaderInfo(subSubFolder);
                 fcd.Enable = false;
-                this._FormatedCsvDic.Add(subSubFolderName, fcd);
+                this._FormatedCsvDic[subSubFolderName] = fcd;
             }
 
         }
@@ -97,19 +103,20 @@ namespace CatHut
             {
                 string subSubFolderName = new DirectoryInfo(subSubFolder).Name;
 
-                //データを追加
-                this._FormatedCsvDic[subSubFolderName].AddData(subSubFolder);
+                if (_FormatedCsvDic.ContainsKey(subSubFolderName))
+                {
+                    //データを追加
+                    this._FormatedCsvDic[subSubFolderName].AddData(subSubFolder);
+                }
             }
-
-
         }
 
-        public void AdjustDicitonary()
+        public void AdjustDicitonaryByHeader()
         {
             //要素のないキーは削除する
             foreach (var key in this._FormatedCsvDic.Keys.ToList())
             {
-                if (this._FormatedCsvDic[key].DataPart == null || this._FormatedCsvDic[key].HeaderPart == null)
+                if (this._FormatedCsvDic[key].HeaderPart == null)
                 {
                     this._FormatedCsvDic.Remove(key);
                 }
@@ -120,6 +127,27 @@ namespace CatHut
             }
 
             if(_FormatedCsvDic.Count > 0)
+            {
+                _Enable = true;
+            }
+        }
+
+        public void AdjustDicitonaryByData()
+        {
+            //要素のないキーは削除する
+            foreach (var key in this._FormatedCsvDic.Keys.ToList())
+            {
+                if (this._FormatedCsvDic[key].DataPart == null)
+                {
+                    this._FormatedCsvDic.Remove(key);
+                }
+                else
+                {
+                    _FormatedCsvDic[key].Enable = true;
+                }
+            }
+
+            if (_FormatedCsvDic.Count > 0)
             {
                 _Enable = true;
             }

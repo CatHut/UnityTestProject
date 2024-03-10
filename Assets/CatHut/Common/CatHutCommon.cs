@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using UnityEngine;
 
 namespace CatHut
 {
@@ -32,6 +33,22 @@ namespace CatHut
                 return (T)xs.Deserialize(XmlReader.Create(ms));
 
             }
+        }
+
+        /// <summary>
+        /// 指定されたクラスのインスタンスをディープコピーする。
+        /// JsonUtilityを使用してJSON形式でシリアライズおよびデシリアライズを行う。
+        /// </summary>
+        /// <typeparam name="T">型</typeparam>
+        /// <param name="obj">コピーするインスタンス</param>
+        /// <returns>コピーされたインスタンス</returns>
+        public static T DeepCloneJson<T>(T obj)
+        {
+            // オブジェクトをJSON文字列にシリアライズ
+            string json = JsonUtility.ToJson(obj);
+
+            // JSON文字列から新しいインスタンスにデシリアライズ
+            return JsonUtility.FromJson<T>(json);
         }
     }
 }

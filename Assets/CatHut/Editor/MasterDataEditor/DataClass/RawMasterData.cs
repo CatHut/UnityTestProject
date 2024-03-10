@@ -3,15 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.WSA;
+using UnityEngine;
 
 namespace CatHut
 {
     public class RawMasterData
     {
-        private SerializableDictionary<string, DataGroup> _DataGroupDic;
+        private SerializableDictionary<string, DataGroup> _DataGroupDic;    //こっちではヘッダ情報のみを管理
+        private SerializableDictionary<string, SerializableDictionary<string, DataGroup>> _EachPathDataGroupDic;    //パスごとのデータ管理
         private TableData _GrobalTableData;
 
         public SerializableDictionary<string, DataGroup> DataGroupDic
@@ -48,8 +47,21 @@ namespace CatHut
                 if (!Directory.Exists(folderPath)) { continue; }
 
                 _GrobalTableData.AddTableData(folderPath);
-                ImportMasterDataMultiply(folderPath);
+                ImportHeaderMultiply(folderPath);
             }
+
+
+            this._EachPathDataGroupDic = new SerializableDictionary<string, SerializableDictionary<string, DataGroup>>();
+
+            foreach (var folderPath in folderPathList)
+            {
+                if (!Directory.Exists(folderPath)) { continue; }
+
+                var temp = CatHutCommon.DeepCloneJson(_DataGroupDic);
+                _EachPathDataGroupDic[folderPath] = temp;
+                ImportDataMultiply(folderPath, _EachPathDataGroupDic[folderPath]);
+            }
+
         }
 
         public void ImportMasterData(string folderPath)
@@ -64,7 +76,7 @@ namespace CatHut
             {
                 string subFolderName = new DirectoryInfo(subFolder).Name;
 
-                this._DataGroupDic.Add(subFolderName, new DataGroup(subFolder));
+                this._DataGroupDic[subFolderName] = new DataGroup(subFolder);
 
             }
 
@@ -78,17 +90,18 @@ namespace CatHut
             }
         }
 
-        public void ImportMasterDataMultiply(string folderPath)
+        /// <summary>
+        /// フォルダ内にあるヘッダ情報を登録する。
+        /// </summary>
+        /// <param name="folderPath"></param>
+        public void ImportHeaderMultiply(string folderPath)
         {
 
             var folder = folderPath;
 
-            this._DataGroupDic = new SerializableDictionary<string, DataGroup>();
-
             string[] subFolders = Directory.GetDirectories(folder);
 
-
-
+            this._DataGroupDic = new SerializableDictionary<string, DataGroup>();
 
             //一旦ヘッダ情報を生成(重複時は上書きされる)
             foreach (string subFolder in subFolders)
@@ -98,27 +111,58 @@ namespace CatHut
                 var dg = new DataGroup();
                 dg.SetHeaderInfo(subFolder);
 
-                this._DataGroupDic.Add(subFolderName, dg);
+                if(_DataGroupDic.ContainsKey(subFolderName) == true)
+                {
+                    Debug.LogWarning(subFolderName + "header is Already Registered. " + "It is overwritten by " + subFolder);
+                }
+                this._DataGroupDic[subFolderName] = dg;
             }
-
-            //データ設定（全て追加）
-            foreach (string subFolder in subFolders)
-            {
-                string subFolderName = new DirectoryInfo(subFolder).Name;
-
-                this._DataGroupDic[subFolderName].SetData(subFolder);
-            }
-
 
             //要素のないキーは削除する
             foreach (var key in this._DataGroupDic.Keys.ToList())
             {
                 //格納状況により調整。
-                _DataGroupDic[key].AdjustDicitonary();
+                _DataGroupDic[key].AdjustDicitonaryByHeader();
 
                 if (this._DataGroupDic[key].FormatedCsvDic.Count == 0)
                 {
                     this._DataGroupDic.Remove(key);
+                }
+            }
+        }
+
+        /// <summary>
+        /// フォルダ内にあるヘッダ情報を登録する。
+        /// </summary>
+        /// <param name="folderPath"></param>
+        public void ImportDataMultiply(string folderPath, SerializableDictionary<string, DataGroup> dataGroupDic)
+        {
+            var folder = folderPath;
+
+            string[] subFolders = Directory.GetDirectories(folder);
+
+
+            //ヘッダ情報がない場合にここで補正
+            foreach (string subFolder in subFolders)
+            {
+                string subFolderName = new DirectoryInfo(subFolder).Name;
+
+                if (dataGroupDic.ContainsKey(subFolderName))
+                {
+                    dataGroupDic[subFolderName].SetData(subFolder);
+                }
+            }
+
+
+            //要素のないキーは削除する
+            foreach (var key in dataGroupDic.Keys.ToList())
+            {
+                //格納状況により調整。
+                dataGroupDic[key].AdjustDicitonaryByData();
+
+                if (dataGroupDic[key].FormatedCsvDic.Count == 0)
+                {
+                    dataGroupDic.Remove(key);
                 }
             }
         }

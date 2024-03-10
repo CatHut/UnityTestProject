@@ -4,36 +4,38 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using UnityEngine;
 
 namespace CatHut
 {
 
+    [Serializable]
     public class FormatedCsvData
     {
         /// <summary>
         /// データ部
         /// </summary>
-        public CsvData DataPart { get; set; }
+        [SerializeField]
+        public CsvData DataPart;
         /// <summary>
         /// ヘッダ部
         /// </summary>
-        public HeaderInfo HeaderPart { get; set; }
+        [SerializeField]
+        public HeaderInfo HeaderPart;
 
-        public DataGroup Parent { get; set; }
-
-        public bool Enable { get; set; }
+        [SerializeField]
+        public bool Enable;
 
         public FormatedCsvData() { 
         
         }
 
 
-        public FormatedCsvData(DataGroup dg, string folder)
+        public FormatedCsvData(string folder)
         {
-            Parent = dg;
             Enable = true;
             
-            HeaderPart = new HeaderInfo(Parent);
+            HeaderPart = new HeaderInfo();
 
             string searchPattern = "Header_*.csv";
             string[] csvFiles = Directory.GetFiles(folder, searchPattern);
@@ -68,12 +70,11 @@ namespace CatHut
 
         }
 
-        public void SetHeaderInfo(DataGroup dg, string folder)
+        public void SetHeaderInfo(string folder)
         {
-            Parent = dg;
             Enable = true;
 
-            HeaderPart = new HeaderInfo(Parent);
+            HeaderPart = new HeaderInfo();
 
             string searchPattern = "Header_*.csv";
             string[] csvFiles = Directory.GetFiles(folder, searchPattern);

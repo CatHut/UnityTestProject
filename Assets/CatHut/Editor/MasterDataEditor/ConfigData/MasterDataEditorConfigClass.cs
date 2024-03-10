@@ -62,10 +62,16 @@ public static class MasterDataEditorConfig
     [System.Serializable]
     public class MasterDataEditorConfigData
     {
+        //全般設定
         public List<string> CsvMasterDataPathList = new List<string>();
         public string CreatedScriptableObjectClassPath = "";
         public string ScriptableObjectInstancePath = "";
         public string CreatedMasterDataClassPath = "";
-    }    
+
+
+        //DataEditor設定
+        public string SelectedMasterDataPath = "";
+
+    }
 }
 

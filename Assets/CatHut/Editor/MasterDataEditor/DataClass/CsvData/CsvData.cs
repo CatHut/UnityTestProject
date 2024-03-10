@@ -5,31 +5,38 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using UnityEngine;
 
 namespace CatHut
 {
+    [Serializable]
     public class CsvData
     {
         /// <summary>
         /// CSVデータ
         /// </summary>
+        [SerializeField]
         private List<List<string>> data;
 
         /// <summary>
         /// 列名の辞書 key:列名 , value:インデックス
         /// </summary>
-        private Dictionary<string, int> ColumnDic;
+        [SerializeField]
+        private SerializableDictionary<string, int> ColumnDic;
 
         /// <summary>
         /// 列名のタイトル行
         /// </summary>
+        [SerializeField]
         private int ColumnTitleRow = 0;
 
         /// <summary>
         /// ファイルのフルパス
         /// </summary>
+        [SerializeField]
         private string filePath;
 
+        [SerializeField]
         private Encoding FileEncode = Encoding.UTF8;
 
 
@@ -112,7 +119,7 @@ namespace CatHut
                     this.data = reader.ReadToEnd();
                 }
 
-                ColumnDic = new Dictionary<string, int>();
+                ColumnDic = new SerializableDictionary<string, int>();
 
                 int i = 0;
                 foreach (string str in data[ColumnTitleRow])

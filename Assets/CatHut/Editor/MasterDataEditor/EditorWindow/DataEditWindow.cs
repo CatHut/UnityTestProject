@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -13,8 +14,8 @@ using UnityEngine.UIElements;
 public class DataEditWindow : EditorWindow
 {
 
-    private readonly List<TreeViewItemData<Item>> _rootItems = new();
-    private TreeView treeView;
+    private List<TreeViewItemData<Item>> _rootItems;
+    private TreeView TreeView;
 
 
     [MenuItem("Tools/CatHut/MasterDataEditor/Data Edit")]
@@ -39,64 +40,98 @@ public class DataEditWindow : EditorWindow
         // ルート
         var root = rootVisualElement;
 
+        // 垂直分割
+        var varticalSplitView = new TwoPaneSplitView(0, 100, TwoPaneSplitViewOrientation.Vertical);
+        root.Add(varticalSplitView);
+        var topPane = new VisualElement();
+        var bottomPane = new VisualElement();
+
+        varticalSplitView.Add(topPane);
+        varticalSplitView.Add(bottomPane);
+
+        // 編集対象のフォルダ選択ドロップダウン
+        var folderList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
+        var masterDataPathDropdown = new PopupField<string>("MasterDataPath", folderList, 0);
+        masterDataPathDropdown.name = "MasterDataPath";
+        masterDataPathDropdown.value = MasterDataEditorConfig.settings.SelectedMasterDataPath;
+
+        // 値が変更されたときの処理を登録
+        masterDataPathDropdown.RegisterValueChangedCallback(evt =>
+        {
+            //Treeビュー等の更新
+            MasterDataEditorConfig.settings.SelectedMasterDataPath = evt.newValue;
+            MasterDataEditorConfig.SaveSettings();
+
+            //データリロード
+        });
+        topPane.Add(masterDataPathDropdown);
+
         // 水平分割
-        var splitView = new TwoPaneSplitView(0, 200, TwoPaneSplitViewOrientation.Horizontal);
-        root.Add(splitView);
+        var horizontalSplitView = new TwoPaneSplitView(0, 200, TwoPaneSplitViewOrientation.Horizontal);
+        bottomPane.Add(horizontalSplitView);
 
         var leftPane = new VisualElement();
-        splitView.Add(leftPane);
+        horizontalSplitView.Add(leftPane);
 
+        // 編集領域（初期は空）
+        var rightPane = new VisualElement();
+        rightPane.name = "editArea";
+        horizontalSplitView.Add(rightPane);
 
         //ツリービューを構成
+        ConfigureTreeView(leftPane);
+
+    }
+
+
+    // CreateGUIメソッドのTreeView関連の構築部分を分離した関数
+    private void ConfigureTreeView(VisualElement container)
+    {
         var id = 0;
         EditorSharedData.UpdateData();
         var dgd = EditorSharedData.RawMasterData.DataGroupDic;
+        _rootItems = new List<TreeViewItemData<Item>>();
         foreach (var dg in dgd)
         {
             var items = new List<TreeViewItemData<Item>>();
             foreach (var innerItem in dg.Value.FormatedCsvDic)
             {
-                var item = new TreeViewItemData<Item>(id, new Item { Name = innerItem.Key, HierarchyLevel = 1, Id = id }) ;
+                var item = new TreeViewItemData<Item>(id, new Item { Name = innerItem.Key, HierarchyLevel = 1, Id = id });
                 id++;
                 items.Add(item);
             }
 
             // ルートアイテムを作成し、子アイテムを追加
-            var rootItem = new TreeViewItemData<Item>(id, new Item { Name = dg.Key, HierarchyLevel = 0, Id = id }, items);
-            id++;
-            // ルートアイテムのみをデータソースに追加
-            _rootItems.Add(rootItem);
+            if (items.Count > 0)
+            {
+                var rootItem = new TreeViewItemData<Item>(id, new Item { Name = dg.Key, HierarchyLevel = 0, Id = id }, items);
+                id++;
+                // ルートアイテムのみをデータソースに追加
+                _rootItems.Add(rootItem);
+            }
         }
 
-        treeView = new TreeView(); 
-        treeView.SetRootItems(_rootItems);
-        treeView.selectionType = SelectionType.Single;
-        treeView.style.flexGrow = 1;
-        treeView.selectionChanged += OnTreeViewSelectionChange;
+        TreeView = new TreeView();
+        TreeView.SetRootItems(_rootItems);
+        TreeView.selectionType = SelectionType.Single;
+        TreeView.style.flexGrow = 1;
+        TreeView.selectionChanged += OnTreeViewSelectionChange;
 
-        treeView.makeItem = () => {
+        TreeView.makeItem = () => {
             var label = new Label();
             label.style.flexGrow = 1;
             label.style.unityTextAlign = TextAnchor.MiddleLeft;
             return label;
         };
 
-        // アイテムの内容を設定する処理
-        treeView.bindItem = (e, i) => e.Q<Label>().text = treeView.GetItemDataForIndex<Item>(i).Name;
+        TreeView.bindItem = (e, i) => e.Q<Label>().text = TreeView.GetItemDataForIndex<Item>(i).Name;
 
-        treeView.Rebuild();
+        TreeView.Rebuild();
 
-        leftPane.Add(treeView);
+        container.Add(TreeView);
 
-        // 編集領域（初期は空）
-        var rightPane = new VisualElement();
-        rightPane.name = "editArea";
-        splitView.Add(rightPane);
-
-
-        //初期選択状態設定
-        treeView.SetSelectionById(0);
-
+        // 初期選択状態設定
+        TreeView.SetSelectionById(0);
     }
 
     private void OnTreeViewSelectionChange(IEnumerable<object> selectedItems)
@@ -125,7 +160,7 @@ public class DataEditWindow : EditorWindow
 
     private void CreateDataEditArea(VisualElement editArea)
     {
-        var name = GetSelectedAndParentItemNames(treeView);
+        var name = GetSelectedAndParentItemNames(TreeView);
 
         var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart; //ヘッダ情報
         var gTable = EditorSharedData.RawMasterData.GrobalTableData;    //グローバルテーブル
@@ -176,7 +211,7 @@ public class DataEditWindow : EditorWindow
 
     private void UpdateHeaderEditUi(VisualElement editArea)
     {
-        var name = GetSelectedAndParentItemNames(treeView);
+        var name = GetSelectedAndParentItemNames(TreeView);
         var variableListView = editArea.Q<MultiColumnListView>("DataListView");
 
         //データ取得
@@ -241,14 +276,14 @@ public class DataEditWindow : EditorWindow
     {
 
         // 選択状態取得
-        var name = GetSelectedAndParentItemNames(treeView);
+        var name = GetSelectedAndParentItemNames(TreeView);
 
         //ヘッダ情報
         var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart; 
 
 
-        //ソース設定
-        variableListView.itemsSource = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle; ;
+        //ソース設定 TODO
+        //variableListView.itemsSource = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle; ;
 
 
         // 列の定義を動的に行う

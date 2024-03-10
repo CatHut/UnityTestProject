@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using UnityEngine;
 
 namespace CatHut
 {
+    [Serializable]
     public class Table
     {
         /// <summary>
@@ -17,16 +19,21 @@ namespace CatHut
         /// <summary>
         /// テーブルが所有するラベルと値のデータセットDictionary
         /// </summary>
-        public Dictionary<string, string> DataSet;
+        public SerializableDictionary<string, string> DataSet;
 
         public Table(string name)
         {
             Name = name;
-            DataSet = new Dictionary<string, string>();
+            DataSet = new SerializableDictionary<string, string>();
+        }
+
+        public Table() {
+            DataSet = new SerializableDictionary<string, string>();
         }
     }
 
 
+    [Serializable]
     public class TableData
     {
 
@@ -35,23 +42,26 @@ namespace CatHut
 
 
         //テーブルデータ
-        public Dictionary<string, Table> TableDic;
+        [SerializeField]
+        public SerializableDictionary<string, Table> TableDic;
 
         /// <summary>
         /// インポートしたCSVのRawデータ
         /// </summary>
-        public CsvData CsvData { get; set; }
+        [SerializeField]
+        public CsvData CsvData;
 
-        public string Path { get; set; }
+        [SerializeField]
+        public string Path;
 
         public TableData() {
-            TableDic = new Dictionary<string, Table>();
+            TableDic = new SerializableDictionary<string, Table>();
         }
 
         public TableData(string folder)
         {
 
-            TableDic = new Dictionary<string, Table>();
+            TableDic = new SerializableDictionary<string, Table>();
             Path = folder + "\\" + TABLE_FOLDER_NAME + "\\" + TABLE_FILE_NAME;
 
             if (File.Exists(Path))
@@ -68,7 +78,7 @@ namespace CatHut
 
             if(TableDic == null)
             {
-                TableDic = new Dictionary<string, Table>();
+                TableDic = new SerializableDictionary<string, Table>();
             }
 
             if (File.Exists(Path))
