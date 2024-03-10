@@ -13,31 +13,50 @@ namespace CatHut
 	public static partial class ExcellImporter
 	{
 
-		public static void ImportCsvData(List<string> list) 
+		public static void ImportAllCsvData() 
 		{
-			foreach(var path in list)
+
+            List<string> folderPathList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
+
+            _GrobalTableData = new TableData();
+
+
+            foreach (var folderPath in folderPathList)
+            {
+                if (!Directory.Exists(folderPath)) { continue; }
+
+                _GrobalTableData.AddTableData(folderPath);
+                MasterDataEditorCommon.ImportHeaderMultiply(folderPath, ref _DataGroupDic);
+            }
+
+            foreach (var folderPath in folderPathList)
+            {
+                if (!Directory.Exists(folderPath)) { continue; }
+
+                MasterDataEditorCommon.ImportDataMultiply(folderPath, ref _DataGroupDic);
+            }
+
+
+            var file = Path.GetFileNameWithoutExtension(path);
+
+			switch (file)
 			{
-				var file = Path.GetFileNameWithoutExtension(path);
-
-				switch (file)
-				{
-                        case "Enemy":
-                            //Import_Enemy(path);
-                            break;
-                        case "Skill":
-                            //Import_Skill(path);
-                            break;
-                        case "Player":
-                            //Import_Player(path);
-                            break;
-                        case "Item":
-                            //Import_Item(path);
-                            break;
+                    case "Enemy":
+                        //Import_Enemy(path);
+                        break;
+                    case "Skill":
+                        //Import_Skill(path);
+                        break;
+                    case "Player":
+                        //Import_Player(path);
+                        break;
+                    case "Item":
+                        //Import_Item(path);
+                        break;
 
 
-					default:
-						break;
-				}
+				default:
+					break;
 			}
 		}
 

@@ -74,7 +74,7 @@ public class Enemy : ScriptableObject
         }
     }
 
-}
+
 
 [System.Serializable]
 public class EnemyParameterDictionary : SerializableDictionary<string, EnemyParameter> { }
@@ -392,3 +392,5 @@ public class SkillPattern : IMasterData
 }
 
 
+
+}

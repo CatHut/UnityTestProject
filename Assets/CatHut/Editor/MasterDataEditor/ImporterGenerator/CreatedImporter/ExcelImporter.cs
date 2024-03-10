@@ -14,12 +14,10 @@ namespace CatHut
     public static partial class ExcellImporter
     {
 
-        [MenuItem("UsingExcel/ReImportExcels", false, 0)]
+        [MenuItem("Tools/CatHut/MasterDataEditor/Import All Csv", false, 0)]
         private static void ReimportAllExcels()
         {
-            var ImportExcelList = UsingExcelCommon.GetAllExcelList();
-
-            ImportCsvData(ImportExcelList);
+            ImportAllCsvData();
         }
 
     }

@@ -1,4 +1,4 @@
-﻿#if false
+﻿#if UNITY_EDITOR
 
 using System.Collections;
 using System.Collections.Generic;
@@ -40,8 +40,7 @@ namespace CatHut
 					}
 
 					//エクセルファイル中のクラス定義分追加
-                    var PlayerParameterClassData = new PlayerParameterClassDictionary();
-                    var PlayerJobClassData = new PlayerJobClassDictionary();
+                    var EnemyParameterData = new EnemyParameterDictionary();
 
 
 					foreach (var name in wsNameList)
@@ -54,7 +53,7 @@ namespace CatHut
 						{
 
 							//エクセルファイル中のクラス定義分追加
-                            case "PlayerParameterClass":
+                            case "EnemyParameter":
                                 foreach (var row in table.DataRange.Rows())
                                 {
                                     string ret = "";
@@ -63,37 +62,25 @@ namespace CatHut
                                         //FirstColumn == # then continue
                                         continue;
                                     }
-                                    var rowData = new PlayerParameterClass();
+                                    var rowData = new EnemyParameter();
                                     rowData.id = row.Cell(1).GetString();
-                                    rowData.job = row.Cell(2).GetString();
+                                    rowData.NAME = row.Cell(2).GetString();
                                     rowData.LV = row.Cell(3).GetValue<int>();
-                                    rowData.HP = row.Cell(4).GetValue<int>();
-                                    rowData.MP = row.Cell(5).GetValue<int>();
-                                    rowData.ATK = row.Cell(6).GetValue<int>();
-                                    rowData.DEF = row.Cell(7).GetValue<int>();
-                                    rowData.INT = row.Cell(8).GetValue<int>();
-                                    rowData.REG = row.Cell(9).GetValue<int>();
-                                    rowData.SPD = row.Cell(10).GetValue<int>();
-                                    rowData.EXP = row.Cell(11).GetValue<int>();
-                                    rowData.uplimit = row.Cell(12).GetValue<int>();
-                                    rowData.lowlimit = row.Cell(13).GetValue<int>();
-                                    PlayerParameterClassData.Add(rowData.id, rowData);
-                                }
-                                break;
-                            case "PlayerJobClass":
-                                foreach (var row in table.DataRange.Rows())
-                                {
-                                    string ret = "";
-                                    if (row.Cell(0).TryGetValue(out ret) && ret == "#")
-                                    {
-                                        //FirstColumn == # then continue
-                                        continue;
-                                    }
-                                    var rowData = new PlayerJobClass();
-                                    rowData.id = row.Cell(1).GetString();
-                                    rowData.name = row.Cell(2).GetString();
-                                    rowData.image = row.Cell(3).GetString();
-                                    PlayerJobClassData.Add(rowData.id, rowData);
+                                    rowData.attr = (Player.ATTR)Enum.Parse(typeof(Player.ATTR), row.Cell(4).GetString());
+                                    rowData.HP = row.Cell(5).GetValue<int>();
+                                    rowData.MP = row.Cell(6).GetValue<int>();
+                                    rowData.ATK = row.Cell(7).GetValue<int>();
+                                    rowData.DEF = row.Cell(8).GetValue<int>();
+                                    rowData.INT = row.Cell(9).GetValue<int>();
+                                    rowData.REG = row.Cell(10).GetValue<int>();
+                                    rowData.SPD = row.Cell(11).GetValue<int>();
+                                    rowData.EXP = row.Cell(12).GetValue<int>();
+                                    rowData.IMAGE = row.Cell(13).GetString();
+                                    rowData.lowlimit = row.Cell(14).GetValue<int>();
+                                    rowData.uplimit = row.Cell(15).GetValue<int>();
+                                    rowData.BOSS = row.Cell(16).GetValue<bool>();
+                                    rowData.Pattern = row.Cell(17).GetString();
+                                    EnemyParameterData.Add(rowData.id, rowData);
                                 }
                                 break;
 
@@ -102,15 +89,14 @@ namespace CatHut
 
                     var data = ScriptableObject.CreateInstance<Player>();
 
-                    data.PlayerParameterClassData = PlayerParameterClassData;
-                    data.PlayerJobClassData = PlayerJobClassData;
+                    data.EnemyParameterData = EnemyParameterData;
 
 
-                    if (!Directory.Exists("Assets/MasterData/Excels/CreatedAssets/"))
+                    if (!Directory.Exists("/CreatedAssets/"))
                     {
-                         Directory.CreateDirectory("Assets/MasterData/Excels/CreatedAssets/");
+                         Directory.CreateDirectory("/CreatedAssets/");
                     }
-                    AssetDatabase.CreateAsset(data, "Assets/MasterData/Excels/CreatedAssets/Player.asset");
+                    AssetDatabase.CreateAsset(data, "/CreatedAssets/Player.asset");
 
 
 				}

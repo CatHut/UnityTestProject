@@ -111,6 +111,28 @@ namespace CatHut
             }
         }
 
+        public void AddData(string folder)
+        {
+            string[] subSubFolders = Directory.GetDirectories(folder);
+
+            //FormatedCsvData格納
+            foreach (string subSubFolder in subSubFolders)
+            {
+                string subSubFolderName = new DirectoryInfo(subSubFolder).Name;
+
+                if (!_FormatedCsvDic.ContainsKey(subSubFolderName))
+                {
+                    //データを追加
+                    _FormatedCsvDic[subSubFolderName] = new FormatedCsvData(subSubFolder);
+
+                }
+                else
+                {
+                    _FormatedCsvDic[subSubFolderName].AddData(subSubFolder);
+                }
+            }
+        }
+
         public void AdjustDicitonaryByHeader()
         {
             //要素のないキーは削除する
