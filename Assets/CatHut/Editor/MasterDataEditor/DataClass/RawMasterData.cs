@@ -70,6 +70,45 @@ namespace CatHut
                 ImportDataMultiply(folderPath, _EachPathDataGroupDic[folderPath]);
             }
 
+            var keys = _EachPathDataGroupDic.Keys.ToList();
+            foreach (var key in keys)
+            {
+
+                var epdg = _EachPathDataGroupDic[key];
+
+                var keys2 = epdg.Keys.ToList();
+                foreach (var key2 in keys2)
+                {
+
+                    var dg = epdg[key2];
+
+                    var keys3 = dg.FormatedCsvDic.Keys.ToList();
+                    foreach (var key3 in keys3)
+                    {
+                        var fc = dg.FormatedCsvDic[key3];
+
+                        if (fc.DataPart.Data == null)
+                        {
+                            dg.FormatedCsvDic.Remove(key3);
+                        }
+
+                        if (fc.DataPart.Data.Count <= 0)
+                        {
+                            dg.FormatedCsvDic.Remove(key3);
+                        }
+                    }
+
+                    if(dg.FormatedCsvDic.Count <= 0)
+                    {
+                        epdg.Remove(key2);
+                    }
+
+                }
+                if(epdg.Count <= 0)
+                {
+                    _EachPathDataGroupDic.Remove(key);
+                }
+            }
         }
 
         public void DataReload(string folderPath)

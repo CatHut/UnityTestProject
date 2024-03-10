@@ -66,6 +66,8 @@ public class DataEditWindow : EditorWindow
             MasterDataEditorConfig.SaveSettings();
 
             //データリロード
+            OnMasterDataSelectionChanged();
+
         });
         topPane.Add(masterDataPathDropdown);
 
@@ -74,6 +76,7 @@ public class DataEditWindow : EditorWindow
         bottomPane.Add(horizontalSplitView);
 
         var leftPane = new VisualElement();
+        leftPane.name = "LeftPane"; 
         horizontalSplitView.Add(leftPane);
 
         // 編集領域（初期は空）
@@ -245,6 +248,16 @@ public class DataEditWindow : EditorWindow
         var message = new Label("Select Child Element");
 
         editArea.Add(message);
+    }
+
+    private void OnMasterDataSelectionChanged()
+    {
+
+        var leftPane = rootVisualElement.Q<VisualElement>("LeftPane");
+        leftPane.Clear();
+
+        //ツリービューを構成
+        ConfigureTreeView(leftPane);
     }
 
 
