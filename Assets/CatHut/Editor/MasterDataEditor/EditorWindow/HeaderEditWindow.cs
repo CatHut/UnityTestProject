@@ -300,8 +300,11 @@ public class HeaderEditWindow : EditorWindow
 
 
         editArea.Add(new Button(() => {
-            var dg = EditorSharedData.RawMasterData.DataGroupDic[name.parentName];  //データグループ
-            ScriptableObjectGenerator.CreateScriptableObject(dg);
+
+            foreach (var dg in EditorSharedData.RawMasterData.DataGroupDic.Values) {
+                ScriptableObjectGenerator.CreateScriptableObject(dg);
+            }
+            ImporterGenerator.CreateExcelImporter(EditorSharedData.RawMasterData.DataGroupDic);
 
         }) { text = "Create ScriptableObject And Inporter" });
 

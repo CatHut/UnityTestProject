@@ -19,6 +19,10 @@ public class MasterDataEditorSettingsWindow : EditorWindow
     /// Header情報から生成する、MasterDataクラス(.cs)を格納するフォルダ（任意）
     /// </summary>
     private string createdMasterDataClassFolder = string.Empty;
+    /// <summary>
+    /// Header情報から生成する、CsvImporterを格納するフォルダ
+    /// </summary>
+    private string createdImporterFolder = string.Empty;
 
     [MenuItem("Tools/CatHut/MasterDataEditor/Settings")]
     public static void ShowWindow()
@@ -35,6 +39,7 @@ public class MasterDataEditorSettingsWindow : EditorWindow
         scriptableObjectInstanceFolder = MasterDataEditorConfig.settings.ScriptableObjectInstancePath;
         createdScriptableObjectClassFolder = MasterDataEditorConfig.settings.CreatedScriptableObjectClassPath;
         createdMasterDataClassFolder = MasterDataEditorConfig.settings.CreatedMasterDataClassPath;
+        createdImporterFolder = MasterDataEditorConfig.settings.CreatedImporterPath;
     }
 
     private void OnGUI()
@@ -69,6 +74,9 @@ public class MasterDataEditorSettingsWindow : EditorWindow
         }
 
 
+        //表題
+        GUILayout.Space(20);
+        GUILayout.Label("Output Settings", EditorStyles.boldLabel);
         GUILayout.Space(10);
         if (!AssetDatabase.IsValidFolder(createdScriptableObjectClassFolder))
         {
@@ -96,6 +104,15 @@ public class MasterDataEditorSettingsWindow : EditorWindow
         }
         scriptableObjectInstanceFolder = EditorGUILayout.TextField("ScriptableObjectInstancePath", scriptableObjectInstanceFolder);
 
+        GUILayout.Space(10);
+        if (!AssetDatabase.IsValidFolder(createdImporterFolder))
+        {
+            GUIStyle errorStyle = new GUIStyle();
+            errorStyle.normal.textColor = Color.red;
+            GUILayout.Label("指定されたフォルダが存在しません。", errorStyle);
+        }
+        createdImporterFolder = EditorGUILayout.TextField("CreatedImporterPath", createdImporterFolder);
+
 
 
 
@@ -108,6 +125,7 @@ public class MasterDataEditorSettingsWindow : EditorWindow
             MasterDataEditorConfig.settings.ScriptableObjectInstancePath = scriptableObjectInstanceFolder;
             MasterDataEditorConfig.settings.CreatedScriptableObjectClassPath = createdScriptableObjectClassFolder;
             MasterDataEditorConfig.settings.CreatedMasterDataClassPath = createdMasterDataClassFolder;
+            MasterDataEditorConfig.settings.CreatedImporterPath = createdImporterFolder;
 
             MasterDataEditorConfig.SaveSettings();
         }

@@ -67,6 +67,7 @@ public static class MasterDataEditorConfig
         public string CreatedScriptableObjectClassPath = "";
         public string ScriptableObjectInstancePath = "";
         public string CreatedMasterDataClassPath = "";
+        public string CreatedImporterPath = "";
 
 
         //DataEditor設定
