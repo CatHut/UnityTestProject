@@ -106,7 +106,7 @@ namespace CatHut
                 if (_FormatedCsvDic.ContainsKey(subSubFolderName))
                 {
                     //データを追加
-                    this._FormatedCsvDic[subSubFolderName].AddData(subSubFolder);
+                    this._FormatedCsvDic[subSubFolderName].SetData(subSubFolder);
                 }
             }
         }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using UnityEngine;
+using UnityEngine.WSA;
 
 namespace CatHut
 {
@@ -127,9 +128,26 @@ namespace CatHut
 
 
 
-        public void SetData(string file)
+        public void SetData(string folder)
         {
-            DataPart = new CsvData(file);
+            var searchPattern = "Data_*.csv";
+            string[] csvFiles = Directory.GetFiles(folder, searchPattern);
+
+            if (csvFiles.Length != 0)
+            {
+                DataPart = new CsvData(csvFiles[0]);
+            }
+
+            if (DataPart != null)
+            {
+                if (DataPart.Data.Count == 0)
+                {
+                    DataPart = null;
+                    Enable = false;
+                    return;
+                }
+            }
+
             SetVariableColumnIndex();
         }
 
