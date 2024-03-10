@@ -26,7 +26,7 @@ namespace CatHut
         {
             if (ContainsKey(key))
             {
-                throw new ArgumentException("An element with the same key already exists in the dictionary.");
+                throw new ArgumentException("An element with the same key already exists in the dictionary. key:" + key.ToString());
             }
 
             keyValuePairs.Add(new SerializableKeyValuePair<TKey, TValue>(key, value));
@@ -73,7 +73,7 @@ namespace CatHut
                     }
                 }
 
-                throw new KeyNotFoundException("The given key was not found in the dictionary.");
+                throw new KeyNotFoundException("The given key was not found in the dictionary. key:" + key.ToString());
             }
 
             set
