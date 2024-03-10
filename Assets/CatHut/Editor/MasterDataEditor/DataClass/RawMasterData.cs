@@ -114,7 +114,10 @@ namespace CatHut
 
             string[] subFolders = Directory.GetDirectories(folder);
 
-            this._DataGroupDic = new SerializableDictionary<string, DataGroup>();
+            if (this._DataGroupDic == null)
+            {
+                this._DataGroupDic = new SerializableDictionary<string, DataGroup>();
+            }
 
             //一旦ヘッダ情報を生成(重複時は上書きされる)
             foreach (string subFolder in subFolders)
@@ -126,9 +129,12 @@ namespace CatHut
 
                 if(_DataGroupDic.ContainsKey(subFolderName) == true)
                 {
-                    Debug.LogWarning(subFolderName + "header is Already Registered. " + "It is overwritten by " + subFolder);
+                    Debug.LogWarning(subFolderName + "header is Already Registered. " + subFolder + " is Skipped.");
                 }
-                this._DataGroupDic[subFolderName] = dg;
+                else
+                {
+                    this._DataGroupDic[subFolderName] = dg;
+                }
             }
 
             //要素のないキーは削除する

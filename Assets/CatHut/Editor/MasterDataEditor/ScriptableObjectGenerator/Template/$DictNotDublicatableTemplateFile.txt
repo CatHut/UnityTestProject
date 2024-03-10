@@ -33,8 +33,10 @@ public class #FileName# : ScriptableObject
         }
     }
 
-}
+
 
 #ClsssProtoTypeDeclare#
 
 #ClassDefinitions#
+
+}

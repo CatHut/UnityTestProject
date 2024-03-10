@@ -1,0 +1,3 @@
+﻿id,NAME,LV,attr,HP,MP,ATK,DEF,INT,REG,SPD,EXP,IMAGE,lowlimit,uplimit,BOSS,Pattern
+30001,リンゴリン,10,FIRE,7,0,7,5,7,5,3,100,f_apple,1,5,FALSE,0
+30002,キノッコ,10,WIND,7,0,9,6,9,6,5,100,f_mad_mushroom,1,5,FALSE,0
