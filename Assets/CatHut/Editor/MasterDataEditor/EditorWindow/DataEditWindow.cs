@@ -143,7 +143,8 @@ public class DataEditWindow : EditorWindow
 
         editArea.Add(new Button(() => {
 
-            variableListView.Rebuild();
+            EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].DataPart.Save();
+
         })
         { text = "Save" });
 

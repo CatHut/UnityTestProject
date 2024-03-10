@@ -100,6 +100,8 @@ namespace CatHut
                 //データを追加
                 this._FormatedCsvDic[subSubFolderName].AddData(subSubFolder);
             }
+
+
         }
 
         public void AdjustDicitonary()
