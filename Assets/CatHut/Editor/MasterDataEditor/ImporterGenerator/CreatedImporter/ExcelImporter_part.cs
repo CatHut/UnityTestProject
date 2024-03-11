@@ -10,11 +10,13 @@ using CatHut;
 
 namespace CatHut
 {
-	public static partial class ExcellImporter
-	{
+    public static partial class CsvImporter
+    {
+        private static SerializableDictionary<string, DataGroup> _DataGroupDic;
+        private static TableData _GrobalTableData;
 
-		public static void ImportAllCsvData() 
-		{
+        public static void ImportAllCsvData()
+        {
 
             List<string> folderPathList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
 
@@ -37,12 +39,13 @@ namespace CatHut
             }
 
 
-            var file = Path.GetFileNameWithoutExtension(path);
+            foreach (var temp in _DataGroupDic.Keys)
+            {
 
-			switch (file)
-			{
+                switch (temp)
+                {
                     case "Enemy":
-                        //Import_Enemy(path);
+                        Import_Enemy(_DataGroupDic[temp]);
                         break;
                     case "Skill":
                         //Import_Skill(path);
@@ -55,12 +58,12 @@ namespace CatHut
                         break;
 
 
-				default:
-					break;
-			}
-		}
-
-	}
+                    default:
+                        break;
+                }
+            }
+        }
+    }
 }
 
 #endif

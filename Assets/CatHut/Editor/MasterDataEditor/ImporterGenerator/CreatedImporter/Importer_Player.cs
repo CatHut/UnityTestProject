@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+﻿#if false
 
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using CatHut;
 
 namespace CatHut
 {
-	public static partial class ExcellImporter
+	public static partial class CsvImporter
 	{
 		static void Import_Player(string path)
 		{

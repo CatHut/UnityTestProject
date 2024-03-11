@@ -25,7 +25,8 @@ namespace CatHut
 
             var ImportExcelList = UsingExcelCommon.GetImportCsvList(assetsList, ExcelFolderList);
 
-            ExcellImporter.ImportCsvData(ImportExcelList);
+            //TODO
+            //CsvImporter.ImportCsvData(ImportExcelList);
 
         }
 

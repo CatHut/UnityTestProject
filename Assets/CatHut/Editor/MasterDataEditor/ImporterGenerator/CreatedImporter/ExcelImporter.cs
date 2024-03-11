@@ -11,7 +11,7 @@ using CatHut;
 
 namespace CatHut
 {
-    public static partial class ExcellImporter
+    public static partial class CsvImporter
     {
 
         [MenuItem("Tools/CatHut/MasterDataEditor/Import All Csv", false, 0)]
