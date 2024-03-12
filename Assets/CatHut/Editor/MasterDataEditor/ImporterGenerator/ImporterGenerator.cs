@@ -10,23 +10,21 @@ using System;
 using System.Text.RegularExpressions;
 using System.Linq;
 using static MasterDataEditorConfig;
+using UnityEditor.AddressableAssets.Build.Layout;
 
 namespace CatHut
 {
     public static class ImporterGenerator
     {
 
-        public static void CreateExcelImporter(SerializableDictionary<string, DataGroup> dataGroupDic)
+        public static void CreateCsvImporter(SerializableDictionary<string, DataGroup> dataGroupDic)
         {
             //ScriptableOjbectの定義ファイルを作成する
             foreach (var dg in dataGroupDic)
             {
 
-                var FileName = Path.GetFileNameWithoutExtension(dg.Value.Name);
-
-
                 var ClassDataDefineStr = GetClassDataDefineStr(dg.Value);
-                var ExcelDataReadStr = GetExcelDataReadStr(dg.Value, FileName);
+                var ExcelDataReadStr = GetCsvDataReadStr(dg.Value, dg.Key);
                 var ClassDataSetStr = GetClassDataSetStr(dg.Value);
                 var SaveAssetStr = GetSaveAssetStr(dg.Key);
 
@@ -39,9 +37,9 @@ namespace CatHut
 
                 var FileStr = File.ReadAllText(TemplateFile);
 
-                FileStr = FileStr.Replace("#FileName#", FileName);
+                FileStr = FileStr.Replace("#DataGroupName#", dg.Key);
                 FileStr = FileStr.Replace("#ClassDataDefine#", ClassDataDefineStr);
-                FileStr = FileStr.Replace("#ExcelDataRead#", ExcelDataReadStr);
+                FileStr = FileStr.Replace("#CsvDataRead#", ExcelDataReadStr);
                 FileStr = FileStr.Replace("#ClassDataSet#", ClassDataSetStr);
                 FileStr = FileStr.Replace("#ClassDataSave#", SaveAssetStr);
 
@@ -51,11 +49,12 @@ namespace CatHut
                     Directory.CreateDirectory(CreatedImporterPath);
                 }
 
-                var fullpath = Path.Combine(CreatedImporterPath, "Importer_" + FileName + ".cs");
+                var fullpath = Path.Combine(CreatedImporterPath, "Importer_" + dg.Key + ".cs");
                 File.WriteAllText(fullpath, FileStr, Encoding.UTF8);
 
             }
 
+            AssetDatabase.Refresh();
         }
 
         private static string GetClassDataDefineStr(DataGroup dg)
@@ -64,85 +63,56 @@ namespace CatHut
 
             foreach (var temp in dg.FormatedCsvDic.Keys)
             {
-                str += "                    var " + temp + "Data = new " + temp + "Dictionary();" + Environment.NewLine;
+                str += "            var " + temp + "Data = new " + dg.Name + "." + temp + "Dictionary();" + Environment.NewLine;
             }
             return str;
         }
 
-        private static string GetExcelDataReadStr(DataGroup dg, string fileName)
+        private static string GetCsvDataReadStr(DataGroup dg, string fileName)
         {
             string str = "";
 
             foreach (var temp in dg.FormatedCsvDic.Keys)
             {
-                str += "                            case \"" + temp + "\":" + Environment.NewLine;
-                str += "                                foreach (var row in table.DataRange.Rows())" + Environment.NewLine;
-                str += "                                {" + Environment.NewLine;
-                str += "                                    string ret = \"\";" + Environment.NewLine;
-                str += "                                    if (row.Cell(0).TryGetValue(out ret) && ret == \"#\")" + Environment.NewLine;
-                str += "                                    {" + Environment.NewLine;
-                str += "                                        //FirstColumn == # then continue" + Environment.NewLine;
-                str += "                                        continue;" + Environment.NewLine;
-                str += "                                    }" + Environment.NewLine;
-                str += "                                    var rowData = new " + temp + "();" + Environment.NewLine;
+                str += "                    case \"" + temp + "\":" + Environment.NewLine;
+                str += "                        {" + Environment.NewLine;
+                str += "                            int i = 1;" + Environment.NewLine;
+                str += "                            foreach (var row in fc.DataPart.DataWithoutColumnTitle)" + Environment.NewLine;
+                str += "                            {" + Environment.NewLine;
+                str += "                                bool ret;" + Environment.NewLine;
+                str += "                                var rowData = new "+ dg.Name + "." + temp + "();" + Environment.NewLine;
+                str += Environment.NewLine;
 
-                int idx = 1;
                 foreach (var value in dg.FormatedCsvDic[temp].HeaderPart.VariableDic.Values)
                 {
-                    switch (value.Type)
+
+                    if (value.Type.Contains("Tables["))
                     {
-                        case "Comment":
-                            idx++; //idxだけ進める
-                            break;
-                        case "string":
-                        case "String":
-                            str += "                                    rowData." + value.Name + " = row.Cell(" + idx.ToString() + ").GetString();" + Environment.NewLine;
-                            idx++;
-                            break;
-                        default:
+                        //TODO更にグローバルテーブルとローカルテーブルの区別必要
 
-                            var typeStr = value.Type;
-
-                            if (typeStr.Contains(UsingExcelCommon.TableDeclareWorkSheetName + "["))
-                            {
-                                typeStr = UsingExcelCommon.GetEnumTypeName(typeStr);
-                                typeStr = fileName + "." + typeStr;
-
-                                str += "                                    rowData." + value.Name + " = (" + typeStr + ")Enum.Parse(typeof(" + typeStr + "), " + "row.Cell(" + idx.ToString() + ").GetString());" + Environment.NewLine;
-                            }
-                            else
-                            {
-                                str += "                                    rowData." + value.Name + " = row.Cell(" + idx.ToString() + ").GetValue<" + value.Type + ">();" + Environment.NewLine;
-                            }
-                            idx++;
-                            break;
+                        str += "                            //" + value.Name + Environment.NewLine;
+                        str += "                            ret = MasterDataEditorCommon.TryConvert<" + dg.Name + "." + UsingExcelCommon.GetEnumTypeName(value.Type) + ">(row[valDic[\"" + value.Name + "\"].ColumnIndex], out var result_" + value.Name + ");" + Environment.NewLine;
+                        str += "                            rowData." + value.Name + " = result_" + value.Name + ";" + Environment.NewLine;
+                        str += "                            if (!ret) { Debug.LogWarning($\"Convert Failed row:{i} col:" + value.Name + "\"); }" + Environment.NewLine;
+                        str += Environment.NewLine;
+                    }
+                    else if(value.Type.Contains("Comment"))
+                    {
+                        //何もしない
+                    }
+                    else
+                    {
+                        str += "                            //" + value.Name + Environment.NewLine;
+                        str += "                            ret = MasterDataEditorCommon.TryConvert<" + value.Type + ">(row[valDic[\"" + value.Name + "\"].ColumnIndex], out var result_" + value.Name + ");" + Environment.NewLine;
+                        str += "                            rowData." + value.Name + " = result_" + value.Name + ";" + Environment.NewLine;
+                        str += "                            if (!ret) { Debug.LogWarning($\"Convert Failed row:{i} col:" + value.Name + "\"); }" + Environment.NewLine;
+                        str += Environment.NewLine;
                     }
                 }
 
-                if (false == dg.FormatedCsvDic[temp].HeaderPart.IndexDuplicatable)
-                {
-                    str += "                                    " + temp + "Data.Add(rowData.id, rowData);" + Environment.NewLine;
-                }
-                else
-                {
-                    str += "                                    " + temp + "List" + " temp;" + Environment.NewLine;
-                    str += "                                    if (!" + temp + "Data" + ".ContainsKey(rowData.id))" + Environment.NewLine;
-                    str += "                                    {" + Environment.NewLine;
-                    str += "                                        temp = new " + temp + "List" + "();" + Environment.NewLine;
-                    str += "                                        temp." + temp + "List = new List<" + temp + ">();" + Environment.NewLine;
-                    str += "                                        " + temp + "Data" + ".Add(rowData.id, temp);" + Environment.NewLine;
-                    str += "                                    }" + Environment.NewLine;
-                    str += "                                    else" + Environment.NewLine;
-                    str += "                                    {" + Environment.NewLine;
-                    str += "                                        temp = " + temp + "Data" + "[rowData.id];" + Environment.NewLine;
-                    str += "                                    }" + Environment.NewLine;
-                    str += Environment.NewLine;
-                    str += "                                    temp." + temp + "List.Add(rowData);" + Environment.NewLine;
-                    str += "                                    " + temp + "Data" + "[rowData.id] = temp;" + Environment.NewLine;
-                }
-
-                str += "                                }" + Environment.NewLine;
-                str += "                                break;" + Environment.NewLine;
+                str += "                            }" + Environment.NewLine;
+                str += "                        }" + Environment.NewLine;
+                str += "                        break;" + Environment.NewLine;
             }
             return str;
         }
@@ -152,24 +122,23 @@ namespace CatHut
             string str = "";
             foreach (var temp in dg.FormatedCsvDic.Keys)
             {
-                str += "                    data." + temp + "Data = " + temp + "Data;" + Environment.NewLine;
+                str += "            data." + temp + "Data = " + temp + "Data;" + Environment.NewLine;
             }
             return str;
         }
 
-        private static string GetSaveAssetStr(string path)
+        private static string GetSaveAssetStr(string filename)
         {
             string str = "";
-            var file = Path.GetFileNameWithoutExtension(path);
-            var folder = Path.GetDirectoryName(path);
-            folder = folder.Replace("\\", "/");
 
-            str += "                    if (!Directory.Exists(\"" + folder + "/" + UsingExcelCommon.CreatedAssetFoldeName + "/\"))" + Environment.NewLine;
-            str += "                    {" + Environment.NewLine;
-            str += "                         Directory.CreateDirectory(\"" + folder + "/" + UsingExcelCommon.CreatedAssetFoldeName + "/\");" + Environment.NewLine;
-            str += "                    }" + Environment.NewLine;
+            str += "            var folder = MasterDataEditorConfig.settings.ScriptableObjectInstancePath;" + Environment.NewLine;
 
-            str += "                    AssetDatabase.CreateAsset(data, \"" + folder + "/" + UsingExcelCommon.CreatedAssetFoldeName + "/" + file + ".asset\");" + Environment.NewLine;
+            str += "            if (!Directory.Exists(folder))" + Environment.NewLine;
+            str += "            {" + Environment.NewLine;
+            str += "                Directory.CreateDirectory(folder);" + Environment.NewLine;
+            str += "            }" + Environment.NewLine;
+            str += Environment.NewLine;
+            str += "            AssetDatabase.CreateAsset(data, Path.Combine(folder, \"" + filename +".asset\"));" + Environment.NewLine;
             return str;
         }
 

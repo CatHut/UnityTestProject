@@ -304,7 +304,7 @@ public class HeaderEditWindow : EditorWindow
             foreach (var dg in EditorSharedData.RawMasterData.DataGroupDic.Values) {
                 ScriptableObjectGenerator.CreateScriptableObject(dg);
             }
-            ImporterGenerator.CreateExcelImporter(EditorSharedData.RawMasterData.DataGroupDic);
+            ImporterGenerator.CreateCsvImporter(EditorSharedData.RawMasterData.DataGroupDic);
 
         }) { text = "Create ScriptableObject And Inporter" });
 

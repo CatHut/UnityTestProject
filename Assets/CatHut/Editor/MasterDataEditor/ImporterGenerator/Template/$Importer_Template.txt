@@ -12,60 +12,35 @@ using CatHut;
 
 namespace CatHut
 {
-	public static partial class FormattedCsvImporter
+	public static partial class CsvImporter
 	{
-		static void Import_#FileName#(string path)
+		static void Import_#DataGroupName#(DataGroup dg)
 		{
 
-			//処理するワークシートのフォーマット情報を生成
-			var ExcelDataFromatDic = new Dictionary<string, ExcelSheetFormat>();
-
-			using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-			{
-				using (var xwb = new XLWorkbook(fs, XLEventTracking.Disabled))
-				{
-
-					var wsNameList = new List<string>();
-
-
-					//処理するワークシート名を取得
-					foreach (var ws in xwb.Worksheets)
-					{
-						if (ws.Name.Contains(UsingExcelCommon.TargetWorkSheetMark))
-						{
-							wsNameList.Add(ws.Name);
-						}
-					}
-
-					//エクセルファイル中のクラス定義分追加
 #ClassDataDefine#
 
-					foreach (var name in wsNameList)
-					{
-						var table = UsingExcelCommon.GetExcelSheetTable(xwb, name);
-						ExcelSheetFormat edf = new ExcelSheetFormat();
-						UsingExcelCommon.GetExcelDataFormat(xwb, name, ref edf);
+            foreach (var key in dg.FormatedCsvDic.Keys)
+            {
 
-						switch (edf.ClassName)
-						{
+                var fc = dg.FormatedCsvDic[key];
+                var valDic = dg.FormatedCsvDic[key].HeaderPart.VariableDic;
 
-							//エクセルファイル中のクラス定義分追加
-#ExcelDataRead#
-						}
-					}
+                switch (key)
+                {
 
-                    var data = ScriptableObject.CreateInstance<#FileName#>();
+					//エクセルファイル中のクラス定義分追加
+#CsvDataRead#
+                }
+            }
+
+            var data = ScriptableObject.CreateInstance<#DataGroupName#>();
 
 #ClassDataSet#
 
 #ClassDataSave#
 
-				}
-			}
-		}
-
-	}
-
+        }
+    }
 }
 
 
