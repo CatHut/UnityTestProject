@@ -94,7 +94,82 @@ namespace CatHut
         }
 
 
+        public static bool TryConvert<T>(string str, out T ret)
+        {
+            ret = default(T);
+            bool success = true;
 
+            switch (typeof(T))
+            {
+                case Type t when t == typeof(int):
+                    success = int.TryParse(str, out var intResult);
+                    ret = (T)(object)intResult;
+                    break;
+                case Type t when t == typeof(uint):
+                    success = uint.TryParse(str, out var uintResult);
+                    ret = (T)(object)uintResult;
+                    break;
+                case Type t when t == typeof(short):
+                    success = short.TryParse(str, out var shortResult);
+                    ret = (T)(object)shortResult;
+                    break;
+                case Type t when t == typeof(ushort):
+                    success = ushort.TryParse(str, out var ushortResult);
+                    ret = (T)(object)ushortResult;
+                    break;
+                case Type t when t == typeof(long):
+                    success = long.TryParse(str, out var longResult);
+                    ret = (T)(object)longResult;
+                    break;
+                case Type t when t == typeof(ulong):
+                    success = ulong.TryParse(str, out var ulongResult);
+                    ret = (T)(object)ulongResult;
+                    break;
+                case Type t when t == typeof(float):
+                    success = float.TryParse(str, out var floatResult);
+                    ret = (T)(object)floatResult;
+                    break;
+                case Type t when t == typeof(double):
+                    success = double.TryParse(str, out var doubleResult);
+                    ret = (T)(object)doubleResult;
+                    break;
+                case Type t when t == typeof(char):
+                    success = char.TryParse(str, out var charResult);
+                    ret = (T)(object)charResult;
+                    break;
+                case Type t when t == typeof(bool):
+                    success = bool.TryParse(str, out var boolResult);
+                    ret = (T)(object)boolResult;
+                    break;
+                case Type t when t == typeof(byte):
+                    success = byte.TryParse(str, out var byteResult);
+                    ret = (T)(object)byteResult;
+                    break;
+                case Type t when t == typeof(sbyte):
+                    success = sbyte.TryParse(str, out var sbyteResult);
+                    ret = (T)(object)sbyteResult;
+                    break;
+                case Type t when t == typeof(string):
+                    ret = (T)(object)str;
+                    success = true;
+                    break;
+                case Type t when t.IsEnum:      //テーブル値用
+                    success = Enum.TryParse(t, str, out var enumResult);
+                    ret = (T)enumResult;
+                    break;
+                default:
+                    success = false;
+                    Debug.LogWarning($"Unsupported type: {typeof(T)}");
+                    break;
+            }
+
+            if (!success)
+            {
+                Debug.LogWarning($"Conversion failed: Cannot convert \"{str}\" to {typeof(T)}.");
+            }
+
+            return success;
+        }
 
     }
 }
