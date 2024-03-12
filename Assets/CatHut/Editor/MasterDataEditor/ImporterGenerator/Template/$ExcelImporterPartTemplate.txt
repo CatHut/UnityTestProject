@@ -11,14 +11,37 @@ using CatHut;
 
 namespace CatHut
 {
-	public static partial class ExcellImporter
-	{
+    public static partial class CsvImporter
+    {
+        private static SerializableDictionary<string, DataGroup> _DataGroupDic;
+        private static TableData _GrobalTableData;
 
-		public static void ImportExcelData(List<string> list) 
-		{
-			foreach(var path in list)
-			{
-				var file = Path.GetFileNameWithoutExtension(path);
+        public static void ImportAllCsvData()
+        {
+
+            List<string> folderPathList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
+
+            _GrobalTableData = new TableData();
+
+
+            foreach (var folderPath in folderPathList)
+            {
+                if (!Directory.Exists(folderPath)) { continue; }
+
+                _GrobalTableData.AddTableData(folderPath);
+                MasterDataEditorCommon.ImportHeaderMultiply(folderPath, ref _DataGroupDic);
+            }
+
+            foreach (var folderPath in folderPathList)
+            {
+                if (!Directory.Exists(folderPath)) { continue; }
+
+                MasterDataEditorCommon.ImportDataMultiply(folderPath, ref _DataGroupDic);
+            }
+
+
+            foreach (var temp in _DataGroupDic.Keys)
+            {
 
 				switch (file)
 				{
