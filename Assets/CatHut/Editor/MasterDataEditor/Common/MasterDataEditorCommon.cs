@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.WSA;
 
 
 namespace CatHut
@@ -54,6 +56,43 @@ namespace CatHut
                 if (!Directory.Exists(folderPath)) { continue; }
 
                 MasterDataEditorCommon.ImportDataMultiply(folderPath, ref _DataGroupDic);
+            }
+
+            //整合性チェック
+            var keys1 = _DataGroupDic.Keys.ToList();
+            foreach (var key1 in keys1)
+            {
+
+                var dg = _DataGroupDic[key1];
+
+                var keys2 = dg.FormatedCsvDic.Keys.ToList();
+                foreach (var key2 in keys2)
+                {
+                    var fc = dg.FormatedCsvDic[key2];
+
+                    if (fc.DataPart == null)
+                    {
+                        dg.FormatedCsvDic.Remove(key2);
+                        continue;
+                    }
+
+                    if (fc.DataPart.Data == null)
+                    {
+                        dg.FormatedCsvDic.Remove(key2);
+                        continue;
+                    }
+
+                    if (fc.DataPart.Data.Count <= 0)
+                    {
+                        dg.FormatedCsvDic.Remove(key2);
+                    }
+                }
+
+                if (dg.FormatedCsvDic.Count <= 0)
+                {
+                    _DataGroupDic.Remove(key1);
+                }
+
             }
 
             return _DataGroupDic;
@@ -107,6 +146,25 @@ namespace CatHut
             }
         }
 
+        public static HashSet<string> GetChangedDataGroupNameList(List<string> list)
+        {
+
+            var ret = new HashSet<string>();
+            foreach (var filePath in list)
+            {
+                if (Regex.IsMatch(Path.GetFileName(filePath), @"^(Data_|Header_).*\.csv$"))
+                {
+                    var directoryInfo = new DirectoryInfo(filePath).Parent?.Parent;
+                    if (directoryInfo != null)
+                    {
+                        ret.Add(directoryInfo.Name);
+                    }
+                }
+            }
+            return ret;
+
+        }
+
 
         /// <summary>
         /// フォルダ内にあるヘッダ情報を登録する。
@@ -130,18 +188,6 @@ namespace CatHut
                 }
             }
 
-
-            //要素のないキーは削除する
-            foreach (var key in ret.Keys.ToList())
-            {
-                //格納状況により調整。
-                ret[key].AdjustDicitonaryByData();
-
-                if (ret[key].FormatedCsvDic.Count == 0)
-                {
-                    ret.Remove(key);
-                }
-            }
         }
 
 

@@ -15,18 +15,15 @@ namespace CatHut
         private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
 
-            //変更のあったエクセルを抽出
+            //変更のあったCSVを抽出
             var assetsList = new List<string>();
             assetsList.AddRange(importedAssets);
             assetsList.AddRange(deletedAssets);
 
             //マスターデータCsvをインポートするフォルダリスト生成
-            var ExcelFolderList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
+            var dataGroupList = MasterDataEditorCommon.GetChangedDataGroupNameList(assetsList);
 
-            var ImportExcelList = UsingExcelCommon.GetImportCsvList(assetsList, ExcelFolderList);
-
-            //TODO
-            //CsvImporter.ImportCsvData(ImportExcelList);
+            CsvImporter.ImportCsvData(dataGroupList);
 
         }
 

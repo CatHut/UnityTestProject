@@ -87,6 +87,11 @@ namespace CatHut
                     {
                         var fc = dg.FormatedCsvDic[key3];
 
+                        if (fc.DataPart == null)
+                        {
+                            dg.FormatedCsvDic.Remove(key3);
+                        }
+
                         if (fc.DataPart.Data == null)
                         {
                             dg.FormatedCsvDic.Remove(key3);

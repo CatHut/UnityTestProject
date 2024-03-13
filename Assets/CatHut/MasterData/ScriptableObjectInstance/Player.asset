@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 748e097cc7c676f45b30de81ac76434f, type: 3}
-  m_Name: Enemy
+  m_Script: {fileID: 11500000, guid: 14de652a837167f499b96165ba76bcf2, type: 3}
+  m_Name: Player
   m_EditorClassIdentifier: 
   _EnemyParameterData:
     keyValuePairs:
@@ -21,7 +21,7 @@ MonoBehaviour:
         _LV: 10
         _attr: 1
         _HP: 7
-        _MP: 444
+        _MP: 0
         _ATK: 7
         _DEF: 5
         _INT: 7
@@ -78,7 +78,7 @@ MonoBehaviour:
         _LV: 10
         _attr: 1
         _HP: 10
-        _MP: 444
+        _MP: 0
         _ATK: 12
         _DEF: 9
         _INT: 12
@@ -98,7 +98,7 @@ MonoBehaviour:
         _attr: 2
         _HP: 18
         _MP: 0
-        _ATK: 2
+        _ATK: 3333
         _DEF: 2
         _INT: 2
         _REG: 2
@@ -117,7 +117,7 @@ MonoBehaviour:
         _attr: 3
         _HP: 12
         _MP: 0
-        _ATK: 13
+        _ATK: 13333
         _DEF: 7
         _INT: 13
         _REG: 7
@@ -4270,183 +4270,3 @@ MonoBehaviour:
         _uplimit: 100
         _BOSS: 1
         _Pattern: 202
-    - Key: 30001
-      Value:
-        _id: 30001
-        _NAME: "\u30EA\u30F3\u30B4\u30EA\u30F3"
-        _LV: 10
-        _attr: 1
-        _HP: 7
-        _MP: 0
-        _ATK: 7
-        _DEF: 5
-        _INT: 7
-        _REG: 5
-        _SPD: 3
-        _EXP: 100
-        _IMAGE: f_apple
-        _lowlimit: 1
-        _uplimit: 5
-        _BOSS: 0
-        _Pattern: 0
-    - Key: 30002
-      Value:
-        _id: 30002
-        _NAME: "\u30AD\u30CE\u30C3\u30B3"
-        _LV: 10
-        _attr: 2
-        _HP: 7
-        _MP: 0
-        _ATK: 9
-        _DEF: 6
-        _INT: 9
-        _REG: 6
-        _SPD: 5
-        _EXP: 100
-        _IMAGE: f_mad_mushroom
-        _lowlimit: 1
-        _uplimit: 5
-        _BOSS: 0
-        _Pattern: 0
-  _SkillPatternData:
-    keyValuePairs:
-    - Key: 201
-      Value:
-        _id: 201
-        _Pattern: 0
-        _skill1: 20001
-        _skill2: 20002
-        _skill3: 20003
-        _skill4: 20004
-        _skill5: 20005
-        _weight1: 0
-        _weight2: 0
-        _weight3: 0
-        _weight4: 0
-        _weight5: 0
-    - Key: 202
-      Value:
-        _id: 202
-        _Pattern: 0
-        _skill1: 20001
-        _skill2: 20002
-        _skill3: 20003
-        _skill4: 20004
-        _skill5: 20005
-        _weight1: 0
-        _weight2: 0
-        _weight3: 0
-        _weight4: 0
-        _weight5: 0
-    - Key: 203
-      Value:
-        _id: 203
-        _Pattern: 0
-        _skill1: 20001
-        _skill2: 20002
-        _skill3: 20003
-        _skill4: 20004
-        _skill5: 20005
-        _weight1: 0
-        _weight2: 0
-        _weight3: 0
-        _weight4: 0
-        _weight5: 0
-    - Key: 204
-      Value:
-        _id: 204
-        _Pattern: 0
-        _skill1: 20001
-        _skill2: 20002
-        _skill3: 20003
-        _skill4: 20004
-        _skill5: 20005
-        _weight1: 0
-        _weight2: 0
-        _weight3: 0
-        _weight4: 0
-        _weight5: 0
-    - Key: 205
-      Value:
-        _id: 205
-        _Pattern: 0
-        _skill1: 20001
-        _skill2: 20002
-        _skill3: 20003
-        _skill4: 20004
-        _skill5: 20005
-        _weight1: 0
-        _weight2: 0
-        _weight3: 0
-        _weight4: 0
-        _weight5: 0
-    - Key: 206
-      Value:
-        _id: 206
-        _Pattern: 1
-        _skill1: 20006
-        _skill2: 20007
-        _skill3: 20008
-        _skill4: 20009
-        _skill5: 20010
-        _weight1: 7
-        _weight2: 13
-        _weight3: 7
-        _weight4: 8
-        _weight5: 4
-    - Key: 207
-      Value:
-        _id: 207
-        _Pattern: 1
-        _skill1: 20006
-        _skill2: 20007
-        _skill3: 20008
-        _skill4: 20009
-        _skill5: 20010
-        _weight1: 8
-        _weight2: 12
-        _weight3: 8
-        _weight4: 5
-        _weight5: 4
-    - Key: 208
-      Value:
-        _id: 208
-        _Pattern: 1
-        _skill1: 20006
-        _skill2: 20007
-        _skill3: 20008
-        _skill4: 20009
-        _skill5: 20010
-        _weight1: 17
-        _weight2: 25
-        _weight3: 17
-        _weight4: 8
-        _weight5: 9
-    - Key: 209
-      Value:
-        _id: 209
-        _Pattern: 1
-        _skill1: 20006
-        _skill2: 20007
-        _skill3: 20008
-        _skill4: 20009
-        _skill5: 20010
-        _weight1: 9
-        _weight2: 14
-        _weight3: 9
-        _weight4: 8
-        _weight5: 5
-    - Key: 210
-      Value:
-        _id: 210
-        _Pattern: 1
-        _skill1: 20006
-        _skill2: 20007
-        _skill3: 20008
-        _skill4: 20009
-        _skill5: 20010
-        _weight1: 7
-        _weight2: 12
-        _weight3: 7
-        _weight4: 7
-        _weight5: 6

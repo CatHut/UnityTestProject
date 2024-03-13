@@ -37,23 +37,25 @@ namespace CatHut
 			}
 		}
 
-        public static void ImportCsvData(string DataGroupName)
+        public static void ImportCsvData(HashSet<string> DataGroupNameList)
         {
             _GrobalTableData = MasterDataEditorCommon.GetGlobalTable();
             _DataGroupDic = MasterDataEditorCommon.GetDataGroupDic();
 
-
-            switch (DataGroupName)
+            foreach (var temp in DataGroupNameList)
             {
-                case "Enemy":
-                    Import_Enemy(_DataGroupDic[DataGroupName]);
-                    break;
-                case "Player":
-                    Import_Player(_DataGroupDic[DataGroupName]);
-                    break;
+                switch (temp)
+                {
+                    case "Enemy":
+                        Import_Enemy(_DataGroupDic[temp]);
+                        break;
+                    case "Player":
+                        Import_Player(_DataGroupDic[temp]);
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
             }
         }
 

@@ -82,10 +82,10 @@ namespace CatHut
                     {
                         //TODO更にグローバルテーブルとローカルテーブルの区別必要
 
-                        str += "                            //" + value.Name + Environment.NewLine;
-                        str += "                            ret = MasterDataEditorCommon.TryConvert<" + dg.Name + "." + UsingExcelCommon.GetEnumTypeName(value.Type) + ">(row[valDic[\"" + value.Name + "\"].ColumnIndex], out var result_" + value.Name + ");" + Environment.NewLine;
-                        str += "                            rowData." + value.Name + " = result_" + value.Name + ";" + Environment.NewLine;
-                        str += "                            if (!ret) { Debug.LogWarning($\"Convert Failed row:{i} col:" + value.Name + "\"); }" + Environment.NewLine;
+                        str += "                                //" + value.Name + Environment.NewLine;
+                        str += "                                ret = MasterDataEditorCommon.TryConvert<" + dg.Name + "." + UsingExcelCommon.GetEnumTypeName(value.Type) + ">(row[valDic[\"" + value.Name + "\"].ColumnIndex], out var result_" + value.Name + ");" + Environment.NewLine;
+                        str += "                                rowData." + value.Name + " = result_" + value.Name + ";" + Environment.NewLine;
+                        str += "                                if (!ret) { Debug.LogWarning($\"Convert Failed row:{i} col:" + value.Name + "\"); }" + Environment.NewLine;
                         str += Environment.NewLine;
                     }
                     else if(value.Type.Contains("Comment"))
@@ -94,14 +94,17 @@ namespace CatHut
                     }
                     else
                     {
-                        str += "                            //" + value.Name + Environment.NewLine;
-                        str += "                            ret = MasterDataEditorCommon.TryConvert<" + value.Type + ">(row[valDic[\"" + value.Name + "\"].ColumnIndex], out var result_" + value.Name + ");" + Environment.NewLine;
-                        str += "                            rowData." + value.Name + " = result_" + value.Name + ";" + Environment.NewLine;
-                        str += "                            if (!ret) { Debug.LogWarning($\"Convert Failed row:{i} col:" + value.Name + "\"); }" + Environment.NewLine;
+                        str += "                                //" + value.Name + Environment.NewLine;
+                        str += "                                ret = MasterDataEditorCommon.TryConvert<" + value.Type + ">(row[valDic[\"" + value.Name + "\"].ColumnIndex], out var result_" + value.Name + ");" + Environment.NewLine;
+                        str += "                                rowData." + value.Name + " = result_" + value.Name + ";" + Environment.NewLine;
+                        str += "                                if (!ret) { Debug.LogWarning($\"Convert Failed row:{i} col:" + value.Name + "\"); }" + Environment.NewLine;
                         str += Environment.NewLine;
                     }
                 }
 
+                var indexValue = dg.FormatedCsvDic[temp].HeaderPart.IndexVariable;
+
+                str += "                                "+ temp + "Data.Add(rowData." + indexValue + ", rowData);" + Environment.NewLine;
                 str += "                            }" + Environment.NewLine;
                 str += "                        }" + Environment.NewLine;
                 str += "                        break;" + Environment.NewLine;
@@ -139,7 +142,6 @@ namespace CatHut
         {
             //Importerの呼び出し元のスクリプトファイルを作成する
             var SwitchCaseListStr = GetSwitchCaseListStr(dataGroupDic);
-            var SwitchCaseListStr2 = GetSwitchCaseListStr2(dataGroupDic);
 
             //テンプレートファイルを探す
             var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.ExcelImporterPartTemplate);
@@ -150,7 +152,6 @@ namespace CatHut
             var FileStr = File.ReadAllText(TemplateFile);
 
             FileStr = FileStr.Replace("#SwitchCaseList#", SwitchCaseListStr);
-            FileStr = FileStr.Replace("#SwitchCaseList2#", SwitchCaseListStr2);
 
             var CreatedImporterPath = MasterDataEditorConfig.LoadSettings().CreatedImporterPath;
             if (!Directory.Exists(CreatedImporterPath))
@@ -173,19 +174,6 @@ namespace CatHut
                 str += "                    case \"" + file + "\":" + Environment.NewLine;
                 str += "                        Import_" + file + "(_DataGroupDic[temp]);" + Environment.NewLine;
                 str += "                        break;" + Environment.NewLine;
-            }
-            return str;
-        }
-        private static string GetSwitchCaseListStr2(SerializableDictionary<string, DataGroup> dataGroupDic)
-        {
-            string str = "";
-
-            foreach (var temp in dataGroupDic.Keys)
-            {
-                var file = Path.GetFileNameWithoutExtension(temp);
-                str += "                case \"" + file + "\":" + Environment.NewLine;
-                str += "                    Import_" + file + "(_DataGroupDic[DataGroupName]);" + Environment.NewLine;
-                str += "                    break;" + Environment.NewLine;
             }
             return str;
         }

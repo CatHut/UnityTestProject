@@ -31,17 +31,19 @@ namespace CatHut
 			}
 		}
 
-        public static void ImportCsvData(string DataGroupName)
+        public static void ImportCsvData(HashSet<string> DataGroupNameList)
         {
             _GrobalTableData = MasterDataEditorCommon.GetGlobalTable();
             _DataGroupDic = MasterDataEditorCommon.GetDataGroupDic();
 
-
-            switch (DataGroupName)
+            foreach (var temp in DataGroupNameList)
             {
-#SwitchCaseList2#
-                default:
-                    break;
+                switch (temp)
+                {
+#SwitchCaseList#
+                    default:
+                        break;
+                }
             }
         }
 
