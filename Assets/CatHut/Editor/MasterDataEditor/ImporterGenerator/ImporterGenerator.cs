@@ -139,6 +139,7 @@ namespace CatHut
         {
             //Importerの呼び出し元のスクリプトファイルを作成する
             var SwitchCaseListStr = GetSwitchCaseListStr(dataGroupDic);
+            var SwitchCaseListStr2 = GetSwitchCaseListStr2(dataGroupDic);
 
             //テンプレートファイルを探す
             var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.ExcelImporterPartTemplate);
@@ -149,6 +150,7 @@ namespace CatHut
             var FileStr = File.ReadAllText(TemplateFile);
 
             FileStr = FileStr.Replace("#SwitchCaseList#", SwitchCaseListStr);
+            FileStr = FileStr.Replace("#SwitchCaseList2#", SwitchCaseListStr2);
 
             var CreatedImporterPath = MasterDataEditorConfig.LoadSettings().CreatedImporterPath;
             if (!Directory.Exists(CreatedImporterPath))
@@ -171,6 +173,19 @@ namespace CatHut
                 str += "                    case \"" + file + "\":" + Environment.NewLine;
                 str += "                        Import_" + file + "(_DataGroupDic[temp]);" + Environment.NewLine;
                 str += "                        break;" + Environment.NewLine;
+            }
+            return str;
+        }
+        private static string GetSwitchCaseListStr2(SerializableDictionary<string, DataGroup> dataGroupDic)
+        {
+            string str = "";
+
+            foreach (var temp in dataGroupDic.Keys)
+            {
+                var file = Path.GetFileNameWithoutExtension(temp);
+                str += "                case \"" + file + "\":" + Environment.NewLine;
+                str += "                    Import_" + file + "(_DataGroupDic[DataGroupName]);" + Environment.NewLine;
+                str += "                    break;" + Environment.NewLine;
             }
             return str;
         }
