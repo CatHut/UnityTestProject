@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CatHut;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,56 @@ namespace CatHut
 {
     public static class MasterDataEditorCommon
     {
+
+        /// <summary>
+        /// グローバルテーブルを取得
+        /// </summary>
+        /// <returns></returns>
+        public static TableData GetGlobalTable()
+        {
+            List<string> folderPathList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
+
+            var _GrobalTableData = new TableData();
+
+            foreach (var folderPath in folderPathList)
+            {
+                if (!Directory.Exists(folderPath)) { continue; }
+
+                _GrobalTableData.AddTableData(folderPath);
+            }
+
+            return _GrobalTableData;
+
+        }
+
+        /// <summary>
+        /// データグループ取得
+        /// </summary>
+        /// <returns></returns>
+        public static SerializableDictionary<string, DataGroup> GetDataGroupDic()
+        {
+            List<string> folderPathList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
+
+            var _DataGroupDic = new SerializableDictionary<string, DataGroup>();
+
+            foreach (var folderPath in folderPathList)
+            {
+                if (!Directory.Exists(folderPath)) { continue; }
+
+                MasterDataEditorCommon.ImportHeaderMultiply(folderPath, ref _DataGroupDic);
+            }
+
+            foreach (var folderPath in folderPathList)
+            {
+                if (!Directory.Exists(folderPath)) { continue; }
+
+                MasterDataEditorCommon.ImportDataMultiply(folderPath, ref _DataGroupDic);
+            }
+
+            return _DataGroupDic;
+        }
+
+
         /// <summary>
         /// フォルダ内にあるヘッダ情報を登録する。
         /// </summary>

@@ -305,6 +305,9 @@ public class HeaderEditWindow : EditorWindow
                 ScriptableObjectGenerator.CreateScriptableObject(dg);
             }
             ImporterGenerator.CreateCsvImporter(EditorSharedData.RawMasterData.DataGroupDic);
+            ImporterGenerator.CreateCsvImporterPart(EditorSharedData.RawMasterData.DataGroupDic);
+
+            AssetDatabase.Refresh();
 
         }) { text = "Create ScriptableObject And Inporter" });
 

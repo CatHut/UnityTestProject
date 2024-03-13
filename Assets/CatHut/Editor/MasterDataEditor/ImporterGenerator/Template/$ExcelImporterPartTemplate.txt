@@ -2,11 +2,8 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using UnityEditor;
 using UnityEngine;
-using ClosedXML;
 using CatHut;
 
 namespace CatHut
@@ -18,35 +15,16 @@ namespace CatHut
 
         public static void ImportAllCsvData()
         {
-
-            List<string> folderPathList = MasterDataEditorConfig.settings.CsvMasterDataPathList;
-
-            _GrobalTableData = new TableData();
-
-
-            foreach (var folderPath in folderPathList)
-            {
-                if (!Directory.Exists(folderPath)) { continue; }
-
-                _GrobalTableData.AddTableData(folderPath);
-                MasterDataEditorCommon.ImportHeaderMultiply(folderPath, ref _DataGroupDic);
-            }
-
-            foreach (var folderPath in folderPathList)
-            {
-                if (!Directory.Exists(folderPath)) { continue; }
-
-                MasterDataEditorCommon.ImportDataMultiply(folderPath, ref _DataGroupDic);
-            }
+            _GrobalTableData = MasterDataEditorCommon.GetGlobalTable();
+            _DataGroupDic = MasterDataEditorCommon.GetDataGroupDic();
 
 
             foreach (var temp in _DataGroupDic.Keys)
             {
 
-				switch (file)
+                switch (temp)
 				{
 #SwitchCaseList#
-
 					default:
 						break;
 				}

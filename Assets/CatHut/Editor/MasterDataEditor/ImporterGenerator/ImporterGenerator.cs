@@ -1,16 +1,9 @@
 ﻿#if UNITY_EDITOR
 
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEditor;
-using UnityEngine;
 using System;
-using System.Text.RegularExpressions;
-using System.Linq;
-using static MasterDataEditorConfig;
-using UnityEditor.AddressableAssets.Build.Layout;
 
 namespace CatHut
 {
@@ -54,7 +47,6 @@ namespace CatHut
 
             }
 
-            AssetDatabase.Refresh();
         }
 
         private static string GetClassDataDefineStr(DataGroup dg)
@@ -139,6 +131,47 @@ namespace CatHut
             str += "            }" + Environment.NewLine;
             str += Environment.NewLine;
             str += "            AssetDatabase.CreateAsset(data, Path.Combine(folder, \"" + filename +".asset\"));" + Environment.NewLine;
+            return str;
+        }
+
+
+        public static void CreateCsvImporterPart(SerializableDictionary<string, DataGroup> dataGroupDic)
+        {
+            //Importerの呼び出し元のスクリプトファイルを作成する
+            var SwitchCaseListStr = GetSwitchCaseListStr(dataGroupDic);
+
+            //テンプレートファイルを探す
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.ExcelImporterPartTemplate);
+            var TemplateFile = "";
+
+            TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
+
+            var FileStr = File.ReadAllText(TemplateFile);
+
+            FileStr = FileStr.Replace("#SwitchCaseList#", SwitchCaseListStr);
+
+            var CreatedImporterPath = MasterDataEditorConfig.LoadSettings().CreatedImporterPath;
+            if (!Directory.Exists(CreatedImporterPath))
+            {
+                Directory.CreateDirectory(CreatedImporterPath);
+            }
+
+            var fullpath = Path.Combine(CreatedImporterPath, "ExcelImporter_part.cs");
+            File.WriteAllText(fullpath, FileStr, Encoding.UTF8);
+
+        }
+
+        private static string GetSwitchCaseListStr(SerializableDictionary<string, DataGroup> dataGroupDic)
+        {
+            string str = "";
+
+            foreach (var temp in dataGroupDic.Keys)
+            {
+                var file = Path.GetFileNameWithoutExtension(temp);
+                str += "                    case \"" + file + "\":" + Environment.NewLine;
+                str += "                        Import_" + file + "(_DataGroupDic[temp]);" + Environment.NewLine;
+                str += "                        break;" + Environment.NewLine;
+            }
             return str;
         }
 

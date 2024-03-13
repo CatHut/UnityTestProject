@@ -15,7 +15,7 @@ namespace CatHut
     public class ScriptableObjectGenerator_bk
     {
 
-        [MenuItem("Tools/CatHut/MasterDataEditor/ReCreate", false, 1)]
+//        [MenuItem("Tools/CatHut/MasterDataEditor/ReCreate", false, 1)]
         private static void ReCereateScriptableObjectAndImporter()
         {
             CleanUsingExcelScripts();
@@ -24,7 +24,7 @@ namespace CatHut
         }
 
 
-        [MenuItem("Tools/CatHut/MasterDataEditor/Create Using Excel Scripts", false, 2)]
+//        [MenuItem("Tools/CatHut/MasterDataEditor/Create Using Excel Scripts", false, 2)]
         private static void CreateUsingExcelScripts()
         {
             //エクセルをインポートするフォルダリスト取得
@@ -55,7 +55,7 @@ namespace CatHut
             CreateExcelImporterParent();
 
             //Importer_partの出力
-            CreateExcelImporterPart(ExcelDataDic);
+            //CreateExcelImporterPart(ExcelDataDic);
 
             //Importerの出力
             CreateExcelImporter(ExcelDataDic);
@@ -72,7 +72,7 @@ namespace CatHut
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Tools/CatHut/MasterDataEditor/Clean", false, 3)]
+        //        [MenuItem("Tools/CatHut/MasterDataEditor/Clean", false, 3)]
         private static void CleanUsingExcelScripts()
         {
             //MasterDataEditor削除
@@ -88,7 +88,7 @@ namespace CatHut
         }
 
 
-        [MenuItem("Tools/CatHut/MasterDataEditor/Settings2/Open ImportFolderList", false, 4)]
+        //       [MenuItem("Tools/CatHut/MasterDataEditor/Settings2/Open ImportFolderList", false, 4)]
         private static void OpenImportFolderList()
         {
 //            var temp = UsingExcelCommon.GetFileList(UsingExcelCommon.ImportFolderListFile);
@@ -112,7 +112,7 @@ namespace CatHut
 
         }
 
-        [MenuItem("Tools/CatHut/MasterDataEditor/Settings2/Open MasterDataExcelList", false, 5)]
+        //       [MenuItem("Tools/CatHut/MasterDataEditor/Settings2/Open MasterDataExcelList", false, 5)]
         private static void OpenMasterDataExcelList()
         {
 //            var temp = UsingExcelCommon.GetFileList(UsingExcelCommon.MasterDataExcelListFile);
@@ -275,25 +275,6 @@ namespace CatHut
 
         }
 
-        private static void CreateExcelImporterPart(Dictionary<string, ExcelDataDictionary> ExcelDataDic)
-        {
-            //Importerの呼び出し元のスクリプトファイルを作成する
-            var SwitchCaseListStr = GetSwitchCaseListStr(ExcelDataDic);
-
-            //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.ExcelImporterPartTemplate);
-            var TemplateFile = "";
-
-            TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
-
-            var FileStr = File.ReadAllText(TemplateFile);
-
-            FileStr = FileStr.Replace("#SwitchCaseList#", SwitchCaseListStr);
-
-            TemplateFile = TemplateFile.Replace("/Template", "/CreatedImporter");
-            File.WriteAllText(TemplateFile.Replace(UsingExcelCommon.ExcelImporterPartTemplate + ".txt", "ExcelImporter_part.cs"), FileStr, Encoding.UTF8);
-
-        }
 
         private static void CreateExcelImporter(Dictionary<string, ExcelDataDictionary> ExcelDataDic)
         {
@@ -430,19 +411,7 @@ namespace CatHut
             return str;
         }
 
-        private static string GetSwitchCaseListStr(Dictionary<string, ExcelDataDictionary> ExcelDataDic)
-        {
-            string str = "";
 
-            foreach (var temp in ExcelDataDic)
-            {
-                var file = Path.GetFileNameWithoutExtension(temp.Key);
-                str += "                        case \"" + file + "\":" + Environment.NewLine;
-                str += "                            Import_" + file + "(path);" + Environment.NewLine;
-                str += "                            break;" + Environment.NewLine;
-            }
-            return str;
-        }
 
         private static string GetClassDataDefineStr(Dictionary<string, ExcelSheetFormat> edfDic)
         {
