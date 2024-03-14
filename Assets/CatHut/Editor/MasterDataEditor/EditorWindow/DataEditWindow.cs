@@ -17,6 +17,7 @@ public class DataEditWindow : EditorWindow
 
     private List<TreeViewItemData<Item>> _rootItems;
     private TreeView TreeView;
+    private Button ReflectButton;
 
     private readonly string UI_ITEM_MASTER_DATA_PATH = "MasterDataPath";
 
@@ -30,6 +31,24 @@ public class DataEditWindow : EditorWindow
 
     public void OnEnable()
     {
+        ReflectButton = new Button(() =>
+        {
+            // ここにボタンが押されたときの処理を記述
+        })
+        {
+            text = EditorApplication.isPlaying ? "Reflect" : "Reflect(EnterPlayMode)"
+        };
+
+        EditorApplication.playModeStateChanged += (PlayModeStateChange state) =>
+        {
+            // ゲームが再生中かどうかでボタンの有効・無効を切り替え
+            ReflectButton.SetEnabled(EditorApplication.isPlaying);
+
+            // ゲーム再生状態に応じてボタンのテキストも更新
+            ReflectButton.text = EditorApplication.isPlaying ? "Reflect" : "Reflect(EnterPlayMode)";
+        };
+
+        ReflectButton.SetEnabled(EditorApplication.isPlaying);
     }
 
     private void Reset()
@@ -195,6 +214,10 @@ public class DataEditWindow : EditorWindow
 
         })
         { text = "Save" });
+
+
+        //このボタン定義はOnEnableでやる
+        editArea.Add(ReflectButton);
 
 
         editArea.Add(new Button(() => {
@@ -496,6 +519,18 @@ public class DataEditWindow : EditorWindow
         variableListView.Rebuild();
 
         editArea.Add(variableListView);
+    }
+
+
+    private void ReflectToGameData()
+    {
+
+        var name = GetSelectedAndParentItemNames(TreeView);
+        var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
+
+        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
+        var gTable = EditorSharedData.RawMasterData.GrobalTableData;    //グローバルテーブル
+        var dg = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName];  //データグループ
     }
 
 
