@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine;
@@ -23,13 +24,14 @@ namespace CatHut
         [MenuItem("Tools/CatHut/AddressableOperator/AddAssets", false, 2)]
         private static void AddAssets()
         {
-            var AddressableBuildSetting = AddressableOperatorCommon.GetAddressableBuildSetting();
-            var AssSetting = AssetDatabase.LoadAssetAtPath<AddressableAssetSettings>(AddressableOperatorCommon.ADDRESSABLE_ASSET_SETTING_PATH);
+            var AddressableOperationConfigData = AddressableOperatorConfig.LoadSettings();
+            var AssSetting = AddressableAssetSettingsDefaultObject.Settings;
+
 
             var AssGroups = AssSetting.groups;
 
 
-            foreach (var data in AddressableBuildSetting.AddressableSettingList)
+            foreach (var data in AddressableOperationConfigData.AddressableSettingList)
             {
                 var folder = data.FolderPath;
 
@@ -40,6 +42,12 @@ namespace CatHut
                     Debug.Log("指定されたグループ:" + data.Group + "が見つかりませんでした。");
                     Debug.Log("指定されたグループ:" + data.Group + "を追加します。");
                     parentGroup = CreatePackedAssetsGroup(data.Group, AssSetting);
+                }
+
+                //ラベルの追加
+                if (!AssSetting.GetLabels().Contains(data.Group))
+                {
+                    AssSetting.AddLabel(data.Group);
                 }
 
                 var dic = AddressableOperatorCommon.GetGuidFileDic(folder);
@@ -61,14 +69,14 @@ namespace CatHut
         [MenuItem("Tools/CatHut/AddressableOperator/RemoveAsset", false, 3)]
         private static void RemoveAllAssets()
         {
-            var AssSetting = AssetDatabase.LoadAssetAtPath<AddressableAssetSettings>(AddressableOperatorCommon.ADDRESSABLE_ASSET_SETTING_PATH);
+            var AssSetting = AddressableAssetSettingsDefaultObject.Settings;
 
             List<AddressableAssetEntry> addressableList = new List<AddressableAssetEntry>();
             AssSetting.GetAllAssets(addressableList, false);
 
-            var AddressableBuildSettingList = AddressableOperatorCommon.GetAddressableBuildSetting();
+            var AddressableOperationConfigData = AddressableOperatorConfig.LoadSettings();
 
-            foreach (var absl in AddressableBuildSettingList.AddressableSettingList)
+            foreach (var absl in AddressableOperationConfigData.AddressableSettingList)
             {
                 foreach (var data in addressableList)
                 {

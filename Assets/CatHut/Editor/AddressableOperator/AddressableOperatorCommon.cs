@@ -10,23 +10,12 @@ namespace CatHut
 {
     public class AddressableOperatorCommon
     {
-        public static readonly string ADDRESSABLE_ASSET_SETTING_PATH = "Assets/AddressableAssetsData/AddressableAssetSettings.asset";
 
         private static readonly int CSV_GROUP_IDX = 0;  //グループ
         private static readonly int CSV_FOLDER_IDX = 1; //フォルダ
         private static readonly int CSV_EXT_IDX = 2;    //拡張子
 
-        /// <summary>
-        /// Addressableの対象にするフォルダリストを取得
-        /// </summary>
-        /// <returns>Groupをキーとしたフォルダリスト</returns>
-        public static AddressableOperatorConfigData GetAddressableBuildSetting()
-        {
 
-
-            return null;
-
-        }
 
         /// <summary>
         /// 指定フォルダ以下のファイルのGUIDを取得する
