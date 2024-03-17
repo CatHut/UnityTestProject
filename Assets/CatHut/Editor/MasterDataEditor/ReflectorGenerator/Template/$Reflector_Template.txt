@@ -1,0 +1,47 @@
+﻿#if UNITY_EDITOR
+
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
+using System;
+using CatHut;
+
+
+namespace CatHut
+{
+	public static partial class CsvImporter
+	{
+		static void Import_#DataGroupName#(DataGroup dg)
+		{
+
+#ClassDataDefine#
+
+            foreach (var key in dg.FormatedCsvDic.Keys)
+            {
+
+                var fc = dg.FormatedCsvDic[key];
+                var valDic = dg.FormatedCsvDic[key].HeaderPart.VariableDic;
+
+                switch (key)
+                {
+
+					//エクセルファイル中のクラス定義分追加
+#CsvDataRead#
+                }
+            }
+
+            var data = ScriptableObject.CreateInstance<#DataGroupName#>();
+
+#ClassDataSet#
+
+#ClassDataSave#
+
+        }
+    }
+}
+
+
+#endif

@@ -25,6 +25,8 @@ namespace CatHut
         readonly public static string CsvImporterParentTemplate = "$CsvImporterParentTemplate";
         readonly public static string CsvImporterTemplate = "$Importer_Template";
         readonly public static string CsvImporterPartTemplate = "$CsvImporterPartTemplate";
+        readonly public static string CsvReflectorTemplate = "$Reflector_Template";
+        readonly public static string CsvReflectorPartTemplate = "$CsvReflectorPartTemplate";
         readonly public static string MasterDataTemplate = "$MasterDataTemplate";
 
         readonly public static string EditorWindowTemplate = "$EditorWindowTemplate";

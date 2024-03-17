@@ -10,7 +10,7 @@ namespace CatHut
     public static class ReflectorGenerator
     {
 
-        public static void CreateCsvImporter(SerializableDictionary<string, DataGroup> dataGroupDic)
+        public static void CreateCsvReflector(SerializableDictionary<string, DataGroup> dataGroupDic)
         {
             //ScriptableOjbectの定義ファイルを作成する
             foreach (var dg in dataGroupDic)
@@ -23,7 +23,7 @@ namespace CatHut
 
 
                 //テンプレートファイルを探す
-                var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.CsvImporterTemplate);
+                var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.CsvReflectorTemplate);
                 var TemplateFile = "";
 
                 TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -36,13 +36,13 @@ namespace CatHut
                 FileStr = FileStr.Replace("#ClassDataSet#", ClassDataSetStr);
                 FileStr = FileStr.Replace("#ClassDataSave#", SaveAssetStr);
 
-                var CreatedImporterPath = MasterDataEditorConfig.LoadSettings().CreatedImporterPath;
-                if (!Directory.Exists(CreatedImporterPath))
+                var CreatedReflectorPath = MasterDataEditorConfig.LoadSettings().CreatedReflectorPath;
+                if (!Directory.Exists(CreatedReflectorPath))
                 {
-                    Directory.CreateDirectory(CreatedImporterPath);
+                    Directory.CreateDirectory(CreatedReflectorPath);
                 }
 
-                var fullpath = Path.Combine(CreatedImporterPath, "Importer_" + dg.Key + ".cs");
+                var fullpath = Path.Combine(CreatedReflectorPath, "Reflector_" + dg.Key + ".cs");
                 File.WriteAllText(fullpath, FileStr, Encoding.UTF8);
 
             }
