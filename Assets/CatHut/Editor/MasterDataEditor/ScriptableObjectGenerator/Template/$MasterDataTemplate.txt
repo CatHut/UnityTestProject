@@ -17,8 +17,12 @@ public class MasterData : SingletonMonoBehaviour<MasterData>
     {
         base.Awake();
 
-#MasterDataClassLoad#
+        Reload();
+    }
 
+    public void Reload()
+    {
+#MasterDataClassLoad#
     }
 
     public object this[string propertyName]

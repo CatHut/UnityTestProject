@@ -31,19 +31,14 @@ public class MasterData : SingletonMonoBehaviour<MasterData>
     {
         base.Awake();
 
-
         Reload();
-
     }
 
     public void Reload()
     {
-        MasterData.Instance.EnemyData = null;
-        MasterData.Instance.PlayerData = null;
+        EnemyData = Addressables.LoadAssetAsync<Enemy>("Enemy").WaitForCompletion();
+        PlayerData = Addressables.LoadAssetAsync<Player>("Player").WaitForCompletion();
 
-
-        MasterData.Instance.EnemyData = Addressables.LoadAssetAsync<Enemy>("Enemy").WaitForCompletion();
-        MasterData.Instance.PlayerData = Addressables.LoadAssetAsync<Player>("Player").WaitForCompletion();
     }
 
     public object this[string propertyName]

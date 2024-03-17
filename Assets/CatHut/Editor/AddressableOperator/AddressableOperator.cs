@@ -41,9 +41,6 @@ namespace CatHut
 
 
 
-
-
-
         [MenuItem("Tools/CatHut/AddressableOperator/RemoveAsset", false, 3)]
         private static void RemoveAllAssets()
         {

@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
 using UnityEngine;
 using CatHut;
 
@@ -29,6 +30,8 @@ namespace CatHut
 						break;
 				}
 			}
+
+            ImportPostProcess();
 		}
 
         public static void ImportCsvData(HashSet<string> DataGroupNameList)
@@ -45,6 +48,28 @@ namespace CatHut
                         break;
                 }
             }
+
+            ImportPostProcess();
+        }
+
+        private static void ImportPostProcess()
+        {
+            var groupName = AddressableOperatorConfig.settings.MasterDataAddressableSetting.Group;
+            MasterDataEditorCommon.RenameAssetsInGroup(groupName);
+
+            if (Application.isPlaying)
+            {
+                MasterData.Instance.Reload();
+            }
+
+            MasterDataEditorCommon.RenameAssetsBackInGroup(groupName);
+
+
+            var AddressableOperationConfigData = AddressableOperatorConfig.LoadSettings();
+            var AssSetting = AddressableAssetSettingsDefaultObject.Settings;
+
+            //MasterData
+            AddressableOperatorCommon.ProcessAddressableSetting(AssSetting, AddressableOperationConfigData.MasterDataAddressableSetting);
         }
 
 	}

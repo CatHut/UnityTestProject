@@ -28,7 +28,7 @@ MonoBehaviour:
         _REG: 5
         _SPD: 3
         _EXP: 100
-        _IMAGE: aaa
+        _IMAGE: f_apple
         _lowlimit: 1
         _uplimit: 5
         _BOSS: 0

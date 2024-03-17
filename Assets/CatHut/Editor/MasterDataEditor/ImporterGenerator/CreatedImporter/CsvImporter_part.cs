@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using CatHut;
-using UnityEditor.AddressableAssets.Settings;
-using UnityEngine.AddressableAssets;
 using UnityEditor.AddressableAssets;
 
 namespace CatHut
@@ -40,7 +38,7 @@ namespace CatHut
 			}
 
             ImportPostProcess();
-        }
+		}
 
         public static void ImportCsvData(HashSet<string> DataGroupNameList)
         {
@@ -86,9 +84,7 @@ namespace CatHut
             AddressableOperatorCommon.ProcessAddressableSetting(AssSetting, AddressableOperationConfigData.MasterDataAddressableSetting);
         }
 
-    }
-
-
+	}
 }
 
 #endif
