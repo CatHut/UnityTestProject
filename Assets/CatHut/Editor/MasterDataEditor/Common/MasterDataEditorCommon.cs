@@ -287,15 +287,24 @@ namespace CatHut
                 return;
             }
 
+            var assetPathList = new List<string>();
+
             // グループ内の全てのエントリに対して処理
             foreach (var entry in group.entries)
             {
-                string assetPath = entry.AssetPath;
+                assetPathList.Add(entry.AssetPath);
+            }
+
+            RemoveAllEntriesFromGroup(groupName);
+
+            foreach (var assetPath in assetPathList)
+            {
+                var guid = AssetDatabase.AssetPathToGUID(assetPath);
+
                 string oldFileName = Path.GetFileNameWithoutExtension(assetPath);
                 string newFileName = oldFileName + "_temp" + SaveCounter.ToString();
 
                 // AssetDatabaseを使用してファイル名を変更
-                var guid = AssetDatabase.AssetPathToGUID(assetPath);
                 string errorMessage = AssetDatabase.RenameAsset(assetPath, newFileName);
                 if (string.Empty != errorMessage)
                 {
@@ -303,9 +312,13 @@ namespace CatHut
                     Debug.LogError(errorMessage);
                     continue;
                 }
+                // アセットデータベースをリフレッシュ
+                AssetDatabase.Refresh();
+                AssetDatabase.SaveAssets();
 
-                // Addressableのエントリも更新
-                entry.SetAddress(newFileName);
+                var entry = settings.CreateOrMoveEntry(guid, group);
+                entry.SetAddress(oldFileName);
+                
 
                 Debug.Log($"Asset renamed: {oldFileName}.asset to {newFileName}.asset");
             }
@@ -313,23 +326,16 @@ namespace CatHut
             // Addressablesの設定を保存
             settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, group, true, true);
 
-            // アセットデータベースをリフレッシュ
-            AssetDatabase.Refresh();
-            AssetDatabase.SaveAssets();
 
             SaveCounter++;
         }
 
-        
-
         public static void RenameAssetsBackInGroup(string groupName)
         {
-            Regex tempRegex = new Regex(@"_temp\d*$", RegexOptions.Compiled);
-
             // AddressableAssetSettingsを取得
             var settings = AddressableAssetSettingsDefaultObject.Settings;
 
-            // 指定されたグループを検索
+            // MasterDataグループを検索
             var group = settings.FindGroup(groupName);
             if (group == null)
             {
@@ -337,19 +343,29 @@ namespace CatHut
                 return;
             }
 
-            // グループ内の全エントリに対して処理
+            var assetPathList = new List<string>();
+
+            // グループ内の全てのエントリに対して処理
             foreach (var entry in group.entries)
             {
-                string assetPath = entry.AssetPath;
-                string fileName = Path.GetFileName(assetPath);
-                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(assetPath);
-                string extension = Path.GetExtension(assetPath);
+                assetPathList.Add(entry.AssetPath);
+            }
 
-                // ファイル名から"_temp"と数字を削除
-                string newFileNameWithoutExtension = tempRegex.Replace(fileNameWithoutExtension, "");
+            RemoveGroup(groupName);
+
+            foreach (var assetPath in assetPathList)
+            {
+                var guid = AssetDatabase.AssetPathToGUID(assetPath);
+
+                string oldFileName = Path.GetFileNameWithoutExtension(assetPath);
+
+                // "_temp"と数字を取り除く正規表現パターン
+                var regex = new Regex("_temp[0-9]+");
+                // ファイル名から該当する部分を取り除く
+                string newFileName = regex.Replace(oldFileName, "");
 
                 // AssetDatabaseを使用してファイル名を変更
-                string errorMessage = AssetDatabase.RenameAsset(assetPath, newFileNameWithoutExtension);
+                string errorMessage = AssetDatabase.RenameAsset(assetPath, newFileName);
                 if (!string.IsNullOrEmpty(errorMessage))
                 {
                     Debug.LogError("Could not rename asset: " + assetPath);
@@ -357,18 +373,57 @@ namespace CatHut
                     continue;
                 }
 
-                // Addressableのエントリも更新（コメントアウトされていた行を復活）
-                entry.SetAddress(newFileNameWithoutExtension);
+                // アセットデータベースをリフレッシュ
+                AssetDatabase.Refresh();
+                AssetDatabase.SaveAssets();
 
-                Debug.Log($"Asset renamed back: {fileName} to {newFileNameWithoutExtension + extension}");
+                Debug.Log($"Asset renamed: {oldFileName}.asset to {newFileName}.asset");
             }
 
-            // Addressablesの設定を保存
-            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, group, true, true);
+        }
 
+        public static void RemoveAllEntriesFromGroup(string groupName)
+        {
+            // AddressableAssetSettingsを取得
+            AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
 
-            // アセットデータベースをリフレッシュ
-            AssetDatabase.Refresh();
+            // 指定したグループを検索
+            AddressableAssetGroup group = settings.FindGroup(groupName);
+            if (group == null)
+            {
+                Debug.LogError("Group not found: " + groupName);
+                return;
+            }
+
+            // グループからすべてのエントリを削除
+            // 注意: コレクションをループしている間に変更を加えるとエラーになるため、一時リストを作成する
+            var entriesToRemove = new List<AddressableAssetEntry>(group.entries);
+            foreach (var entry in entriesToRemove)
+            {
+                settings.RemoveAssetEntry(entry.guid);
+            }
+
+            // 設定を保存
+            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryRemoved, group, true, true);
+
+            // Addressable Asset Systemを更新
+            //AddressableAssetSettingsDefaultObject.Settings.SetDirty(AddressableAssetSettings.ModificationEvent.BatchModification, null, true, false);
+        }
+
+        public static void RemoveGroup(string groupName)
+        {
+            AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+            AddressableAssetGroup group = settings.FindGroup(groupName);
+
+            if (group != null)
+            {
+                // グループを削除します
+                settings.RemoveGroup(group);
+            }
+            else
+            {
+                UnityEngine.Debug.LogError("Group not found: " + groupName);
+            }
         }
 
     }

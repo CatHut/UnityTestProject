@@ -41,9 +41,7 @@ public class MasterData : SingletonMonoBehaviour<MasterData>
         MasterData.Instance.EnemyData = null;
         MasterData.Instance.PlayerData = null;
 
-#if UNITY_EDITOR
-        Caching.ClearCache();
-#endif
+
         MasterData.Instance.EnemyData = Addressables.LoadAssetAsync<Enemy>("Enemy").WaitForCompletion();
         MasterData.Instance.PlayerData = Addressables.LoadAssetAsync<Player>("Player").WaitForCompletion();
     }
