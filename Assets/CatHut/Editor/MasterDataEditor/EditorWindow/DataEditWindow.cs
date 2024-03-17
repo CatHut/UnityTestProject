@@ -1,4 +1,5 @@
 ﻿using CatHut;
+using Codice.Client.Commands;
 using DG.Tweening.Plugins.Core.PathCore;
 using System;
 using System.Collections.Generic;
@@ -6,8 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
+using Unity.Properties;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
@@ -17,7 +20,7 @@ public class DataEditWindow : EditorWindow
 
     private List<TreeViewItemData<Item>> _rootItems;
     private TreeView TreeView;
-    private Button ReflectButton;
+    private Button ApplyButton;
 
     private readonly string UI_ITEM_MASTER_DATA_PATH = "MasterDataPath";
 
@@ -31,24 +34,27 @@ public class DataEditWindow : EditorWindow
 
     public void OnEnable()
     {
-        ReflectButton = new Button(() =>
+        ApplyButton = new Button(() =>
         {
             // ここにボタンが押されたときの処理を記述
+            ApplyValuesToGame();
         })
         {
-            text = EditorApplication.isPlaying ? "Reflect" : "Reflect(EnterPlayMode)"
+            text = EditorApplication.isPlaying ? "Apply Values To Game" : "Apply Values To Game(Enter PlayMode)"
         };
 
         EditorApplication.playModeStateChanged += (PlayModeStateChange state) =>
         {
             // ゲームが再生中かどうかでボタンの有効・無効を切り替え
-            ReflectButton.SetEnabled(EditorApplication.isPlaying);
+            ApplyButton.SetEnabled(EditorApplication.isPlaying);
 
             // ゲーム再生状態に応じてボタンのテキストも更新
-            ReflectButton.text = EditorApplication.isPlaying ? "Reflect" : "Reflect(EnterPlayMode)";
+            ApplyButton.text = EditorApplication.isPlaying ? "Reflect" : "Reflect(EnterPlayMode)";
         };
 
-        ReflectButton.SetEnabled(EditorApplication.isPlaying);
+        ApplyButton.SetEnabled(EditorApplication.isPlaying);
+
+
     }
 
     private void Reset()
@@ -217,7 +223,7 @@ public class DataEditWindow : EditorWindow
 
 
         //このボタン定義はOnEnableでやる
-        editArea.Add(ReflectButton);
+        editArea.Add(ApplyButton);
 
 
         editArea.Add(new Button(() => {
@@ -228,12 +234,6 @@ public class DataEditWindow : EditorWindow
         })
         { text = "Csv Reload" });
 
-        editArea.Add(new Button(() => {
-
-            variableListView.RefreshItems();
-
-        })
-        { text = "TestRefresh" });
 
 
         //これはTreeViewに実装
@@ -320,7 +320,7 @@ public class DataEditWindow : EditorWindow
         var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
 
         //ソース設定 TODO
-        variableListView.itemsSource = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle; ;
+        variableListView.itemsSource = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
 
 
         // 列の定義を動的に行う
@@ -522,7 +522,7 @@ public class DataEditWindow : EditorWindow
     }
 
 
-    private void ReflectToGameData()
+    private void ApplyValuesToGame()
     {
 
         var name = GetSelectedAndParentItemNames(TreeView);
@@ -531,7 +531,75 @@ public class DataEditWindow : EditorWindow
         var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
         var gTable = EditorSharedData.RawMasterData.GrobalTableData;    //グローバルテーブル
         var dg = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName];  //データグループ
+
+
+        var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName];
+
+
+        switch (name.parentName)
+        {
+            case "Enemy":
+                {
+                    switch(name.selectedName)
+                    {
+                        case "EnemyParameter":
+                            {
+                                SetDataEnemyParameter(MasterData.Instance.EnemyData.EnemyParameterData, data);
+                            }
+                            break;
+                        case "SkillPattern":
+                            {
+                            }
+                            break;
+                    }
+                }
+                break;
+            case "Player":
+                {
+                    switch (name.selectedName)
+                    {
+                        case "EnemyParameter":
+                            {
+                            }
+                            break;
+                    }
+                }
+                break;
+        }
+
     }
+
+
+    void SetDataEnemyParameter(Enemy.EnemyParameterDictionary master, FormatedCsvData fcd)
+    {
+        var data = fcd.DataPart.DataWithoutColumnTitle;
+
+        var indexStr = fcd.HeaderPart.IndexVariable;
+        var indexCol = fcd.HeaderPart.VariableDic[indexStr].ColumnIndex;
+        var valDic = fcd.HeaderPart.VariableDic;
+
+        foreach(var row in data)
+        {
+            foreach (var kvp in valDic)
+            {
+                //master[row[indexCol]].REG = row[indexCol];
+                //master[row[indexCol]].REG = row[indexCol];
+                //master[row[indexCol]].REG = row[indexCol];
+                //master[row[indexCol]].REG = row[indexCol];
+                //master[row[indexCol]].REG = row[indexCol];
+                //master[row[indexCol]].REG = row[indexCol];
+                //master[row[indexCol]].REG = row[indexCol];
+                //master[row[indexCol]].REG = row[indexCol];
+            }
+
+
+
+        }
+
+    }
+
+
+
 
 
 }

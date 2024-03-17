@@ -18,6 +18,13 @@ public class MasterData : SingletonMonoBehaviour<MasterData>
         set { _EnemyData = value; } 
     }
 
+    private Player _PlayerData;
+    public Player PlayerData
+    {
+        get { return _PlayerData; }
+        set { _PlayerData = value; } 
+    }
+
 
 
     private new void Awake()
@@ -25,6 +32,7 @@ public class MasterData : SingletonMonoBehaviour<MasterData>
         base.Awake();
 
         EnemyData = Addressables.LoadAssetAsync<Enemy>("Enemy").WaitForCompletion();
+        PlayerData = Addressables.LoadAssetAsync<Player>("Player").WaitForCompletion();
 
 
     }
