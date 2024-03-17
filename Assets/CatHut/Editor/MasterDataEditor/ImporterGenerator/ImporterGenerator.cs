@@ -23,7 +23,7 @@ namespace CatHut
 
 
                 //テンプレートファイルを探す
-                var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.ExcelImporterTemplate);
+                var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.CsvImporterTemplate);
                 var TemplateFile = "";
 
                 TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -83,7 +83,7 @@ namespace CatHut
                         //TODO更にグローバルテーブルとローカルテーブルの区別必要
 
                         str += "                                //" + value.Name + Environment.NewLine;
-                        str += "                                ret = MasterDataEditorCommon.TryConvert<" + dg.Name + "." + UsingExcelCommon.GetEnumTypeName(value.Type) + ">(row[valDic[\"" + value.Name + "\"].ColumnIndex], out var result_" + value.Name + ");" + Environment.NewLine;
+                        str += "                                ret = MasterDataEditorCommon.TryConvert<" + dg.Name + "." + UsingCsvCommon.GetEnumTypeName(value.Type) + ">(row[valDic[\"" + value.Name + "\"].ColumnIndex], out var result_" + value.Name + ");" + Environment.NewLine;
                         str += "                                rowData." + value.Name + " = result_" + value.Name + ";" + Environment.NewLine;
                         str += "                                if (!ret) { Debug.LogWarning($\"Convert Failed row:{i} col:" + value.Name + "\"); }" + Environment.NewLine;
                         str += Environment.NewLine;
@@ -144,7 +144,7 @@ namespace CatHut
             var SwitchCaseListStr = GetSwitchCaseListStr(dataGroupDic);
 
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.ExcelImporterPartTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.CsvImporterPartTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -159,7 +159,7 @@ namespace CatHut
                 Directory.CreateDirectory(CreatedImporterPath);
             }
 
-            var fullpath = Path.Combine(CreatedImporterPath, "ExcelImporter_part.cs");
+            var fullpath = Path.Combine(CreatedImporterPath, "CsvImporter_part.cs");
             File.WriteAllText(fullpath, FileStr, Encoding.UTF8);
 
         }

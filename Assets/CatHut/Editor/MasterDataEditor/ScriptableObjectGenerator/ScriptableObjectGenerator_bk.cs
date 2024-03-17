@@ -28,13 +28,13 @@ namespace CatHut
         private static void CreateUsingExcelScripts()
         {
             //エクセルをインポートするフォルダリスト取得
-            var ExcelFolderList = UsingExcelCommon.GetExcelFolderList();
+            var ExcelFolderList = UsingCsvCommon.GetExcelFolderList();
 
             //ScriptableObjectを生成するエクセルファイルリスト取得
-            var ExcelFileList = UsingExcelCommon.GetMasterDataExcelList();
+            var ExcelFileList = UsingCsvCommon.GetMasterDataExcelList();
 
             //対象のファイルを諸々条件つけて整形（重複等対応）
-            var CreateScriptableObjectList = UsingExcelCommon.GetMasterDataExcelPath(ExcelFolderList, ExcelFileList);
+            var CreateScriptableObjectList = UsingCsvCommon.GetMasterDataExcelPath(ExcelFolderList, ExcelFileList);
 
             var ExcelDataDic = new Dictionary<string, ExcelDataDictionary>();
 
@@ -146,7 +146,7 @@ namespace CatHut
             var MasterDataClassLoadStr = GetMasterDataClassLosdStr(ExcelDataDic);
 
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.MasterDataTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.MasterDataTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -158,14 +158,14 @@ namespace CatHut
             FileStr = FileStr.Replace("#MasterDataClassLoad#", MasterDataClassLoadStr);
 
             TemplateFile = TemplateFile.Replace("/Template", "/CreatedScriptableObject");
-            File.WriteAllText(TemplateFile.Replace(UsingExcelCommon.MasterDataTemplate + ".txt", "MasterData.cs"), FileStr, Encoding.UTF8);
+            File.WriteAllText(TemplateFile.Replace(UsingCsvCommon.MasterDataTemplate + ".txt", "MasterData.cs"), FileStr, Encoding.UTF8);
 
         }
 
         private static void CreateEditorWindow(Dictionary<string, ExcelDataDictionary> ExcelDataDic)
         {
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.EditorWindowTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.EditorWindowTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -186,7 +186,7 @@ namespace CatHut
                     FileStr = FileStr.Replace("#MasterDataClassName#", sheetInfo.ClassName);
 
                     var SaveFile = TemplateFile.Replace("/Template", "/CreatedScript");
-                    File.WriteAllText(SaveFile.Replace(UsingExcelCommon.EditorWindowTemplate + ".txt", "EditorWindow_" + sheetInfo.ClassName + ".cs"), FileStr, Encoding.UTF8);
+                    File.WriteAllText(SaveFile.Replace(UsingCsvCommon.EditorWindowTemplate + ".txt", "EditorWindow_" + sheetInfo.ClassName + ".cs"), FileStr, Encoding.UTF8);
 
                 }
             }
@@ -195,7 +195,7 @@ namespace CatHut
         private static void CreateCustomTreeView(Dictionary<string, ExcelDataDictionary> ExcelDataDic)
         {
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.CustomTreeViewTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.CustomTreeViewTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -210,7 +210,7 @@ namespace CatHut
 
                 foreach (var enumKey in temp.Value.EnumDic.Keys)
                 {
-                    var enumName = UsingExcelCommon.GetEnumTypeName(enumKey);
+                    var enumName = UsingCsvCommon.GetEnumTypeName(enumKey);
 
                     EnumCaseStr += "                case " + FileName + "." + enumName + " " + "enum" + cnt.ToString("00") + ":" + Environment.NewLine;
                     EnumCaseStr += "                    {" + Environment.NewLine;
@@ -226,7 +226,7 @@ namespace CatHut
             FileStr = FileStr.Replace("#EnumCaseText#", EnumCaseStr);
 
             var SaveFile = TemplateFile.Replace("/Template", "/CreatedScript");
-            File.WriteAllText(SaveFile.Replace(UsingExcelCommon.CustomTreeViewTemplate + ".txt", "CustomTreeView.cs"), FileStr, Encoding.UTF8);
+            File.WriteAllText(SaveFile.Replace(UsingCsvCommon.CustomTreeViewTemplate + ".txt", "CustomTreeView.cs"), FileStr, Encoding.UTF8);
 
         }
 
@@ -235,7 +235,7 @@ namespace CatHut
         {
 
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.ExcelImporterParentTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.CsvImporterParentTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -249,7 +249,7 @@ namespace CatHut
             {
                 Directory.CreateDirectory(CreatedImporterFolder);
             }
-            File.WriteAllText(TemplateFile.Replace(UsingExcelCommon.ExcelImporterParentTemplate + ".txt", "ExcelImporter.cs"), FileStr, Encoding.UTF8);
+            File.WriteAllText(TemplateFile.Replace(UsingCsvCommon.CsvImporterParentTemplate + ".txt", "ExcelImporter.cs"), FileStr, Encoding.UTF8);
 
         }
 
@@ -257,7 +257,7 @@ namespace CatHut
         {
 
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.AssetPostProcessImporterTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.AssetPostProcessImporterTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -271,7 +271,7 @@ namespace CatHut
             {
                 Directory.CreateDirectory(CreatedImporterFolder);
             }
-            File.WriteAllText(TemplateFile.Replace(UsingExcelCommon.AssetPostProcessImporterTemplate + ".txt", "AssetPostProcessImporter.cs"), FileStr, Encoding.UTF8);
+            File.WriteAllText(TemplateFile.Replace(UsingCsvCommon.AssetPostProcessImporterTemplate + ".txt", "AssetPostProcessImporter.cs"), FileStr, Encoding.UTF8);
 
         }
 
@@ -292,7 +292,7 @@ namespace CatHut
 
 
                 //テンプレートファイルを探す
-                var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.ExcelImporterTemplate);
+                var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.CsvImporterTemplate);
                 var TemplateFile = "";
 
                 TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -306,7 +306,7 @@ namespace CatHut
                 FileStr = FileStr.Replace("#ClassDataSave#", SaveAssetStr);
 
                 TemplateFile = TemplateFile.Replace("/Template", "/CreatedImporter");
-                File.WriteAllText(TemplateFile.Replace(UsingExcelCommon.ExcelImporterTemplate + ".txt", "Importer_" + FileName + ".cs"), FileStr, Encoding.UTF8);
+                File.WriteAllText(TemplateFile.Replace(UsingCsvCommon.CsvImporterTemplate + ".txt", "Importer_" + FileName + ".cs"), FileStr, Encoding.UTF8);
 
             }
 
@@ -327,7 +327,7 @@ namespace CatHut
 
 
                 //テンプレートファイルを探す
-                var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.DictNotDublicatableTemplate);
+                var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.DictNotDublicatableTemplate);
                 var TemplateFile = "";
 
                 TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -346,7 +346,7 @@ namespace CatHut
                 {
                     Directory.CreateDirectory(CreatedScriptableObjectFolder);
                 }
-                File.WriteAllText(TemplateFile.Replace(UsingExcelCommon.DictNotDublicatableTemplate + ".txt", FileName + ".cs"), FileStr, Encoding.UTF8);
+                File.WriteAllText(TemplateFile.Replace(UsingCsvCommon.DictNotDublicatableTemplate + ".txt", FileName + ".cs"), FileStr, Encoding.UTF8);
 
             }
 
@@ -458,9 +458,9 @@ namespace CatHut
 
                             var typeStr = value.Value;
 
-                            if (typeStr.Contains(UsingExcelCommon.TableDeclareWorkSheetName + "["))
+                            if (typeStr.Contains(UsingCsvCommon.TableDeclareWorkSheetName + "["))
                             {
-                                typeStr = UsingExcelCommon.GetEnumTypeName(typeStr);
+                                typeStr = UsingCsvCommon.GetEnumTypeName(typeStr);
                                 typeStr = fileName + "." + typeStr;
 
                                 str += "                                    rowData." + value.Key + " = (" + typeStr + ")Enum.Parse(typeof(" + typeStr + "), " + "row.Cell(" + idx.ToString() + ").GetString());" + Environment.NewLine;
@@ -519,12 +519,12 @@ namespace CatHut
             var folder = Path.GetDirectoryName(path);
             folder = folder.Replace("\\", "/");
 
-            str += "                    if (!Directory.Exists(\"" + folder + "/" + UsingExcelCommon.CreatedAssetFoldeName + "/\"))" + Environment.NewLine;
+            str += "                    if (!Directory.Exists(\"" + folder + "/" + UsingCsvCommon.CreatedAssetFoldeName + "/\"))" + Environment.NewLine;
             str += "                    {" + Environment.NewLine;
-            str += "                         Directory.CreateDirectory(\"" + folder + "/" + UsingExcelCommon.CreatedAssetFoldeName + "/\");" + Environment.NewLine;
+            str += "                         Directory.CreateDirectory(\"" + folder + "/" + UsingCsvCommon.CreatedAssetFoldeName + "/\");" + Environment.NewLine;
             str += "                    }" + Environment.NewLine;
 
-            str += "                    AssetDatabase.CreateAsset(data, \"" + folder + "/" + UsingExcelCommon.CreatedAssetFoldeName + "/" + file + ".asset\");" + Environment.NewLine;
+            str += "                    AssetDatabase.CreateAsset(data, \"" + folder + "/" + UsingCsvCommon.CreatedAssetFoldeName + "/" + file + ".asset\");" + Environment.NewLine;
             return str;
         }
 
@@ -569,7 +569,7 @@ namespace CatHut
             foreach (var enuminfo in edfDic.EnumDic)
             {
 
-                var enumName = UsingExcelCommon.GetEnumTypeName(enuminfo.Key);
+                var enumName = UsingCsvCommon.GetEnumTypeName(enuminfo.Key);
 
 
                 str += "    public enum " + enumName + "{" + Environment.NewLine;
@@ -651,10 +651,10 @@ namespace CatHut
                     }
 
                     var typeStr = valuables.Value;
-                    if (typeStr.Contains(UsingExcelCommon.TableDeclareWorkSheetName + "["))
+                    if (typeStr.Contains(UsingCsvCommon.TableDeclareWorkSheetName + "["))
                     {
                         //Enumの型名取得
-                        typeStr = UsingExcelCommon.GetEnumTypeName(typeStr);
+                        typeStr = UsingCsvCommon.GetEnumTypeName(typeStr);
                         typeStr = fileName + "." + typeStr;
                     }
                     str += "    [SerializeField]" + Environment.NewLine;
@@ -775,7 +775,7 @@ namespace CatHut
             //CreatedImporterのフォルダを削除する
 
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.ExcelImporterTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.CsvImporterTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -795,7 +795,7 @@ namespace CatHut
             //ScriptableOjbectのフォルダを削除する
 
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.DictNotDublicatableTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.DictNotDublicatableTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -816,7 +816,7 @@ namespace CatHut
             //CreatedImporterのフォルダを削除する
 
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.EditorWindowTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.EditorWindowTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);

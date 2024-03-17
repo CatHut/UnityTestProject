@@ -27,7 +27,7 @@ namespace CatHut
             var ClassDefinitionsStr = GetClassDefinitionsStr(dg.FormatedCsvDic, FileName);
 
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.DictNotDublicatableTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.DictNotDublicatableTemplate);
             var TemplateFile = "";
 
             TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
@@ -59,7 +59,7 @@ namespace CatHut
             foreach (var enuminfo in dg.TableData.TableDic)
             {
 
-                var enumName = UsingExcelCommon.GetEnumTypeName(enuminfo.Key);
+                var enumName = UsingCsvCommon.GetEnumTypeName(enuminfo.Key);
 
 
                 str += "    public enum " + enumName + "{" + Environment.NewLine;
@@ -175,10 +175,10 @@ namespace CatHut
                     }
 
                     var typeStr = valuables.Value.Type;
-                    if (typeStr.Contains(UsingExcelCommon.TableDeclareWorkSheetName + "["))
+                    if (typeStr.Contains(UsingCsvCommon.TableDeclareWorkSheetName + "["))
                     {
                         //Enumの型名取得
-                        typeStr = UsingExcelCommon.GetEnumTypeName(typeStr);
+                        typeStr = UsingCsvCommon.GetEnumTypeName(typeStr);
                         typeStr = fileName + "." + typeStr;
                     }
                     str += "    [SerializeField]" + Environment.NewLine;

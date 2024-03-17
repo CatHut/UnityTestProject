@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace CatHut
 {
-    public class UsingExcelCommon
+    public class UsingCsvCommon
     {
         readonly public static string TargetWorkSheetMark = "$";
         readonly public static string TableDeclareWorkSheetName = "Tables";
@@ -22,9 +22,9 @@ namespace CatHut
 
         readonly public static string DictNotDublicatableTemplate = "$DictNotDublicatableTemplateFile";
         readonly public static string AssetPostProcessImporterTemplate = "$AssetPostProcessImporterTemplate";
-        readonly public static string ExcelImporterParentTemplate = "$ExcelImporterParentTemplate";
-        readonly public static string ExcelImporterTemplate = "$Importer_Template";
-        readonly public static string ExcelImporterPartTemplate = "$ExcelImporterPartTemplate";
+        readonly public static string CsvImporterParentTemplate = "$CsvImporterParentTemplate";
+        readonly public static string CsvImporterTemplate = "$Importer_Template";
+        readonly public static string CsvImporterPartTemplate = "$CsvImporterPartTemplate";
         readonly public static string MasterDataTemplate = "$MasterDataTemplate";
 
         readonly public static string EditorWindowTemplate = "$EditorWindowTemplate";
@@ -480,7 +480,7 @@ namespace CatHut
         public static string GetEnumTypeName(string type)
         {
             var typeStr = type;
-            typeStr = typeStr.Replace(UsingExcelCommon.TableDeclareWorkSheetName + "[", "");
+            typeStr = typeStr.Replace(UsingCsvCommon.TableDeclareWorkSheetName + "[", "");
             typeStr = typeStr.Replace("]", "");
 
             var enumName = Regex.Replace(typeStr, @"([a-z])([A-Z])", "$1_$2");

@@ -24,7 +24,7 @@ namespace CatHut
             var MasterDataClassLoadStr = GetMasterDataClassLosdStr(rmd.DataGroupDic);
 
             //テンプレートファイルを探す
-            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingExcelCommon.MasterDataTemplate);
+            var TemplateFileGUIDs = AssetDatabase.FindAssets(UsingCsvCommon.MasterDataTemplate);
 
             var TemplateFile = AssetDatabase.GUIDToAssetPath(TemplateFileGUIDs[0]);
 
