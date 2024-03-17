@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using CatHut;
+using UnityEditor.AddressableAssets.Settings;
+using UnityEngine.AddressableAssets;
 
 namespace CatHut
 {
@@ -35,7 +37,10 @@ namespace CatHut
 						break;
 				}
 			}
-		}
+
+
+            MasterData.Instance.Reload();
+        }
 
         public static void ImportCsvData(HashSet<string> DataGroupNameList)
         {
@@ -57,9 +62,13 @@ namespace CatHut
                         break;
                 }
             }
+
+
+
+            //MasterData.Instance.Reload();
         }
 
-	}
+    }
 }
 
 #endif

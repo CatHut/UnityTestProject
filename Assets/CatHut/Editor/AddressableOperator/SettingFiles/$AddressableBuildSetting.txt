@@ -1,2 +1,0 @@
-MasterData,Assets/MasterData/Excels/CreatedAssets,.asset
-Prefabs,Assets/Prefabs,.prefab

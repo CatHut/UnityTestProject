@@ -31,10 +31,21 @@ public class MasterData : SingletonMonoBehaviour<MasterData>
     {
         base.Awake();
 
-        EnemyData = Addressables.LoadAssetAsync<Enemy>("Enemy").WaitForCompletion();
-        PlayerData = Addressables.LoadAssetAsync<Player>("Player").WaitForCompletion();
 
+        Reload();
 
+    }
+
+    public void Reload()
+    {
+        MasterData.Instance.EnemyData = null;
+        MasterData.Instance.PlayerData = null;
+
+#if UNITY_EDITOR
+        Caching.ClearCache();
+#endif
+        MasterData.Instance.EnemyData = Addressables.LoadAssetAsync<Enemy>("Enemy").WaitForCompletion();
+        MasterData.Instance.PlayerData = Addressables.LoadAssetAsync<Player>("Player").WaitForCompletion();
     }
 
     public object this[string propertyName]

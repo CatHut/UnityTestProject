@@ -32,15 +32,34 @@ public class AddressableOperatorWindow : EditorWindow
         GUILayout.BeginHorizontal();
         if (GUILayout.Button("Save Settings", GUILayout.Width(200)))
         {
+            AddressableOperatorConfig.settings.MasterDataAddressableSetting = AddressableOperationConfigData.MasterDataAddressableSetting;
             AddressableOperatorConfig.settings.AddressableSettingList = AddressableOperationConfigData.AddressableSettingList;
             AddressableOperatorConfig.SaveSettings();
         }
         GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
 
+        //MasterData
+        GUILayout.Space(20);
+        GUILayout.Label("MasterData Addressables Settings", EditorStyles.boldLabel);
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Group", GUILayout.Width(100));
+        GUILayout.Label("Folder Path", GUILayout.Width(300));
+        GUILayout.Label("Extension", GUILayout.Width(100));
+        GUILayout.EndHorizontal();
+
+        var masterSetting = AddressableOperationConfigData.MasterDataAddressableSetting;
+
+        GUILayout.BeginHorizontal();
+        masterSetting.Group = EditorGUILayout.TextField(masterSetting.Group, GUILayout.Width(100));
+        masterSetting.FolderPath = EditorGUILayout.TextField(masterSetting.FolderPath, GUILayout.Width(300));
+        masterSetting.Extention = EditorGUILayout.TextField(masterSetting.Extention, GUILayout.Width(100));
+        GUILayout.EndHorizontal();
+
+
+        //その他
         GUILayout.Space(20);
         GUILayout.Label("Addressables Settings", EditorStyles.boldLabel);
-
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("Group", GUILayout.Width(100));

@@ -27,43 +27,48 @@ namespace CatHut
             var AddressableOperationConfigData = AddressableOperatorConfig.LoadSettings();
             var AssSetting = AddressableAssetSettingsDefaultObject.Settings;
 
+            //MasterData
+            ProcessAddressableSetting(AssSetting, AddressableOperationConfigData.MasterDataAddressableSetting);
 
-            var AssGroups = AssSetting.groups;
 
-
-            foreach (var data in AddressableOperationConfigData.AddressableSettingList)
+            // その他
+            foreach (var setting in AddressableOperationConfigData.AddressableSettingList)
             {
-                var folder = data.FolderPath;
+                ProcessAddressableSetting(AssSetting, setting);
+            }
+        }
 
-                var parentGroup = AssGroups.FirstOrDefault(x => x.Name == data.Group);
 
-                if(parentGroup == null)
+        private static void ProcessAddressableSetting(AddressableAssetSettings assSettings, AddressableOperatorConfig.AddressableSetting setting)
+        {
+            var parentGroup = assSettings.groups.FirstOrDefault(g => g.Name == setting.Group);
+
+            if (parentGroup == null)
+            {
+                Debug.Log("指定されたグループ:" + setting.Group + "が見つかりませんでした。");
+                Debug.Log("指定されたグループ:" + setting.Group + "を追加します。");
+                parentGroup = CreatePackedAssetsGroup(setting.Group, assSettings);
+            }
+
+            if (!assSettings.GetLabels().Contains(setting.Group))
+            {
+                assSettings.AddLabel(setting.Group);
+            }
+
+            var dic = AddressableOperatorCommon.GetGuidFileDic(setting.FolderPath);
+
+            foreach (var keypair in dic)
+            {
+                if (keypair.Value.Contains(setting.Extention))
                 {
-                    Debug.Log("指定されたグループ:" + data.Group + "が見つかりませんでした。");
-                    Debug.Log("指定されたグループ:" + data.Group + "を追加します。");
-                    parentGroup = CreatePackedAssetsGroup(data.Group, AssSetting);
-                }
-
-                //ラベルの追加
-                if (!AssSetting.GetLabels().Contains(data.Group))
-                {
-                    AssSetting.AddLabel(data.Group);
-                }
-
-                var dic = AddressableOperatorCommon.GetGuidFileDic(folder);
-
-                foreach(var keypair in dic)
-                {
-                    //指定された拡張子のみ登録
-                    if (keypair.Value.Contains(data.Extention))
-                    {
-                        var entry = AssSetting.CreateOrMoveEntry(keypair.Key, parentGroup);
-                        entry.SetLabel(data.Group, true);
-                        entry.SetAddress(Path.GetFileNameWithoutExtension(entry.address), false);
-                    }
+                    var entry = assSettings.CreateOrMoveEntry(keypair.Key, parentGroup);
+                    entry.SetLabel(setting.Group, true);
+                    entry.SetAddress(Path.GetFileNameWithoutExtension(entry.address), false);
                 }
             }
         }
+
+
 
 
         [MenuItem("Tools/CatHut/AddressableOperator/RemoveAsset", false, 3)]

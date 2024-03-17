@@ -218,7 +218,6 @@ namespace CatHut
 
             AssetDatabase.CreateAsset(data, Path.Combine(folder, "Enemy.asset"));
 
-
         }
     }
 }

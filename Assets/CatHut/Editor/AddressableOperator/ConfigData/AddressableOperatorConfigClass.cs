@@ -62,7 +62,10 @@ public static class AddressableOperatorConfig
     [System.Serializable]
     public class AddressableOperatorConfigData
     {
-        //全般設定
+        //マスターデータパス設定
+        public AddressableSetting MasterDataAddressableSetting;
+
+        //アセットパス設定
         public List<AddressableSetting> AddressableSettingList = new List<AddressableSetting>();
 
     }

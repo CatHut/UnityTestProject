@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEditor.AddressableAssets.Settings;
+using UnityEditor.AddressableAssets;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.WSA;
 
@@ -12,6 +15,7 @@ namespace CatHut
 {
     public static class MasterDataEditorCommon
     {
+        private static int SaveCounter = 0;
 
         /// <summary>
         /// グローバルテーブルを取得
@@ -268,5 +272,99 @@ namespace CatHut
             return success;
         }
 
+
+        public static void RenameAssetsInGroup(string groupName)
+        {
+            // AddressableAssetSettingsを取得
+            var settings = AddressableAssetSettingsDefaultObject.Settings;
+
+            // MasterDataグループを検索
+            var group = settings.FindGroup(groupName);
+            if (group == null)
+            {
+                Debug.LogError(groupName + " group not found.");
+                return;
+            }
+
+            // グループ内の全てのエントリに対して処理
+            foreach (var entry in group.entries)
+            {
+                string assetPath = entry.AssetPath;
+                string oldFileName = Path.GetFileNameWithoutExtension(assetPath);
+                string newFileName = oldFileName + "_temp" + SaveCounter.ToString();
+
+                // AssetDatabaseを使用してファイル名を変更
+                string errorMessage = AssetDatabase.RenameAsset(assetPath, newFileName);
+                if (string.Empty != errorMessage)
+                {
+                    Debug.LogError("Could not rename asset: " + assetPath);
+                    Debug.LogError(errorMessage);
+                    continue;
+                }
+
+                // Addressableのエントリも更新
+ //               entry.SetAddress(newFileName);
+
+                Debug.Log($"Asset renamed: {oldFileName}.asset to {newFileName}.asset");
+            }
+
+            // Addressablesの設定を保存
+//            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, group, true, true);
+
+            // アセットデータベースをリフレッシュ
+            AssetDatabase.Refresh();
+
+            SaveCounter++;
+        }
+
+        
+
+        public static void RenameAssetsBackInGroup(string groupName)
+        {
+            Regex tempRegex = new Regex(@"_temp\d*$", RegexOptions.Compiled);
+
+            // AddressableAssetSettingsを取得
+            var settings = AddressableAssetSettingsDefaultObject.Settings;
+
+            // 指定されたグループを検索
+            var group = settings.FindGroup(groupName);
+            if (group == null)
+            {
+                Debug.LogError(groupName + " group not found.");
+                return;
+            }
+
+            // グループ内の全エントリに対して処理
+            foreach (var entry in group.entries)
+            {
+                string assetPath = entry.AssetPath;
+                string fileName = Path.GetFileName(assetPath);
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(assetPath);
+                string extension = Path.GetExtension(assetPath);
+
+                // ファイル名から"_temp"と数字を削除
+                string newFileNameWithoutExtension = tempRegex.Replace(fileNameWithoutExtension, "");
+
+                // 新しいファイル名を生成
+                string newAssetPath = Path.Combine(Path.GetDirectoryName(assetPath), newFileNameWithoutExtension + extension);
+
+                // AssetDatabaseを使用してファイル名を変更
+                string errorMessage = AssetDatabase.RenameAsset(assetPath, newFileNameWithoutExtension);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    Debug.LogError("Could not rename asset: " + assetPath);
+                    Debug.LogError(errorMessage);
+                    continue;
+                }
+
+                Debug.Log($"Asset renamed back: {fileName} to {newFileNameWithoutExtension + extension}");
+            }
+
+            // アセットデータベースをリフレッシュ
+            AssetDatabase.Refresh();
+        }
+
     }
+
+
 }

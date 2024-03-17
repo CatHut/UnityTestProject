@@ -38,10 +38,7 @@ public class DataEditWindow : EditorWindow
         {
             // ここにボタンが押されたときの処理を記述
             ApplyValuesToGame();
-        })
-        {
-            text = EditorApplication.isPlaying ? "Apply Values To Game" : "Apply Values To Game(Enter PlayMode)"
-        };
+        });
 
         EditorApplication.playModeStateChanged += (PlayModeStateChange state) =>
         {
@@ -49,7 +46,7 @@ public class DataEditWindow : EditorWindow
             ApplyButton.SetEnabled(EditorApplication.isPlaying);
 
             // ゲーム再生状態に応じてボタンのテキストも更新
-            ApplyButton.text = EditorApplication.isPlaying ? "Reflect" : "Reflect(EnterPlayMode)";
+            ApplyButton.text = EditorApplication.isPlaying ? "Apply Values To Game" : "Apply Values To Game(Enter PlayMode)";
         };
 
         ApplyButton.SetEnabled(EditorApplication.isPlaying);
@@ -325,6 +322,7 @@ public class DataEditWindow : EditorWindow
 
         // 列の定義を動的に行う
         List<string> columns = header.VariableDic.Keys.ToList();
+        string indexVariable = header.IndexVariable;
 
         foreach (string colName in columns)
         {
@@ -336,6 +334,12 @@ public class DataEditWindow : EditorWindow
                 makeCell = () =>
                 {
                     var type = header.VariableDic[colName].Type;
+
+                    //インデックスは編集させない
+                    if (colName == indexVariable)
+                    {
+                        return new Label();
+                    }
 
                     switch (type)
                     {
@@ -395,6 +399,14 @@ public class DataEditWindow : EditorWindow
 
                     //データ
                     var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
+
+                    //インデックスは編集させない
+                    if (colName == indexVariable)
+                    {
+                        var label = e as Label;
+                        label.text = data[i][col];
+                        return;
+                    }
 
                     switch (type)
                     {
@@ -528,78 +540,11 @@ public class DataEditWindow : EditorWindow
         var name = GetSelectedAndParentItemNames(TreeView);
         var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
 
-        var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
-        var gTable = EditorSharedData.RawMasterData.GrobalTableData;    //グローバルテーブル
-        var dg = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName];  //データグループ
-
-
         var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName];
 
-
-        switch (name.parentName)
-        {
-            case "Enemy":
-                {
-                    switch(name.selectedName)
-                    {
-                        case "EnemyParameter":
-                            {
-                                SetDataEnemyParameter(MasterData.Instance.EnemyData.EnemyParameterData, data);
-                            }
-                            break;
-                        case "SkillPattern":
-                            {
-                            }
-                            break;
-                    }
-                }
-                break;
-            case "Player":
-                {
-                    switch (name.selectedName)
-                    {
-                        case "EnemyParameter":
-                            {
-                            }
-                            break;
-                    }
-                }
-                break;
-        }
+        CsvReflector.ApplyValuesToGame(name.parentName, name.selectedName, data);
 
     }
-
-
-    void SetDataEnemyParameter(Enemy.EnemyParameterDictionary master, FormatedCsvData fcd)
-    {
-        var data = fcd.DataPart.DataWithoutColumnTitle;
-
-        var indexStr = fcd.HeaderPart.IndexVariable;
-        var indexCol = fcd.HeaderPart.VariableDic[indexStr].ColumnIndex;
-        var valDic = fcd.HeaderPart.VariableDic;
-
-        foreach(var row in data)
-        {
-            foreach (var kvp in valDic)
-            {
-                //master[row[indexCol]].REG = row[indexCol];
-                //master[row[indexCol]].REG = row[indexCol];
-                //master[row[indexCol]].REG = row[indexCol];
-                //master[row[indexCol]].REG = row[indexCol];
-                //master[row[indexCol]].REG = row[indexCol];
-                //master[row[indexCol]].REG = row[indexCol];
-                //master[row[indexCol]].REG = row[indexCol];
-                //master[row[indexCol]].REG = row[indexCol];
-            }
-
-
-
-        }
-
-    }
-
-
-
 
 
 }
