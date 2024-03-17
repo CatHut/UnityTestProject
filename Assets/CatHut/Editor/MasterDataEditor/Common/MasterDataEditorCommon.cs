@@ -9,6 +9,7 @@ using UnityEditor.AddressableAssets;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.WSA;
+using UnityEditor.VersionControl;
 
 
 namespace CatHut
@@ -294,6 +295,7 @@ namespace CatHut
                 string newFileName = oldFileName + "_temp" + SaveCounter.ToString();
 
                 // AssetDatabaseを使用してファイル名を変更
+                var guid = AssetDatabase.AssetPathToGUID(assetPath);
                 string errorMessage = AssetDatabase.RenameAsset(assetPath, newFileName);
                 if (string.Empty != errorMessage)
                 {
@@ -303,16 +305,17 @@ namespace CatHut
                 }
 
                 // Addressableのエントリも更新
- //               entry.SetAddress(newFileName);
+                entry.SetAddress(newFileName);
 
                 Debug.Log($"Asset renamed: {oldFileName}.asset to {newFileName}.asset");
             }
 
             // Addressablesの設定を保存
-//            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, group, true, true);
+            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, group, true, true);
 
             // アセットデータベースをリフレッシュ
             AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
 
             SaveCounter++;
         }
@@ -345,9 +348,6 @@ namespace CatHut
                 // ファイル名から"_temp"と数字を削除
                 string newFileNameWithoutExtension = tempRegex.Replace(fileNameWithoutExtension, "");
 
-                // 新しいファイル名を生成
-                string newAssetPath = Path.Combine(Path.GetDirectoryName(assetPath), newFileNameWithoutExtension + extension);
-
                 // AssetDatabaseを使用してファイル名を変更
                 string errorMessage = AssetDatabase.RenameAsset(assetPath, newFileNameWithoutExtension);
                 if (!string.IsNullOrEmpty(errorMessage))
@@ -357,8 +357,15 @@ namespace CatHut
                     continue;
                 }
 
+                // Addressableのエントリも更新（コメントアウトされていた行を復活）
+                entry.SetAddress(newFileNameWithoutExtension);
+
                 Debug.Log($"Asset renamed back: {fileName} to {newFileNameWithoutExtension + extension}");
             }
+
+            // Addressablesの設定を保存
+            settings.SetDirty(AddressableAssetSettings.ModificationEvent.EntryMoved, group, true, true);
+
 
             // アセットデータベースをリフレッシュ
             AssetDatabase.Refresh();

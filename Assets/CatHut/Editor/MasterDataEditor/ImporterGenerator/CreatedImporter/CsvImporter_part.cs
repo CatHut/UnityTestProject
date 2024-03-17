@@ -38,8 +38,10 @@ namespace CatHut
 				}
 			}
 
-
+            var groupName = AddressableOperatorConfig.settings.MasterDataAddressableSetting.Group;
+            MasterDataEditorCommon.RenameAssetsInGroup(groupName);
             MasterData.Instance.Reload();
+            //MasterDataEditorCommon.RenameAssetsBackInGroup(groupName);
         }
 
         public static void ImportCsvData(HashSet<string> DataGroupNameList)
@@ -63,9 +65,10 @@ namespace CatHut
                 }
             }
 
-
-
-            //MasterData.Instance.Reload();
+            var groupName = AddressableOperatorConfig.settings.MasterDataAddressableSetting.Group;
+            MasterDataEditorCommon.RenameAssetsInGroup(groupName);
+            MasterData.Instance.Reload();
+            //MasterDataEditorCommon.RenameAssetsBackInGroup(groupName);
         }
 
     }

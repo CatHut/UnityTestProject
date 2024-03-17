@@ -28,45 +28,18 @@ namespace CatHut
             var AssSetting = AddressableAssetSettingsDefaultObject.Settings;
 
             //MasterData
-            ProcessAddressableSetting(AssSetting, AddressableOperationConfigData.MasterDataAddressableSetting);
+            AddressableOperatorCommon.ProcessAddressableSetting(AssSetting, AddressableOperationConfigData.MasterDataAddressableSetting);
 
 
             // その他
             foreach (var setting in AddressableOperationConfigData.AddressableSettingList)
             {
-                ProcessAddressableSetting(AssSetting, setting);
+                AddressableOperatorCommon.ProcessAddressableSetting(AssSetting, setting);
             }
         }
 
 
-        private static void ProcessAddressableSetting(AddressableAssetSettings assSettings, AddressableOperatorConfig.AddressableSetting setting)
-        {
-            var parentGroup = assSettings.groups.FirstOrDefault(g => g.Name == setting.Group);
 
-            if (parentGroup == null)
-            {
-                Debug.Log("指定されたグループ:" + setting.Group + "が見つかりませんでした。");
-                Debug.Log("指定されたグループ:" + setting.Group + "を追加します。");
-                parentGroup = CreatePackedAssetsGroup(setting.Group, assSettings);
-            }
-
-            if (!assSettings.GetLabels().Contains(setting.Group))
-            {
-                assSettings.AddLabel(setting.Group);
-            }
-
-            var dic = AddressableOperatorCommon.GetGuidFileDic(setting.FolderPath);
-
-            foreach (var keypair in dic)
-            {
-                if (keypair.Value.Contains(setting.Extention))
-                {
-                    var entry = assSettings.CreateOrMoveEntry(keypair.Key, parentGroup);
-                    entry.SetLabel(setting.Group, true);
-                    entry.SetAddress(Path.GetFileNameWithoutExtension(entry.address), false);
-                }
-            }
-        }
 
 
 
@@ -96,20 +69,6 @@ namespace CatHut
         }
 
 
-        private static AddressableAssetGroup CreatePackedAssetsGroup(string groupName, AddressableAssetSettings setting)
-        {
-            AddressableAssetGroup newGroup = setting.CreateGroup(groupName, false, false, false, null);
-
-            var groupSchema = newGroup.AddSchema<BundledAssetGroupSchema>();
-            groupSchema.BuildPath.SetVariableByName(setting, AddressableAssetSettings.kLocalBuildPath);
-            groupSchema.LoadPath.SetVariableByName(setting, AddressableAssetSettings.kLocalLoadPath);
-            groupSchema.BundleMode = BundledAssetGroupSchema.BundlePackingMode.PackTogether;
-
-            var updateSchema = newGroup.AddSchema<ContentUpdateGroupSchema>();
-
-            return newGroup;
-
-        }
 
 
     }

@@ -23,10 +23,13 @@ namespace CatHut
             //マスターデータCsvをインポートするフォルダリスト生成
             var dataGroupList = MasterDataEditorCommon.GetChangedDataGroupNameList(assetsList);
 
-            CsvImporter.ImportCsvData(dataGroupList);
+            if (dataGroupList.Count > 0)
+            {
 
+                CsvImporter.ImportCsvData(dataGroupList);
+
+            }
         }
-
     }
 }
 
