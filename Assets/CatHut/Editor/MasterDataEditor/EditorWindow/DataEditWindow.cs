@@ -50,6 +50,8 @@ public class DataEditWindow : EditorWindow
             ApplyButton.text = EditorApplication.isPlaying ? "Apply Values To Game" : "Apply Values To Game(Enter PlayMode)";
         };
 
+        // ゲーム再生状態に応じてボタンのテキストも更新
+        ApplyButton.text = EditorApplication.isPlaying ? "Apply Values To Game" : "Apply Values To Game(Enter PlayMode)";
         ApplyButton.SetEnabled(EditorApplication.isPlaying);
 
 
