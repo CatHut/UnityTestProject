@@ -12,32 +12,19 @@ using CatHut;
 
 namespace CatHut
 {
-	public static partial class CsvImporter
+	public static partial class CsvReflector
 	{
-		static void Import_#DataGroupName#(DataGroup dg)
+		static void Reflect#DataGroupName#(string child, FormatedCsvData fcd)
 		{
 
-#ClassDataDefine#
+            var valDic = fcd.HeaderPart.VariableDic;
 
-            foreach (var key in dg.FormatedCsvDic.Keys)
+            switch (child)
             {
 
-                var fc = dg.FormatedCsvDic[key];
-                var valDic = dg.FormatedCsvDic[key].HeaderPart.VariableDic;
-
-                switch (key)
-                {
-
-					//エクセルファイル中のクラス定義分追加
+				//エクセルファイル中のクラス定義分追加
 #CsvDataRead#
-                }
             }
-
-            var data = ScriptableObject.CreateInstance<#DataGroupName#>();
-
-#ClassDataSet#
-
-#ClassDataSave#
 
         }
     }

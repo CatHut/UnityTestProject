@@ -3,9 +3,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
 using UnityEngine;
 using CatHut;
-using UnityEditor.AddressableAssets;
 
 namespace CatHut
 {

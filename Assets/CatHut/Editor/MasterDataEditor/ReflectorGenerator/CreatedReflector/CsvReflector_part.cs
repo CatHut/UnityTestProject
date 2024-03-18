@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.AddressableAssets;
 using UnityEngine;
 using CatHut;
 
@@ -19,13 +20,14 @@ namespace CatHut
                     ReflectEnemy(ChildName, fcd);
                     break;
                 case "Player":
-//                    Import_Player(ChildName);
+                    ReflectPlayer(ChildName, fcd);
                     break;
 
-                default:
-                    break;
-            }
-        }
+					default:
+						break;
+			}
+
+		}
 
 	}
 }

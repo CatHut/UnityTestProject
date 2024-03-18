@@ -9,68 +9,19 @@ using CatHut;
 
 namespace CatHut
 {
-    public static partial class CsvImporter
+    public static partial class CsvReflector
     {
-        private static SerializableDictionary<string, DataGroup> _DataGroupDic;
-        private static TableData _GrobalTableData;
 
-        public static void ImportAllCsvData()
+        public static void ApplyValuesToGame(string parentName, string ChildName, FormatedCsvData fcd)
         {
-            _GrobalTableData = MasterDataEditorCommon.GetGlobalTable();
-            _DataGroupDic = MasterDataEditorCommon.GetDataGroupDic();
-
-
-            foreach (var temp in _DataGroupDic.Keys)
+            switch (parentName)
             {
-
-                switch (temp)
-				{
 #SwitchCaseList#
 					default:
 						break;
-				}
 			}
 
-            ImportPostProcess();
 		}
-
-        public static void ImportCsvData(HashSet<string> DataGroupNameList)
-        {
-            _GrobalTableData = MasterDataEditorCommon.GetGlobalTable();
-            _DataGroupDic = MasterDataEditorCommon.GetDataGroupDic();
-
-            foreach (var temp in DataGroupNameList)
-            {
-                switch (temp)
-                {
-#SwitchCaseList#
-                    default:
-                        break;
-                }
-            }
-
-            ImportPostProcess();
-        }
-
-        private static void ImportPostProcess()
-        {
-            var groupName = AddressableOperatorConfig.settings.MasterDataAddressableSetting.Group;
-            MasterDataEditorCommon.RenameAssetsInGroup(groupName);
-
-            if (Application.isPlaying)
-            {
-                MasterData.Instance.Reload();
-            }
-
-            MasterDataEditorCommon.RenameAssetsBackInGroup(groupName);
-
-
-            var AddressableOperationConfigData = AddressableOperatorConfig.LoadSettings();
-            var AssSetting = AddressableAssetSettingsDefaultObject.Settings;
-
-            //MasterData
-            AddressableOperatorCommon.ProcessAddressableSetting(AssSetting, AddressableOperationConfigData.MasterDataAddressableSetting);
-        }
 
 	}
 }

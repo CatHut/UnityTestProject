@@ -306,6 +306,8 @@ public class HeaderEditWindow : EditorWindow
             }
             ImporterGenerator.CreateCsvImporter(EditorSharedData.RawMasterData.DataGroupDic);
             ImporterGenerator.CreateCsvImporterPart(EditorSharedData.RawMasterData.DataGroupDic);
+            ReflectorGenerator.CreateCsvReflector(EditorSharedData.RawMasterData.DataGroupDic);
+            ReflectorGenerator.CreateCsvReflectorPart(EditorSharedData.RawMasterData.DataGroupDic);
 
             AssetDatabase.Refresh();
 
