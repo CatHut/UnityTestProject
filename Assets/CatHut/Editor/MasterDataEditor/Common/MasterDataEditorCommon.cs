@@ -410,6 +410,10 @@ namespace CatHut
             //AddressableAssetSettingsDefaultObject.Settings.SetDirty(AddressableAssetSettings.ModificationEvent.BatchModification, null, true, false);
         }
 
+        /// <summary>
+        /// Addressablesのグループ削除
+        /// </summary>
+        /// <param name="groupName"></param>
         public static void RemoveGroup(string groupName)
         {
             AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
@@ -423,6 +427,35 @@ namespace CatHut
             else
             {
                 UnityEngine.Debug.LogError("Group not found: " + groupName);
+            }
+        }
+
+
+        /// <summary>
+        /// Tables[AAA]からAAAを取り出す
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ExtractTableName(string input)
+        {
+            // 正規表現パターン: 'Tables[' と ']' に囲まれた文字を抽出
+            string pattern = @"Tables\[(.*?)\]";
+
+            // 正規表現オブジェクトの生成
+            Regex regex = new Regex(pattern);
+
+            // 入力文字列に対してマッチングを試みる
+            Match match = regex.Match(input);
+
+            // マッチした場合、グループ1の値（括弧内の部分）を返す
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+            else
+            {
+                // マッチしない場合は、適切な処理または空文字列を返す
+                return string.Empty;
             }
         }
 

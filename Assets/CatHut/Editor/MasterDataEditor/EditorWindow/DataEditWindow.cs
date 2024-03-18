@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
+using System.Text.RegularExpressions;
 using Unity.Properties;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -314,6 +315,9 @@ public class DataEditWindow : EditorWindow
         //ヘッダ情報
         var header = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].FormatedCsvDic[name.selectedName].HeaderPart;
 
+        //テーブルデータ
+        var tables = EditorSharedData.RawMasterData.DataGroupDic[name.parentName].TableData.TableDic;
+
         var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
 
         //ソース設定 TODO
@@ -334,7 +338,6 @@ public class DataEditWindow : EditorWindow
             //データ
             var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
 
-
             Column column = new Column
             {
                 title = colName,
@@ -342,7 +345,6 @@ public class DataEditWindow : EditorWindow
                 width = 70,
                 makeCell = () =>
                 {
-                    var type = header.VariableDic[colName].Type;
 
                     //インデックスは編集させない
                     if (colName == indexVariable)
@@ -390,12 +392,24 @@ public class DataEditWindow : EditorWindow
                                 var boolValue = new List<string>() { "true", "false" };
                                 return new PopupField<string>(boolValue, 0);
                             }
-
-                        // その他の型に対応するUIエレメントのバインドを追加
                         case "string":
-                        default:
                             {
                                 return new TextField();
+                            }
+                        // その他の型に対応するUIエレメントのバインドを追加
+                        default:
+                            {
+                                if (type.Contains("Tables["))
+                                {
+                                    var typeName = MasterDataEditorCommon.ExtractTableName(type);
+                                    var labels = tables[typeName].Labels;
+                                    return new PopupField<string>(labels, 0);
+                                }
+                                else
+                                {
+                                    //不定だけど一応
+                                    return new TextField();
+                                }
                             }
                     }
 
@@ -503,20 +517,34 @@ public class DataEditWindow : EditorWindow
                             break;
                         case "bool":
                             {
-                                var boolValue = new List<string>() { "true", "false" };
                                 var popup = e as PopupField<string>;
-                                popup.choices = boolValue;
                                 popup.SetValueWithoutNotify(ConvertBoolean.ToBoolString(data[i][col]));
                                 popup.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
                             }
                             break;
-                        // その他の型に対応するUIエレメントのバインドを追加
                         case "string":
-                        default:
                             {
                                 var textField = e as TextField;
                                 textField.SetValueWithoutNotify(data[i][col]);
                                 textField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue; });
+                            }
+                            break;
+                        // その他の型に対応するUIエレメントのバインドを追加
+                        default:
+                            {
+                                if (type.Contains("Tables["))
+                                {
+                                    var popup = e as PopupField<string>;
+                                    popup.SetValueWithoutNotify(data[i][col]);
+                                    popup.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
+                                }
+                                else
+                                {
+                                    //不定だけど一応
+                                    var textField = e as TextField;
+                                    textField.SetValueWithoutNotify(data[i][col]);
+                                    textField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue; });
+                                }
                             }
                             break;
                     }
@@ -541,6 +569,29 @@ public class DataEditWindow : EditorWindow
 
         CsvReflector.ApplyValuesToGame(name.parentName, name.selectedName, data);
 
+    }
+
+    public static string ExtractTableName(string input)
+    {
+        // 正規表現パターン: 'Tables[' と ']' に囲まれた文字を抽出
+        string pattern = @"Tables\[(.*?)\]";
+
+        // 正規表現オブジェクトの生成
+        Regex regex = new Regex(pattern);
+
+        // 入力文字列に対してマッチングを試みる
+        Match match = regex.Match(input);
+
+        // マッチした場合、グループ1の値（括弧内の部分）を返す
+        if (match.Success)
+        {
+            return match.Groups[1].Value;
+        }
+        else
+        {
+            // マッチしない場合は、適切な処理または空文字列を返す
+            return string.Empty;
+        }
     }
 
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using UnityEngine;
+using PlasticGui.WorkspaceWindow.QueryViews.Labels;
 
 namespace CatHut
 {
@@ -30,6 +31,12 @@ namespace CatHut
         public Table() {
             DataSet = new SerializableDictionary<string, string>();
         }
+
+        public List<string> Labels
+        {
+            get { return DataSet.Keys.ToList(); }
+        }
+
     }
 
 
