@@ -324,8 +324,17 @@ public class DataEditWindow : EditorWindow
         List<string> columns = header.VariableDic.Keys.ToList();
         string indexVariable = header.IndexVariable;
 
+
+
         foreach (string colName in columns)
         {
+            var col = header.VariableDic[colName].ColumnIndex;
+            var type = header.VariableDic[colName].Type;
+
+            //データ
+            var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
+
+
             Column column = new Column
             {
                 title = colName,
@@ -393,12 +402,6 @@ public class DataEditWindow : EditorWindow
                 },
                 bindCell = (e, i) =>
                 {
-                    var col = header.VariableDic[colName].ColumnIndex;
-                    var type = header.VariableDic[colName].Type;
-                    var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
-
-                    //データ
-                    var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
 
                     //インデックスは編集させない
                     if (colName == indexVariable)
@@ -423,9 +426,7 @@ public class DataEditWindow : EditorWindow
                                 {
                                     Debug.Log($"Parse failed for uint value: {data[i][col]} at row: {i}, col: {colName}");
                                 }
-                                intField.RegisterValueChangedCallback(evt => { 
-                                    data[i][col] = evt.newValue.ToString();
-                                });
+                                intField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
                             }
                             break;
                         case "ulong":
@@ -439,9 +440,7 @@ public class DataEditWindow : EditorWindow
                                 {
                                     Debug.Log($"Parse failed for uint value: {data[i][col]} at row: {i}, col: {colName}");
                                 }
-                                ulongField.RegisterValueChangedCallback(evt => { 
-                                    data[i][col] = evt.newValue.ToString();
-                                });
+                                ulongField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
                             }
                             break;
                         case "sbyte":
@@ -457,9 +456,7 @@ public class DataEditWindow : EditorWindow
                                 {
                                     Debug.Log($"Parse failed for uint value: {data[i][col]} at row: {i}, col: {colName}");
                                 }
-                                intField.RegisterValueChangedCallback(evt => {
-                                    data[i][col] = evt.newValue.ToString();
-                                });
+                                intField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue.ToString(); });
                             }
                             break;
                         case "long":
