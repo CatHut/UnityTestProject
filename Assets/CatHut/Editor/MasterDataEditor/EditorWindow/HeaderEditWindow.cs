@@ -357,22 +357,22 @@ public class HeaderEditWindow : EditorWindow
         editArea.Add(new Button(() => {
             //ボタン押したときの処理書く
         })
-        { text = "Add Table" });
+        { text = "Add Table(未実装)" });
 
         editArea.Add(new Button(() => {
             //ボタン押したときの処理書く
         })
-        { text = "Delete Table" });
+        { text = "Delete Table(未実装)" });
 
         editArea.Add(new Button(() => {
             //ボタン押したときの処理書く
         })
-        { text = "Add Header" });
+        { text = "Add Header(未実装)" });
 
         editArea.Add(new Button(() => {
             //ボタン押したときの処理書く
         })
-        { text = "Delete Header" });
+        { text = "Delete Header(未実装)" });
     }
 
 

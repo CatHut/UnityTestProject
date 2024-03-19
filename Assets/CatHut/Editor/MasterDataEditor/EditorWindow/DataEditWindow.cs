@@ -193,6 +193,8 @@ public class DataEditWindow : EditorWindow
 
     private void CreateDataEditArea(VisualElement editArea)
     {
+        editArea.Clear();
+
         var name = GetSelectedAndParentItemNames(TreeView);
 
         var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
@@ -228,16 +230,11 @@ public class DataEditWindow : EditorWindow
 
         editArea.Add(new Button(() => {
 
-
             UpdateDataEditUi(editArea);
 
         })
         { text = "Csv Reload" });
 
-
-
-        //これはTreeViewに実装
-        editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Create DataGroup" });
     }
 
     private void InitializeDataEditUi(VisualElement editArea)
@@ -248,18 +245,11 @@ public class DataEditWindow : EditorWindow
     private void UpdateDataEditUi(VisualElement editArea)
     {
         var path = rootVisualElement.Q<PopupField<string>>(UI_ITEM_MASTER_DATA_PATH).value;
-        var name = GetSelectedAndParentItemNames(TreeView);
-        var variableListView = editArea.Q<MultiColumnListView>("DataListView");
 
         //データリロード
         EditorSharedData.RawMasterData.DataReload(path);
 
-        //データ取得
-        var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
-
-        //ソース設定
-        variableListView.itemsSource = data;
-        variableListView.Rebuild();
+        CreateDataEditArea(editArea);
 
     }
 
