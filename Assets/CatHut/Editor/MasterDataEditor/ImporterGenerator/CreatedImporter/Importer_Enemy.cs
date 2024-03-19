@@ -124,10 +124,8 @@ namespace CatHut
                                 rowData.Pattern = result_Pattern;
                                 if (!ret) { Debug.LogWarning($"Convert Failed row:{i} col:Pattern"); }
 
-
                                 if (!EnemyParameterData.ContainsKey(rowData.id))
                                 {
-                                    //未登録だったら新規作成
                                     var list = new Enemy.EnemyParameterListClass();
                                     list.EnemyParameterList = new List<Enemy.EnemyParameter> { rowData };
                                     EnemyParameterData[rowData.id] = list;
@@ -207,7 +205,7 @@ namespace CatHut
                                 rowData.weight5 = result_weight5;
                                 if (!ret) { Debug.LogWarning($"Convert Failed row:{i} col:weight5"); }
 
-                                SkillPatternData.Add(rowData.id, rowData);
+                                SkillPatternData[rowData.id] = rowData;
                             }
                         }
                         break;

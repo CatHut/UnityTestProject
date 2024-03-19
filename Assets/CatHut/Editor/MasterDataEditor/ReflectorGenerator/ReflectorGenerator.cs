@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using UnityEditor;
 using System;
+using System.Collections.Generic;
 
 namespace CatHut
 {
@@ -64,6 +65,26 @@ namespace CatHut
             {
                 str += "                case \"" + temp + "\":" + Environment.NewLine;
                 str += "                    {" + Environment.NewLine;
+
+                if (dg.FormatedCsvDic[temp].HeaderPart.IndexDuplicatable)
+                {
+                    str += $"                        int j = 1;" + Environment.NewLine;
+                    str += $"                        //IndexValuableの要素を一旦全て削除" + Environment.NewLine;
+                    str += $"                        foreach (var row in fcd.DataPart.DataWithoutColumnTitle)" + Environment.NewLine;
+                    str += $"                        {{" + Environment.NewLine;
+                    str += $"                            bool ret;" + Environment.NewLine;
+                    str += $"                            ret = MasterDataEditorCommon.TryConvert<string>(row[valDic[\"{dg.FormatedCsvDic[temp].HeaderPart.IndexVariable}\"].ColumnIndex], out var idx);" + Environment.NewLine;
+                    str += $"                            if (!ret) {{ Debug.LogWarning($\"Convert Failed row:{{j}} col:{dg.FormatedCsvDic[temp].HeaderPart.IndexVariable}\"); continue; }}" + Environment.NewLine;
+                    str += Environment.NewLine;
+                    str += $"                            MasterData.Instance.{dg.Name}Data.{temp}Data.Remove(idx);" + Environment.NewLine;
+                    str += Environment.NewLine;
+                    str += $"                            j++;" + Environment.NewLine;
+                    str += $"                        }}" + Environment.NewLine;
+                    str += Environment.NewLine;
+                    str += Environment.NewLine;
+
+                }
+
                 str += "                        int i = 1;" + Environment.NewLine;
                 str += "                        foreach (var row in fcd.DataPart.DataWithoutColumnTitle)" + Environment.NewLine;
                 str += "                        {" + Environment.NewLine;
@@ -100,7 +121,30 @@ namespace CatHut
 
                 var indexValue = dg.FormatedCsvDic[temp].HeaderPart.IndexVariable;
 
-                str += $"                            MasterData.Instance.{dg.Name}Data.{temp}Data[rowData.id] = rowData;" + Environment.NewLine;
+                if (dg.FormatedCsvDic[temp].HeaderPart.IndexDuplicatable) {
+                    str += $"                            if (!MasterData.Instance.{dg.Name}Data.{temp}Data.ContainsKey(rowData.{dg.FormatedCsvDic[temp].HeaderPart.IndexVariable}))" + Environment.NewLine;
+                    str += $"                            {{" + Environment.NewLine;
+                    str += $"                                //未登録だったら新規作成" + Environment.NewLine;
+                    str += $"                                var list = new {dg.Name}.{temp}ListClass();" + Environment.NewLine;
+                    str += $"                                list.{temp}List = new List<{dg.Name}.{temp}> {{ rowData }};" + Environment.NewLine;
+                    str += $"                                MasterData.Instance.{dg.Name}Data.{temp}Data[rowData.{dg.FormatedCsvDic[temp].HeaderPart.IndexVariable}] = list;" + Environment.NewLine;
+                    str += $"                            }}" + Environment.NewLine;
+                    str += $"                            else" + Environment.NewLine;
+                    str += $"                            {{" + Environment.NewLine;
+                    str += $"                                MasterData.Instance.{dg.Name}Data.{temp}Data[rowData.{dg.FormatedCsvDic[temp].HeaderPart.IndexVariable}].{temp}List.Add(rowData);" + Environment.NewLine;
+                    str += $"                            }}" + Environment.NewLine;
+                }
+                else
+                {
+                    str += $"                            MasterData.Instance.{dg.Name}Data.{temp}Data[rowData.{dg.FormatedCsvDic[temp].HeaderPart.IndexVariable}] = rowData;" + Environment.NewLine;
+                }
+
+
+
+
+
+
+
                 str += "                        }" + Environment.NewLine;
                 str += "                    }" + Environment.NewLine;
                 str += "                    break;" + Environment.NewLine;

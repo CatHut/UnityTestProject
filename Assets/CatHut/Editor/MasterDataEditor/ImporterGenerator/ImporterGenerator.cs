@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using UnityEditor;
 using System;
+using System.Collections.Generic;
 
 namespace CatHut
 {
@@ -104,7 +105,23 @@ namespace CatHut
 
                 var indexValue = dg.FormatedCsvDic[temp].HeaderPart.IndexVariable;
 
-                str += "                                "+ temp + "Data.Add(rowData." + indexValue + ", rowData);" + Environment.NewLine;
+                if (false == dg.FormatedCsvDic[temp].HeaderPart.IndexDuplicatable)
+                {
+                    str += "                                " + temp + "Data[rowData." + indexValue + "] = rowData;" + Environment.NewLine;
+                }
+                else
+                {
+                    str += $"                                if (!{temp}Data.ContainsKey(rowData.{indexValue}))" + Environment.NewLine;
+                    str += $"                                {{" + Environment.NewLine;
+                    str += $"                                    var list = new {dg.Name}.{temp}ListClass();" + Environment.NewLine;
+                    str += $"                                    list.{temp}List = new List<{dg.Name}.{temp}> {{ rowData }};" + Environment.NewLine;
+                    str += $"                                    {temp}Data[rowData.{indexValue}] = list;" + Environment.NewLine;
+                    str += $"                                }}" + Environment.NewLine;
+                    str += $"                                else" + Environment.NewLine;
+                    str += $"                                {{" + Environment.NewLine;
+                    str += $"                                    {temp}Data[rowData.{indexValue}].{temp}List.Add(rowData);" + Environment.NewLine;
+                    str += $"                                }}" + Environment.NewLine;
+                }
                 str += "                            }" + Environment.NewLine;
                 str += "                        }" + Environment.NewLine;
                 str += "                        break;" + Environment.NewLine;

@@ -123,7 +123,7 @@ namespace CatHut
                                 rowData.Pattern = result_Pattern;
                                 if (!ret) { Debug.LogWarning($"Convert Failed row:{i} col:Pattern"); }
 
-                                EnemyParameterData.Add(rowData.id, rowData);
+                                EnemyParameterData[rowData.id] = rowData;
                             }
                         }
                         break;

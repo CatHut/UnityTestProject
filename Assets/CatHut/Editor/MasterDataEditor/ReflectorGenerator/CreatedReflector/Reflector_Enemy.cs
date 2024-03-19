@@ -30,13 +30,14 @@ namespace CatHut
                         foreach (var row in fcd.DataPart.DataWithoutColumnTitle)
                         {
                             bool ret;
-                            ret = MasterDataEditorCommon.TryConvert<string>(row[valDic["id"].ColumnIndex], out var idx);        //ここのidはIndexValuableを使用
+                            ret = MasterDataEditorCommon.TryConvert<string>(row[valDic["id"].ColumnIndex], out var idx);
                             if (!ret) { Debug.LogWarning($"Convert Failed row:{j} col:id"); continue; }
 
                             MasterData.Instance.EnemyData.EnemyParameterData.Remove(idx);
 
                             j++;
                         }
+
 
                         int i = 1;
                         foreach (var row in fcd.DataPart.DataWithoutColumnTitle)
@@ -128,7 +129,6 @@ namespace CatHut
                             ret = MasterDataEditorCommon.TryConvert<string>(row[valDic["Pattern"].ColumnIndex], out var result_Pattern);
                             rowData.Pattern = result_Pattern;
                             if (!ret) { Debug.LogWarning($"Convert Failed row:{i} col:Pattern"); }
-
 
                             if (!MasterData.Instance.EnemyData.EnemyParameterData.ContainsKey(rowData.id))
                             {
