@@ -1,7 +1,7 @@
 ﻿ClassName,EnemyParameter
 ParentName,Enemy
 IndexVariable,id
-IndexDuplicatable,False
+IndexDuplicatable,false
 #Custom
 Word,aaa,bbb
 Motion,Jump,Walk

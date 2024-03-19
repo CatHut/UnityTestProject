@@ -25,20 +25,6 @@ namespace CatHut
 				//エクセルファイル中のクラス定義分追加
                 case "EnemyParameter":
                     {
-                        int j = 1;
-                        //IndexValuableの要素を一旦全て削除
-                        foreach (var row in fcd.DataPart.DataWithoutColumnTitle)
-                        {
-                            bool ret;
-                            ret = MasterDataEditorCommon.TryConvert<string>(row[valDic["id"].ColumnIndex], out var idx);
-                            if (!ret) { Debug.LogWarning($"Convert Failed row:{j} col:id"); continue; }
-
-                            MasterData.Instance.EnemyData.EnemyParameterData.Remove(idx);
-
-                            j++;
-                        }
-
-
                         int i = 1;
                         foreach (var row in fcd.DataPart.DataWithoutColumnTitle)
                         {
@@ -130,17 +116,7 @@ namespace CatHut
                             rowData.Pattern = result_Pattern;
                             if (!ret) { Debug.LogWarning($"Convert Failed row:{i} col:Pattern"); }
 
-                            if (!MasterData.Instance.EnemyData.EnemyParameterData.ContainsKey(rowData.id))
-                            {
-                                //未登録だったら新規作成
-                                var list = new Enemy.EnemyParameterListClass();
-                                list.EnemyParameterList = new List<Enemy.EnemyParameter> { rowData };
-                                MasterData.Instance.EnemyData.EnemyParameterData[rowData.id] = list;
-                            }
-                            else
-                            {
-                                MasterData.Instance.EnemyData.EnemyParameterData[rowData.id].EnemyParameterList.Add(rowData);
-                            }
+                            MasterData.Instance.EnemyData.EnemyParameterData[rowData.id] = rowData;
                         }
                     }
                     break;

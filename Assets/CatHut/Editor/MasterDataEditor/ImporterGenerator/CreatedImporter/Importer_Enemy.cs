@@ -124,16 +124,7 @@ namespace CatHut
                                 rowData.Pattern = result_Pattern;
                                 if (!ret) { Debug.LogWarning($"Convert Failed row:{i} col:Pattern"); }
 
-                                if (!EnemyParameterData.ContainsKey(rowData.id))
-                                {
-                                    var list = new Enemy.EnemyParameterListClass();
-                                    list.EnemyParameterList = new List<Enemy.EnemyParameter> { rowData };
-                                    EnemyParameterData[rowData.id] = list;
-                                }
-                                else
-                                {
-                                    EnemyParameterData[rowData.id].EnemyParameterList.Add(rowData);
-                                }
+                                EnemyParameterData[rowData.id] = rowData;
                             }
                         }
                         break;
