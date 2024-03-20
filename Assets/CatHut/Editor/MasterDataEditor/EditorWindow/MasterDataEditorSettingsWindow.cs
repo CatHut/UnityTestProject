@@ -67,13 +67,13 @@ public class MasterDataEditorSettingsWindow : EditorWindow
         configData.CreatedScriptableObjectClassPath = EditorGUILayout.TextField("CreatedScriptableObjectClassPath", configData.CreatedScriptableObjectClassPath);
 
         GUILayout.Space(10);
-        if (!AssetDatabase.IsValidFolder(configData.CreatedScriptableObjectClassPath))
+        if (!AssetDatabase.IsValidFolder(configData.CreatedMasterDataClassPath))
         {
             GUIStyle errorStyle = new GUIStyle();
             errorStyle.normal.textColor = Color.red;
             GUILayout.Label("指定されたフォルダが存在しません。", errorStyle);
         }
-        configData.CreatedScriptableObjectClassPath = EditorGUILayout.TextField("CreatedMasterDataClassPath", configData.CreatedScriptableObjectClassPath);
+        configData.CreatedMasterDataClassPath = EditorGUILayout.TextField("CreatedMasterDataClassPath", configData.CreatedMasterDataClassPath);
 
         GUILayout.Space(10);
         if (!AssetDatabase.IsValidFolder(configData.ScriptableObjectInstancePath))
