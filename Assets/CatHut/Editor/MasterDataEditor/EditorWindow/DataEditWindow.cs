@@ -320,6 +320,8 @@ public class DataEditWindow : EditorWindow
         List<string> columns = header.VariableDic.Keys.ToList();
         string indexVariable = header.IndexVariable;
 
+        var tips = "半角のみ入力可(Only half-width characters)";
+
 
         foreach (string colName in columns)
         {
@@ -349,33 +351,33 @@ public class DataEditWindow : EditorWindow
                         case "ushort":
                         case "uint":
                             {
-                                return new UnsignedIntegerField();
+                                return new UnsignedIntegerField() { tooltip = tips };
                             }
                         case "ulong":
                             {
-                                return new UnsignedLongField();
+                                return new UnsignedLongField() { tooltip = tips };
                             }
 
                         case "sbyte":
                         case "short":
                         case "int":
                             {
-                                return new IntegerField();
+                                return new IntegerField() { tooltip = tips };
                             }
 
                         case "long":
                             {
-                                return new LongField();
+                                return new LongField() { tooltip = tips };
                             }
 
                         case "double":
                             {
-                                return new DoubleField();
+                                return new DoubleField() { tooltip = tips };
                             }
 
                         case "float":
                             {
-                                return new FloatField();
+                                return new FloatField() { tooltip = tips };
                             }
 
                         case "bool":
