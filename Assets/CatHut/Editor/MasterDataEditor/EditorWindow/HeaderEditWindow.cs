@@ -227,7 +227,7 @@ public class HeaderEditWindow : EditorWindow
             {
                 var variableInfo = (VariableInfo)variableListView.itemsSource[i];
                 var popupField = e as PopupField<string>;
-                popupField.value = variableInfo.Type;
+                popupField.value = variableInfo.EditorViewType;
 
                 // 値が変更されたときの処理を登録
                 popupField.RegisterValueChangedCallback(evt =>
@@ -315,7 +315,7 @@ public class HeaderEditWindow : EditorWindow
 
 
         //これはTreeViewに実装
-        editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Create DataGroup" });
+        editArea.Add(new Button(() => Debug.Log("Button 2")) { text = "Create DataGroup(未実装)" });
     }
 
     private void InitializeHeaderEditUi(VisualElement editArea)

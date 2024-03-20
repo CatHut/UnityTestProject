@@ -16,6 +16,8 @@ namespace CatHut
 {
     public static class MasterDataEditorCommon
     {
+        public static Vector2Int MLstringAreaSize = new Vector2Int(200, 60);
+
         private static int SaveCounter = 0;
 
         /// <summary>

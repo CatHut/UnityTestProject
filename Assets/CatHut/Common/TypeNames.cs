@@ -16,6 +16,7 @@ namespace CatHut
             "double",  // Double
             "char",    // Char
             "string",  // String
+            "MLstring",  // (MultiLine)String
             "bool",    // Boolean
             "byte",    // Byte
             "sbyte",   // SByte

@@ -79,7 +79,7 @@ namespace CatHut
                 foreach (var value in dg.FormatedCsvDic[temp].HeaderPart.VariableDic.Values)
                 {
 
-                    if (value.Type.Contains("Tables["))
+                    if (value.IsTableType)
                     {
                         //TODO更にグローバルテーブルとローカルテーブルの区別必要
 
@@ -89,7 +89,7 @@ namespace CatHut
                         str += "                                if (!ret) { Debug.LogWarning($\"Convert Failed row:{i} col:" + value.Name + "\"); }" + Environment.NewLine;
                         str += Environment.NewLine;
                     }
-                    else if(value.Type.Contains("Comment"))
+                    else if(value.IsComment)
                     {
                         //何もしない
                     }

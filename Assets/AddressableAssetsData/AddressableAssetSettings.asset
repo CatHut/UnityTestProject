@@ -38,7 +38,7 @@ MonoBehaviour:
     m_Id: 
   m_RemoteCatalogLoadPath:
     m_Id: 
-  m_ContentStateBuildPathProfileVariableName: 
+  m_ContentStateBuildPathProfileVariableName: <default settings path>
   m_CustomContentStateBuildPath: 
   m_ContentStateBuildPath: 
   m_BuildAddressablesWithPlayerBuild: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_GroupAssets:
   - {fileID: 11400000, guid: 7ea3757112ae1eb48835f8c6eadd4a66, type: 2}
   - {fileID: 11400000, guid: 41b0e6c98a9f68b49919b44be579ff35, type: 2}
-  - {fileID: 11400000, guid: d9bf06450ab8dd54aba611cc2450345b, type: 2}
+  - {fileID: 11400000, guid: 0bd1c413aeb38564c87c2daa391760a8, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -87,7 +87,7 @@ MonoBehaviour:
     m_ProfileVersion: 1
   m_LabelTable:
     m_LabelNames:
-    - default
+    - MasterData
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: e7398f12592b7354485c212086ae1a58, type: 2}

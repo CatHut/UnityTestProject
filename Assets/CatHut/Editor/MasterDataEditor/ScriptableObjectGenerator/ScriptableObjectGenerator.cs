@@ -169,7 +169,7 @@ namespace CatHut
                 foreach (var valuables in classinfo.Value.HeaderPart.VariableDic)
                 {
                     //Coment Column Skip
-                    if (valuables.Value.Type == "Comment")
+                    if (valuables.Value.IsComment)
                     {
                         continue;
                     }

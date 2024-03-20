@@ -20,7 +20,43 @@ namespace CatHut
         /// 型名
         /// </summary>
         [SerializeField]
-        public string Type;
+        private string _Type;
+
+        public string Type
+        {
+            set { _Type = value; }
+            
+            get { 
+                if(_Type == "MLstring")
+                {
+                    return "string";
+                }
+
+                return _Type; 
+            }
+        }
+
+        public string EditorViewType
+        {
+            get { return _Type; }
+        }
+
+        public bool IsTableType
+        {
+            get
+            {
+                return Type.Contains("Tables[");
+            }
+        }
+
+        public bool IsComment
+        {
+            get
+            {
+                return Type.Contains("Comment");
+            }
+        }
+
         /// 変数の説明
         /// </summary>
         [SerializeField]
@@ -296,7 +332,7 @@ namespace CatHut
             {
                 rowData = new List<string>();
                 rowData.Add(variable.Value.Name);
-                rowData.Add(variable.Value.Type);
+                rowData.Add(variable.Value.EditorViewType);
                 rowData.Add(variable.Value.Description);
                 csvData.AddRow(rowData);
             }

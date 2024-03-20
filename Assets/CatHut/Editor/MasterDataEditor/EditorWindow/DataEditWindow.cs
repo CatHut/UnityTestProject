@@ -101,7 +101,7 @@ public class DataEditWindow : EditorWindow
         bottomPane.Add(horizontalSplitView);
 
         var leftPane = new VisualElement();
-        leftPane.name = "LeftPane"; 
+        leftPane.name = "LeftPane";
         horizontalSplitView.Add(leftPane);
 
         // 編集領域（初期は空）
@@ -175,7 +175,7 @@ public class DataEditWindow : EditorWindow
         editArea.Clear();
 
 
-        switch(tvi.HierarchyLevel)
+        switch (tvi.HierarchyLevel)
         {
             case 0:
                 //DataGroup選択時
@@ -321,11 +321,10 @@ public class DataEditWindow : EditorWindow
         string indexVariable = header.IndexVariable;
 
 
-
         foreach (string colName in columns)
         {
             var col = header.VariableDic[colName].ColumnIndex;
-            var type = header.VariableDic[colName].Type;
+            var valInfo = header.VariableDic[colName];
 
             //データ
             var data = EditorSharedData.RawMasterData.EachPathDataGroupDic[path][name.parentName].FormatedCsvDic[name.selectedName].DataPart.DataWithoutColumnTitle;
@@ -334,7 +333,7 @@ public class DataEditWindow : EditorWindow
             {
                 title = colName,
                 name = colName,
-                width = 70,
+                width = valInfo.EditorViewType == "MLstring" ? MasterDataEditorCommon.MLstringAreaSize.x : 80,
                 makeCell = () =>
                 {
 
@@ -344,7 +343,7 @@ public class DataEditWindow : EditorWindow
                         return new Label();
                     }
 
-                    switch (type)
+                    switch (valInfo.EditorViewType)
                     {
                         case "byte":
                         case "ushort":
@@ -388,12 +387,21 @@ public class DataEditWindow : EditorWindow
                             {
                                 return new TextField();
                             }
+                        case "MLstring":    //MultiLine string(複数行の編集領域を確保)
+                            {
+                                var field = new TextField();
+                                field.multiline = true;
+                                field.style.width = MasterDataEditorCommon.MLstringAreaSize.x;
+                                field.style.height = MasterDataEditorCommon.MLstringAreaSize.y;
+                                variableListView.fixedItemHeight = MasterDataEditorCommon.MLstringAreaSize.y;
+                                return field;
+                            }
                         // その他の型に対応するUIエレメントのバインドを追加
                         default:
                             {
-                                if (type.Contains("Tables["))
+                                if (valInfo.IsTableType)
                                 {
-                                    var typeName = MasterDataEditorCommon.ExtractTableName(type);
+                                    var typeName = MasterDataEditorCommon.ExtractTableName(valInfo.EditorViewType);
                                     var labels = tables[typeName].Labels;
                                     return new PopupField<string>(labels, 0);
                                 }
@@ -417,7 +425,7 @@ public class DataEditWindow : EditorWindow
                         return;
                     }
 
-                    switch (type)
+                    switch (valInfo.EditorViewType)
                     {
                         case "byte":
                         case "ushort":
@@ -521,10 +529,20 @@ public class DataEditWindow : EditorWindow
                                 textField.RegisterValueChangedCallback(evt => { data[i][col] = evt.newValue; });
                             }
                             break;
+                        case "MLstring":
+                            {
+                                var textField = e as TextField;
+                                textField.SetValueWithoutNotify(data[i][col]);
+                                textField.RegisterValueChangedCallback(evt =>
+                                {
+                                    data[i][col] = evt.newValue;
+                                });
+                            }
+                            break;
                         // その他の型に対応するUIエレメントのバインドを追加
                         default:
                             {
-                                if (type.Contains("Tables["))
+                                if (valInfo.IsTableType)
                                 {
                                     var popup = e as PopupField<string>;
                                     popup.SetValueWithoutNotify(data[i][col]);

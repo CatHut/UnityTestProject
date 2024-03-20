@@ -18,6 +18,6 @@ public class TextSampleComponent : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        m_TextMeshPro.text = MasterData.Instance.EnemyData.EnemyParameterData.First().Value.IMAGE;
+        m_TextMeshPro.text = MasterData.Instance.EnemyData.EnemyParameterData["10001"].IMAGE;
     }
 }
