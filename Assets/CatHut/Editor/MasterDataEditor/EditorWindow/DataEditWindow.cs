@@ -351,7 +351,29 @@ public class DataEditWindow : EditorWindow
                         case "ushort":
                         case "uint":
                             {
-                                return new UnsignedIntegerField() { tooltip = tips };
+                                var temp = new UnsignedIntegerField() { tooltip = tips };
+                                temp.RegisterCallback<KeyDownEvent>(evt => {
+                                    if (evt.keyCode == KeyCode.Return || evt.keyCode == KeyCode.KeypadEnter)
+                                    {
+                                        evt.StopPropagation();
+                                        if (evt.shiftKey)
+                                        {
+                                            var elem = evt.currentTarget as UnsignedIntegerField;
+                                            var idx = elem.parent.IndexOf(elem);
+                                            var nextElem = elem.parent[idx + 1];
+                                            nextElem.Focus();
+
+                                        }
+                                        else
+                                        {
+                                            //ひとつ下の行の入力要素をフォーカスする
+                                            var nextRowElement = variableListView.Q(name.selectedName + 1);
+                                            nextRowElement.Focus();
+                                        }
+                                    }
+                                });
+
+                                return temp;
                             }
                         case "ulong":
                             {
@@ -362,7 +384,25 @@ public class DataEditWindow : EditorWindow
                         case "short":
                         case "int":
                             {
-                                return new IntegerField() { tooltip = tips };
+                                var temp = new IntegerField() { tooltip = tips };
+                                temp.RegisterCallback<KeyDownEvent>(evt =>
+                                {
+                                    if (evt.keyCode == KeyCode.Return || evt.keyCode == KeyCode.KeypadEnter)
+                                    {
+                                        evt.StopPropagation();
+
+                                        if (evt.shiftKey)
+                                        {
+                                        }
+                                        else
+                                        {
+                                        }
+
+                                    }
+                                });
+
+                                return temp;
+
                             }
 
                         case "long":
